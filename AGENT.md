@@ -62,7 +62,7 @@ service is available.
 ## Tracing
 
 Langfuse tracing is initialised at **module level** on `CalendarAgent`
-import (`src/robotsix_calendar_agent/agent.py`):
+import (`src/robotsix_calendar_agent/agent/__init__.py`):
 
 ```python
 from robotsix_llmio.core import setup_langfuse_tracing
@@ -87,7 +87,7 @@ Both are active and must not be disabled without coordination.
 src/robotsix_calendar_agent/
 ├── __init__.py
 ├── __main__.py                 # python -m entry point
-├── agent.py                    # CalendarAgent — wires everything together
+├── agent/                     # CalendarAgent — wires everything together
 ├── caldav_client/              # typed CalDAV/CardDAV wrapper with tenacity retries
 │   ├── __init__.py
 │   ├── _shared.py              # shared helpers
