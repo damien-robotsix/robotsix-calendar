@@ -234,6 +234,8 @@ jobs:
           sarif_file: zizmor.sarif
 
   # hand-rolled: no shared workflow equivalent in robotsix-github-workflows
+  # Uses direct binary download to avoid Docker Hub dependency (rhysd/actionlint
+  # Docker action fails when Docker Hub is unreachable).
   actionlint:
     name: Actionlint
     runs-on: ubuntu-latest
@@ -244,7 +246,12 @@ jobs:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
         with:
           persist-credentials: false
-      - uses: rhysd/actionlint@914e7df21a07ef503a81201c76d2b11c789d3fca  # v1.7.12
+      - name: Install actionlint and shellcheck
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq shellcheck
+          curl -sSL "https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_linux_amd64.tar.gz" | sudo tar xz -C /usr/local/bin actionlint
+      - name: Run actionlint
+        run: actionlint
 
   # hand-rolled: no shared workflow equivalent in robotsix-github-workflows
   commitizen-check:
