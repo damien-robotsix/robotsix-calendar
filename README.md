@@ -6,7 +6,7 @@
 |-------------------------------------------------------------- | -------: | -------: | -------: | -------: | ------: | --------: |
 | src/robotsix\_calendar\_agent/\_\_init\_\_.py                 |        6 |        0 |        0 |        0 |    100% |           |
 | src/robotsix\_calendar\_agent/\_\_main\_\_.py                 |        4 |        4 |        2 |        0 |      0% |       3-8 |
-| src/robotsix\_calendar\_agent/agent.py                        |      126 |        0 |       34 |        1 |     99% | 341-\>343 |
+| src/robotsix\_calendar\_agent/agent/\_\_init\_\_.py           |      126 |        0 |       34 |        1 |     99% | 341-\>343 |
 | src/robotsix\_calendar\_agent/caldav\_client/\_\_init\_\_.py  |       97 |       11 |       34 |        1 |     91% |194-195, 205-208, 238-244 |
 | src/robotsix\_calendar\_agent/caldav\_client/\_shared.py      |       96 |        1 |        8 |        1 |     98% |       151 |
 | src/robotsix\_calendar\_agent/caldav\_client/calendar\_ops.py |       86 |        2 |       20 |        2 |     96% |  201, 238 |
