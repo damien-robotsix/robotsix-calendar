@@ -28,7 +28,7 @@ modules:
       CalDAV client, intent parser, and settings into a single
       in-process agent.
     paths:
-      - src/robotsix_calendar_agent/agent.py
+      - src/robotsix_calendar_agent/agent/__init__.py
       - tests/agent/__init__.py
       - tests/agent/test_agent.py
       - docs/agent/reference.md
