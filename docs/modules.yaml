@@ -93,7 +93,7 @@ modules:
       Health check endpoint for container orchestration — verifies
       connectivity to the configured Radicale CalDAV/CardDAV server.
     paths:
-      - src/robotsix_calendar_agent/healthcheck.py
+      - src/robotsix_calendar_agent/healthcheck/__init__.py
       - tests/healthcheck/__init__.py
       - tests/healthcheck/test_healthcheck.py
       - tests/healthcheck/conftest.py
