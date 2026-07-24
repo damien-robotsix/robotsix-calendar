@@ -108,7 +108,7 @@ modules:
       for all config-file-driven settings in the agent, loaded via
       robotsix_config.load_config.
     paths:
-      - src/robotsix_calendar_agent/settings.py
+      - src/robotsix_calendar_agent/settings/__init__.py
       - tests/settings/__init__.py
       - tests/settings/test_settings.py
       - docs/settings/reference.md

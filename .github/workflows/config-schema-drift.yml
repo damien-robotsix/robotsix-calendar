@@ -3,11 +3,11 @@ name: Config schema drift
 on:
   push:
     paths:
-      - "src/robotsix_calendar_agent/settings.py"
+      - "src/robotsix_calendar_agent/settings/__init__.py"
       - "config/config.schema.json"
   pull_request:
     paths:
-      - "src/robotsix_calendar_agent/settings.py"
+      - "src/robotsix_calendar_agent/settings/__init__.py"
       - "config/config.schema.json"
 
 concurrency:
