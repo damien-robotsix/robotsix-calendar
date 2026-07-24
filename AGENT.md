@@ -97,7 +97,8 @@ src/robotsix_calendar_agent/
 │   └── task_ops.py             # task (VTODO) operations
 ├── entrypoint.py               # main() — long-lived in-process service
 ├── healthcheck.py              # Docker HEALTHCHECK probe
-├── intent_parser.py            # IntentParser — llmio-based NL → ParsedIntent
+├── intent_parser/
+│   └── __init__.py             # IntentParser — llmio-based NL → ParsedIntent
 ├── py.typed                    # PEP 561 marker
 └── settings.py                 # BaseModel — loaded via robotsix_config.load_config from config.json
 ```

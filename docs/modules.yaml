@@ -69,7 +69,7 @@ modules:
       calendar/contact instructions into structured ParsedIntent objects
       via robotsix-llmio.
     paths:
-      - src/robotsix_calendar_agent/intent_parser.py
+      - src/robotsix_calendar_agent/intent_parser/__init__.py
       - tests/intent_parser/__init__.py
       - tests/intent_parser/test_intent_parser.py
       - tests/intent_parser/test_intent_parser_contract.py
