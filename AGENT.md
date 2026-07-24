@@ -97,7 +97,8 @@ src/robotsix_calendar_agent/
 ├── entrypoint/                 # main() — long-lived in-process service
 │   ├── __init__.py
 │   └── __main__.py
-├── healthcheck.py              # Docker HEALTHCHECK probe
+├── healthcheck/               # Docker HEALTHCHECK probe
+│   └── __init__.py
 ├── intent_parser/
 │   └── __init__.py             # IntentParser — llmio-based NL → ParsedIntent
 ├── py.typed                    # PEP 561 marker

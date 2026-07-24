@@ -3,6 +3,7 @@
 
 - Update AGENT.md module layout diagram: `entrypoint.py` → `entrypoint/` subdirectory (PR #365 follow-up)
 - Update AGENT.md to reflect `settings` module reorganization from `settings.py` to `settings/__init__.py`.
+- Update AGENT.md module layout diagram: `healthcheck.py` → `healthcheck/__init__.py` to reflect PR #366 reorganization.)
 - Moved `docs/agent/tutorials/manage-events.md` to `docs/tutorials/basic/manage-events.md` for consistent directory structure. Updated cross-references in `first-agent.md`, `tutorials/index.md`, `mkdocs.yml`, and `docs/modules.yaml` accordingly.
 - Reorganize `settings` module from flat file (`settings.py`) to per-module package (`settings/__init__.py`) for symmetric module layout.
 - Adopt standard Makefile targets: add `lock-check`, `pre-commit`, `test-unit`, and `test-integration`; rename `test` → `test-unit` (with `test` alias); extend `clean` to remove `.mypy_cache`, `.hypothesis`, and `site/`; include `lock-check` in `all` target.
