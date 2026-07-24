@@ -89,15 +89,4 @@ uv run python hello_calendar.py
 
 - [Managing Calendar Events](../../agent/tutorials/manage-events.md) — create, update, and delete
   events.
-<<<<<<< HEAD
-- [Configuration](../../configuration.md) — complete config-file
-=======
-- [Configuration](../../configuration.md) — complete configuration
->>>>>>> d3622ed (mill: Update README.md and docs/ after config migration from env vars to config.json)
-  reference.
-mplete config-file
-  reference.
->>>>>>> d3622ed (mill: Update README.md and docs/ after config migration from env vars to config.json (20260722T205416Z-update-readme-md-and-docs-after-config-m-8f70))
-  reference.
-mplete config-file
-  reference.
+- [Configuration](../../configuration.md) — complete configuration reference.
