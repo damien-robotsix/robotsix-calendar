@@ -81,8 +81,8 @@ modules:
       Service entrypoint — long-lived in-process main() that blocks until
       SIGTERM/SIGINT, suitable for containerised deployments.
     paths:
-      - src/robotsix_calendar_agent/entrypoint.py
-      - src/robotsix_calendar_agent/__main__.py
+      - src/robotsix_calendar_agent/entrypoint/__init__.py
+      - src/robotsix_calendar_agent/entrypoint/__main__.py
       - tests/entrypoint/__init__.py
       - tests/entrypoint/test_entrypoint.py
       - docs/entrypoint/reference.md

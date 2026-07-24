@@ -38,7 +38,7 @@ def main() -> None:
     from robotsix_config import load_config
     from robotsix_llmio.logging import setup_logging
 
-    from .settings import Settings
+    from ..settings import Settings
 
     settings = load_config(Settings)
     setup_logging(
