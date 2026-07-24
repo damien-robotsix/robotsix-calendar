@@ -15,7 +15,7 @@
 | src/robotsix\_calendar\_agent/caldav\_client/task\_ops.py     |       18 |        0 |        2 |        0 |    100% |           |
 | src/robotsix\_calendar\_agent/entrypoint.py                   |       25 |        0 |        0 |        0 |    100% |           |
 | src/robotsix\_calendar\_agent/healthcheck.py                  |       49 |        1 |       12 |        1 |     97% |       109 |
-| src/robotsix\_calendar\_agent/intent\_parser.py               |       60 |        0 |        2 |        0 |    100% |           |
+| src/robotsix\_calendar\_agent/intent\_parser/\_\_init\_\_.py  |       60 |        0 |        2 |        0 |    100% |           |
 | src/robotsix\_calendar\_agent/settings.py                     |       26 |        0 |        2 |        0 |    100% |           |
 | **TOTAL**                                                     |  **714** |   **30** |  **148** |   **10** | **95%** |           |
 
