@@ -21,14 +21,14 @@ try:
 except ImportError:  # pragma: no cover
     pass
 
-from .caldav_client import (
+from ..caldav_client import (
     CalDavClient,
     CalendarEvent,
     Contact,
     Task,
 )
-from .caldav_client.exceptions import AgentLogicError
-from .intent_parser import (
+from ..caldav_client.exceptions import AgentLogicError
+from ..intent_parser import (
     CalendarOperation,
     ContactOperation,
     IntentParseError,
@@ -80,7 +80,7 @@ class CalendarAgent:
     ) -> None:
         from robotsix_config import load_config
 
-        from .settings import Settings
+        from ..settings import Settings
 
         settings = load_config(Settings)
 
