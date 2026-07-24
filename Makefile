@@ -1,12 +1,20 @@
 .DEFAULT_GOAL := all
 
 .PHONY: all
-all: lint typecheck test  ## Run all checks (default goal)
+all: lock-check lint typecheck test  ## Run all checks (default goal)
+
+.PHONY: lock-check
+lock-check:  ## Validate uv.lock is consistent with pyproject.toml
+	uv lock --check
 
 .PHONY: install
 install: .venv  ## Install dev environment and pre-commit hooks
 	uv sync --frozen --group dev
 	pre-commit install
+
+.PHONY: pre-commit
+pre-commit: .venv  ## Run all pre-commit hooks
+	uv run pre-commit run --all-files
 
 .venv:
 	uv venv
@@ -25,9 +33,16 @@ format: .venv  ## Auto-format source code
 typecheck: .venv  ## Run mypy static type checker
 	uv run mypy src/
 
-.PHONY: test
-test: .venv  ## Run tests (non-integration)
+.PHONY: test-unit
+test-unit: .venv  ## Run unit tests (non-integration)
 	uv run pytest -m 'not integration' tests/
+
+.PHONY: test-integration
+test-integration: .venv  ## Run integration tests (requires Radicale server)
+	uv run pytest -m integration tests/
+
+.PHONY: test
+test: test-unit  ## Run unit tests (default test target)
 
 .PHONY: coverage
 coverage: .venv  ## Run tests with coverage report
@@ -48,7 +63,7 @@ docs-serve: .venv  ## Serve documentation locally with live reload
 
 .PHONY: clean
 clean:  ## Remove caches and build artifacts
-	rm -rf __pycache__ .pytest_cache .ruff_cache htmlcov build dist *.egg-info
+	rm -rf __pycache__ .pytest_cache .ruff_cache .mypy_cache .hypothesis htmlcov site build dist *.egg-info
 
 .PHONY: help
 help:  ## Display this help message

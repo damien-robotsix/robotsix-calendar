@@ -2,6 +2,7 @@
 
 
 - Reorganize `settings` module from flat file (`settings.py`) to per-module package (`settings/__init__.py`) for symmetric module layout.
+- Adopt standard Makefile targets: add `lock-check`, `pre-commit`, `test-unit`, and `test-integration`; rename `test` → `test-unit` (with `test` alias); extend `clean` to remove `.mypy_cache`, `.hypothesis`, and `site/`; include `lock-check` in `all` target.
 - Reorganize `agent` module from flat file to sub-package (`src/robotsix_calendar_agent/agent/__init__.py`), aligning with the per-module layout pattern used by `caldav-client` and `intent-parser`.
 - Reorganize `entrypoint` module into per-module subdirectory layout (`entrypoint.py` → `entrypoint/__init__.py`, `__main__.py` → `entrypoint/__main__.py`).
 - Convert `intent_parser` from a flat module to a sub-package (`intent_parser/__init__.py`), aligning with the `caldav_client` layout pattern.
