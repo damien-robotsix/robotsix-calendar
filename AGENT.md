@@ -25,11 +25,11 @@ requires the `tracing` extra (see Tracing below).
 All configuration lives in a single JSON config file
 (`config/config.json`, overridable via `ROBOTSIX_CONFIG_FILE`) loaded
 via **`robotsix_config.load_config(Settings)`** from
-`src/robotsix_calendar_agent/settings.py`. Every field is documented
+`src/robotsix_calendar_agent/settings/__init__.py`. Every field is documented
 in `docs/configuration.md` with its type, default, and description.
 
 **Rule:** When you add, remove, or change a `Settings` field in
-`settings.py`, update `docs/configuration.md` and regenerate
+`settings/__init__.py`, update `docs/configuration.md` and regenerate
 `config/config.schema.json` in the same change. The
 `config-schema-drift` CI job enforces that the committed schema stays
 in sync with the model — it compares `config_schema_json(Settings)`
@@ -86,7 +86,7 @@ Both are active and must not be disabled without coordination.
 ```
 src/robotsix_calendar_agent/
 ├── __init__.py
-├── agent.py                    # CalendarAgent — wires everything together
+├── agent/                     # CalendarAgent — wires everything together
 ├── caldav_client/              # typed CalDAV/CardDAV wrapper with tenacity retries
 │   ├── __init__.py
 │   ├── _shared.py              # shared helpers
@@ -101,7 +101,8 @@ src/robotsix_calendar_agent/
 ├── intent_parser/
 │   └── __init__.py             # IntentParser — llmio-based NL → ParsedIntent
 ├── py.typed                    # PEP 561 marker
-└── settings.py                 # BaseModel — loaded via robotsix_config.load_config from config.json
+└── settings/                   # BaseModel — loaded via robotsix_config.load_config from config.json
+    └── __init__.py
 ```
 
 > **Rule:** When adding a module-level import from an internal module to any file under `src/robotsix_calendar_agent/`, ensure the imported module appears in that file's `dependencies` list in `docs/modules.yaml`. Module-level `from .<module> import (...)` statements always require a corresponding `dependencies` entry — this is enforced by the periodic `module_curator` agent and violations will be flagged as draft tickets.
