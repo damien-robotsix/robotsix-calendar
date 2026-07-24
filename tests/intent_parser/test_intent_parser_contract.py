@@ -1,5 +1,5 @@
 """Contract test: verify robotsix_llmio.core exports the symbols
-intent_parser.py actually imports at runtime.
+intent_parser/__init__.py actually imports at runtime.
 
 This file must NOT mock sys.modules['robotsix_llmio'] or
 sys.modules['robotsix_llmio.core'] — the whole point is to hit the
@@ -48,7 +48,7 @@ def test_get_provider_no_longer_exported() -> None:
     """get_provider was removed; regression guard if it is accidentally re-added.
 
     If this test starts failing it means llmio re-introduced get_provider —
-    update intent_parser.py to use it again OR keep build_agent_for_level
+    update intent_parser/__init__.py to use it again OR keep build_agent_for_level
     (preferred) and delete this guard.
     """
     result = _run_contract(
