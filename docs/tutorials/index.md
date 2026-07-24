@@ -9,7 +9,7 @@ code blocks, fill in your credentials, and run.
 - **[Your First Agent](basic/first-agent.md)** — install, configure
   credentials, and send your first natural-language instruction to a
   running Radicale server.
-- **[Managing Calendar Events](../agent/tutorials/manage-events.md)** — full CRUD
+- **[Managing Calendar Events](basic/manage-events.md)** — full CRUD
   (create, list, update, delete) for calendar events, all driven by
   natural language.
 

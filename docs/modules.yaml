@@ -18,6 +18,7 @@ modules:
       - docs/reference/index.md
       - docs/tutorials/index.md
       - docs/tutorials/basic/first-agent.md
+      - docs/tutorials/basic/manage-events.md
     dependencies:
       - agent
       - caldav-client
@@ -33,7 +34,6 @@ modules:
       - tests/agent/test_agent.py
       - docs/agent/reference.md
       - docs/reference/component_agent.md
-      - docs/agent/tutorials/manage-events.md
     dependencies:
       - caldav-client
       - intent-parser

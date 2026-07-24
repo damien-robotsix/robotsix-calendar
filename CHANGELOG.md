@@ -1,6 +1,7 @@
 ## 0.0.0 (unreleased)
 
 
+- Moved `docs/agent/tutorials/manage-events.md` to `docs/tutorials/basic/manage-events.md` for consistent directory structure. Updated cross-references in `first-agent.md`, `tutorials/index.md`, `mkdocs.yml`, and `docs/modules.yaml` accordingly.
 - Reorganize `settings` module from flat file (`settings.py`) to per-module package (`settings/__init__.py`) for symmetric module layout.
 - Adopt standard Makefile targets: add `lock-check`, `pre-commit`, `test-unit`, and `test-integration`; rename `test` → `test-unit` (with `test` alias); extend `clean` to remove `.mypy_cache`, `.hypothesis`, and `site/`; include `lock-check` in `all` target.
 - Reorganize `agent` module from flat file to sub-package (`src/robotsix_calendar_agent/agent/__init__.py`), aligning with the per-module layout pattern used by `caldav-client` and `intent-parser`.

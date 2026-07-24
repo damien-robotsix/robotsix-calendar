@@ -4,7 +4,7 @@ This tutorial covers the four calendar-event operations —
 **create**, **list**, **update**, and **delete** — using the
 CalDAV client and intent parser directly.
 
-We assume you've completed [Your First Agent](../../tutorials/basic/first-agent.md) and have
+We assume you've completed [Your First Agent](first-agent.md) and have
 `config/config.json` configured with your Radicale credentials.
 
 ---
