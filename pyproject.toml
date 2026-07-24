@@ -86,7 +86,7 @@ select = ["E", "F", "I", "UP", "B", "SIM", "RUF", "S", "T10", "EXE", "ARG", "C4"
 ignore = ["S101", "PT006"]
 
 [tool.ruff.lint.per-file-ignores]
-"src/robotsix_calendar_agent/healthcheck.py" = ["T201"]
+"src/robotsix_calendar_agent/healthcheck/__init__.py" = ["T201"]
 "vulture_whitelist.py" = ["B018", "F821"]
 "tests/**/*.py" = ["S105", "S106", "S603"]
 
