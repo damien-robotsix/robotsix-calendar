@@ -5,7 +5,6 @@
 | Name                                                          |    Stmts |     Miss |   Branch |   BrPart |   Cover |   Missing |
 |-------------------------------------------------------------- | -------: | -------: | -------: | -------: | ------: | --------: |
 | src/robotsix\_calendar\_agent/\_\_init\_\_.py                 |        6 |        0 |        0 |        0 |    100% |           |
-| src/robotsix\_calendar\_agent/\_\_main\_\_.py                 |        4 |        4 |        2 |        0 |      0% |       3-8 |
 | src/robotsix\_calendar\_agent/agent/\_\_init\_\_.py           |      126 |        0 |       34 |        1 |     99% | 341-\>343 |
 | src/robotsix\_calendar\_agent/caldav\_client/\_\_init\_\_.py  |       97 |       11 |       34 |        1 |     91% |194-195, 205-208, 238-244 |
 | src/robotsix\_calendar\_agent/caldav\_client/\_shared.py      |       96 |        1 |        8 |        1 |     98% |       151 |
@@ -13,7 +12,8 @@
 | src/robotsix\_calendar\_agent/caldav\_client/contact\_ops.py  |      102 |       11 |       32 |        4 |     89% |46, 68-70, 76-78, 85-88 |
 | src/robotsix\_calendar\_agent/caldav\_client/exceptions.py    |       19 |        0 |        0 |        0 |    100% |           |
 | src/robotsix\_calendar\_agent/caldav\_client/task\_ops.py     |       18 |        0 |        2 |        0 |    100% |           |
-| src/robotsix\_calendar\_agent/entrypoint.py                   |       25 |        0 |        0 |        0 |    100% |           |
+| src/robotsix\_calendar\_agent/entrypoint/\_\_init\_\_.py      |       25 |        0 |        0 |        0 |    100% |           |
+| src/robotsix\_calendar\_agent/entrypoint/\_\_main\_\_.py      |        4 |        4 |        2 |        0 |      0% |       3-8 |
 | src/robotsix\_calendar\_agent/healthcheck.py                  |       49 |        1 |       12 |        1 |     97% |       109 |
 | src/robotsix\_calendar\_agent/intent\_parser/\_\_init\_\_.py  |       60 |        0 |        2 |        0 |    100% |           |
 | src/robotsix\_calendar\_agent/settings.py                     |       26 |        0 |        2 |        0 |    100% |           |
