@@ -1,6 +1,10 @@
 ## 0.0.0 (unreleased)
 
 
+- Fix AGENT.md `Periodic workflows` section: correct the count from 15 to 14
+  (repo-level stubs), credit the framework-level `langfuse_cleanup` as the
+  15th, and remove `config-schema-drift` from the periodic workflow examples
+  (it is a CI workflow, not a periodic agent workflow).
 - Fix stale `tenacity` references in AGENT.md: update caldav_client module description to "retry logic via robotsix-http" and remove removed `tenacity>=9.0` dependency entry; add `robotsix-http` to listed dependencies.
 - Migrate retry logic from `tenacity` to `robotsix-http`:
   - Replace `_wrap_caldav_op` tenacity-based decorator with `robotsix_http.retry.call_with_retry` + custom `is_transient_fn`.

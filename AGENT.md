@@ -121,10 +121,10 @@ src/robotsix_calendar_agent/
 - **`robotsix-http`** — HTTP client with retry logic
 ## Periodic workflows
 
-This repo is targeted by **15 periodic agent workflows** (second-highest
-in the fleet). Key ones referenced above:
+This repo is targeted by **14 periodic agent workflows** (second-highest
+in the fleet), plus one framework-level workflow (`langfuse_cleanup`) that
+requires no per-repo stub. Key ones referenced above:
 
-- `config-schema-drift` — enforces `config/config.schema.json` ↔ `Settings` model consistency
 - `trace_review` — surfaces anomalous traces
 
 When making changes, consider whether any periodic workflow's
