@@ -87,7 +87,7 @@ Both are active and must not be disabled without coordination.
 src/robotsix_calendar_agent/
 ├── __init__.py
 ├── agent/                     # CalendarAgent — wires everything together
-├── caldav_client/              # typed CalDAV/CardDAV wrapper with tenacity retries
+├── caldav_client/              # typed CalDAV/CardDAV wrapper with retry logic via robotsix-http
 │   ├── __init__.py
 │   ├── _shared.py              # shared helpers
 │   ├── calendar_ops.py         # calendar operations
@@ -118,8 +118,7 @@ src/robotsix_calendar_agent/
 - **`robotsix-llmio[openrouter-deepseek,tracing]`** — LLM intent parsing + Langfuse OTLP export
 - **`caldav`** — CalDAV/CardDAV client library
 - **`pydantic` / `robotsix-config`** — configuration & data models
-- **`tenacity>=9.0`** — retry decorators on CalDAV operations
-
+- **`robotsix-http`** — HTTP client with retry logic
 ## Periodic workflows
 
 This repo is targeted by **15 periodic agent workflows** (second-highest

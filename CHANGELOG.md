@@ -1,6 +1,7 @@
 ## 0.0.0 (unreleased)
 
 
+- Fix stale `tenacity` references in AGENT.md: update caldav_client module description to "retry logic via robotsix-http" and remove removed `tenacity>=9.0` dependency entry; add `robotsix-http` to listed dependencies.
 - Migrate retry logic from `tenacity` to `robotsix-http`:
   - Replace `_wrap_caldav_op` tenacity-based decorator with `robotsix_http.retry.call_with_retry` + custom `is_transient_fn`.
   - Replace manual healthcheck retry loop with `robotsix_http.retry.call_with_retry`.
