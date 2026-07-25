@@ -17,9 +17,9 @@ dependencies = [
     # needs to export intent-parse traces to Langfuse.
     "robotsix-llmio[openrouter,tracing]",
     "robotsix-config",
+    "robotsix-http",
     "caldav",
     "pydantic",
-    "tenacity>=9.0,<10",
 ]
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
@@ -66,6 +66,7 @@ exclude-newer = "7d"
 [tool.uv.sources]
 robotsix-config = { git = "https://github.com/damien-robotsix/robotsix-config.git", rev = "f557bffaf8f7d26d86a508ab7f634133c748c347" }
 robotsix-llmio = { git = "https://github.com/damien-robotsix/robotsix-llmio.git", rev = "73f2d555caa21de47a3732824d776e04719b3011" }  # pragma: allowlist secret
+robotsix-http = { git = "https://github.com/damien-robotsix/robotsix-http.git", rev = "70baf170b66904c9a6570563cce0ac75b6103f58" }
 robotsix-modules = { git = "https://github.com/damien-robotsix/robotsix-modules.git", rev = "b2e82231fa2f260589be9ba757c6be450f4e5d3e" }
 
 [tool.hatch.build.targets.wheel]

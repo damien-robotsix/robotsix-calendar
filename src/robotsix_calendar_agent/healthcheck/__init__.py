@@ -12,19 +12,14 @@ Exit codes:
 from __future__ import annotations
 
 import sys
-import time
+from typing import Any
 
 from opentelemetry import trace
 from robotsix_config import load_config
+from robotsix_http.retry import RetryConfig, call_with_retry
 
 from robotsix_calendar_agent.caldav_client import CalDavClient
 from robotsix_calendar_agent.settings import Settings
-
-RETRIES = 3
-"""Number of health-check retry attempts before giving up."""
-
-RETRY_DELAY_SECONDS = 2
-"""Seconds to wait between health-check retry attempts."""
 
 _tracer = trace.get_tracer(__name__)
 
@@ -40,8 +35,8 @@ def main() -> None:
         0: CalDAV server is reachable and responsive.
         1: Health probe failed after all retry attempts.
 
-    The probe retries up to :data:`RETRIES` times (3 attempts) with
-    :data:`RETRY_DELAY_SECONDS` (2 seconds) between attempts. Requires
+    The probe retries with exponential backoff via
+    :func:`robotsix_http.retry.call_with_retry`. Requires
     ``RADICALE_URL``, ``RADICALE_USERNAME``, and ``RADICALE_PASSWORD`` to
     be set in the config file.
     """
@@ -59,10 +54,7 @@ def main() -> None:
         )
         sys.exit(1)
 
-    last_error: str | None = None
-
-    for attempt in range(1, RETRIES + 1):
-        ok = False
+    def _probe() -> dict[str, Any]:
         with _tracer.start_as_current_span("healthcheck.probe") as span:
             try:
                 client = CalDavClient(
@@ -74,35 +66,33 @@ def main() -> None:
                 )
                 result = client.health()
             except Exception as exc:
-                last_error = str(exc)
                 span.set_attribute("healthcheck.result", "error")
                 span.set_attribute("error", True)
                 span.record_exception(exc)
+                raise
             else:
                 if result.get("connected"):
                     span.set_attribute("healthcheck.result", "ok")
-                    ok = True
+                    return result
                 else:
-                    last_error = result.get("error", "unknown error")
                     span.set_attribute("healthcheck.result", "failed")
                     span.set_attribute("error", True)
+                    raise RuntimeError(result.get("error", "unknown error"))
 
-        if ok:
-            print(f"healthcheck OK: {result}")
-            sys.exit(0)
-
-        if attempt < RETRIES:
-            print(
-                f"healthcheck attempt {attempt}/{RETRIES} failed: {last_error}",
-                file=sys.stderr,
-            )
-            time.sleep(RETRY_DELAY_SECONDS)
-
-    print(
-        f"healthcheck FAILED after {RETRIES} attempts: {last_error}",
-        file=sys.stderr,
-    )
-    sys.exit(1)
+    try:
+        result = call_with_retry(
+            _probe,
+            config=RetryConfig(max_retries=3),
+            what="healthcheck",
+        )
+        print(f"healthcheck OK: {result}")
+        sys.exit(0)
+    except Exception as exc:
+        print(
+            f"healthcheck FAILED after retries: {exc}",
+            file=sys.stderr,
+        )
+        sys.exit(1)
 
 
 if __name__ == "__main__":

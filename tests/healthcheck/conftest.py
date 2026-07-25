@@ -33,29 +33,55 @@ def _make_mock_client(health_result: dict[str, Any]) -> MagicMock:
     return client
 
 
+def _simulate_call_with_retry(
+    fn: Any,
+    *,
+    config: Any = None,
+    is_transient_fn: Any = None,
+    what: str = "operation",
+) -> Any:
+    """Simulate :func:`robotsix_http.retry.call_with_retry` by calling ``fn`` once.
+
+    Tracks calls so tests can inspect arguments.
+    """
+    _simulate_call_with_retry.calls.append(
+        {
+            "fn": fn,
+            "config": config,
+            "is_transient_fn": is_transient_fn,
+            "what": what,
+        }
+    )
+    return fn()
+
+
+_simulate_call_with_retry.calls: list[dict[str, Any]] = []
+
+
 @pytest.fixture
 def healthcheck_main(capsys: pytest.CaptureFixture[str]):
     """Factory fixture to run ``healthcheck.main()`` with patched dependencies.
 
     Returns a callable that accepts ``settings=`` and ``caldav_spec=``
-    keyword arguments and returns ``(excinfo, capsys_output, mock_sleep)``.
+    keyword arguments and returns ``(excinfo, capsys_output, retry_calls)``.
 
     *settings* — a mock Settings object (defaults to a valid one).
     *caldav_spec* — dict of kwargs forwarded to ``patch("...CalDavClient", ...)``.
-    When ``caldav_spec`` is not None, ``time.sleep`` is also patched.
+    When ``caldav_spec`` is not None, ``call_with_retry`` is also patched
+    with a simulator that records every call.
     """
 
     from robotsix_calendar_agent.healthcheck import main as _main
+
+    _simulate_call_with_retry.calls.clear()
 
     def _run(
         *,
         settings: MagicMock | None = None,
         caldav_spec: dict[str, Any] | None = None,
-    ) -> tuple[Any, Any, MagicMock | None]:
+    ) -> tuple[Any, Any, list[dict[str, Any]]]:
         if settings is None:
             settings = _make_mock_settings()
-
-        mock_sleep: MagicMock | None = None
 
         with ExitStack() as stack:
             stack.enter_context(
@@ -72,13 +98,16 @@ def healthcheck_main(capsys: pytest.CaptureFixture[str]):
                         **caldav_spec,
                     )
                 )
-                mock_sleep = stack.enter_context(
-                    patch("robotsix_calendar_agent.healthcheck.time.sleep")
+                stack.enter_context(
+                    patch(
+                        "robotsix_calendar_agent.healthcheck.call_with_retry",
+                        side_effect=_simulate_call_with_retry,
+                    )
                 )
 
             excinfo = stack.enter_context(pytest.raises(SystemExit))
             _main()
 
-        return excinfo, capsys.readouterr(), mock_sleep
+        return excinfo, capsys.readouterr(), list(_simulate_call_with_retry.calls)
 
     return _run
