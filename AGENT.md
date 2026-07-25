@@ -17,7 +17,7 @@ filesystem state. All state lives in the Radicale server.
 
 **LLM operations always go through `robotsix_llmio`** — never call
 provider SDKs directly. Intent parsing (`intent_parser.IntentParser`)
-uses llmio with the `openrouter-deepseek` provider extra. Tracing
+uses llmio with the `openrouter` provider extra. Tracing
 requires the `tracing` extra (see Tracing below).
 
 ## Configuration conventions
@@ -115,7 +115,7 @@ src/robotsix_calendar_agent/
 ## Dependencies
 
 
-- **`robotsix-llmio[openrouter-deepseek,tracing]`** — LLM intent parsing + Langfuse OTLP export
+- **`robotsix-llmio[openrouter,tracing]`** — LLM intent parsing + Langfuse OTLP export
 - **`caldav`** — CalDAV/CardDAV client library
 - **`pydantic` / `robotsix-config`** — configuration & data models
 - **`robotsix-http`** — HTTP client with retry logic
