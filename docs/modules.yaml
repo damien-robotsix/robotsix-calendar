@@ -40,7 +40,7 @@ modules:
 
   - id: caldav-client
     description: >-
-      Typed CalDAV/CardDAV client wrapper with tenacity-based retry logic
+      Typed CalDAV/CardDAV client wrapper with retry logic via robotsix-http
       for calendar, contact, and task operations against a Radicale server.
     paths:
       - src/robotsix_calendar_agent/caldav_client/__init__.py
@@ -162,8 +162,6 @@ modules:
       - .robotsix-mill/periodic/health.yaml
       - .robotsix-mill/periodic/module_curator.yaml
       - .robotsix-mill/periodic/repo_description_sync.yaml
-      - .robotsix-mill/periodic/security_posture.yaml
-      - .robotsix-mill/periodic/state_sync.yaml
       - .robotsix-mill/periodic/survey.yaml
       - .robotsix-mill/periodic/test_gap.yaml
       - .robotsix-mill/periodic/trace_review.yaml

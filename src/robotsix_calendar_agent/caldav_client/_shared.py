@@ -13,15 +13,9 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any, TypeVar, cast
 
-import tenacity
 from opentelemetry import trace
 from opentelemetry.trace import Span
-from tenacity import (
-    retry_if_exception,
-    retry_if_exception_type,
-    stop_after_attempt,
-    wait_exponential,
-)
+from robotsix_http.retry import RetryConfig, call_with_retry
 
 from .exceptions import (
     AuthError,
@@ -198,23 +192,17 @@ def _wrap_caldav_op(op_name: str) -> Callable[[_F], _F]:
     """
 
     def decorator(func: _F) -> _F:
-        retrying_func = tenacity.retry(
-            stop=stop_after_attempt(4),  # initial + 3 retries
-            wait=wait_exponential(multiplier=1, min=1, max=30),
-            retry=(
-                retry_if_exception_type(ConnectionError)
-                | retry_if_exception_type(TimeoutError)
-                | retry_if_exception(_is_transient_exception)
-            ),
-            reraise=True,
-        )(func)
-
         @functools.wraps(func)
         def wrapper(self: Any, *args: Any, **kwargs: Any) -> Any:
             with _tracer.start_as_current_span(f"caldav.{op_name}") as span:
                 span.set_attribute("caldav.op", op_name)
                 try:
-                    return retrying_func(self, *args, **kwargs)
+                    return call_with_retry(
+                        lambda: func(self, *args, **kwargs),
+                        config=RetryConfig(max_retries=3),
+                        is_transient_fn=_is_transient_exception,
+                        what=f"caldav.{op_name}",
+                    )
                 except CalendarError:
                     raise
                 except self._caldav.lib.error.NotFoundError as exc:

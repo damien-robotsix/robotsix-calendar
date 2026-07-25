@@ -1,6 +1,11 @@
 ## 0.0.0 (unreleased)
 
 
+- Migrate retry logic from `tenacity` to `robotsix-http`:
+  - Replace `_wrap_caldav_op` tenacity-based decorator with `robotsix_http.retry.call_with_retry` + custom `is_transient_fn`.
+  - Replace manual healthcheck retry loop with `robotsix_http.retry.call_with_retry`.
+  - Remove `tenacity` dependency; add `robotsix-http` pinned by commit SHA.
+  - Delete unused periodic presence files `security_posture.yaml` and `state_sync.yaml`.
 - Update AGENT.md module layout diagram: `entrypoint.py` → `entrypoint/` subdirectory (PR #365 follow-up)
 - Update AGENT.md to reflect `settings` module reorganization from `settings.py` to `settings/__init__.py`.
 - Update AGENT.md module layout diagram: `healthcheck.py` → `healthcheck/__init__.py` to reflect PR #366 reorganization.)
