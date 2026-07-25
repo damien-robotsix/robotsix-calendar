@@ -1,6 +1,7 @@
 ## 0.0.0 (unreleased)
 
 
+- Add `.python-version` file (3.14) for uv/pyenv version pinning.
 - Fix AGENT.md `Periodic workflows` section: correct the count from 15 to 14
   (repo-level stubs), credit the framework-level `langfuse_cleanup` as the
   15th, and remove `config-schema-drift` from the periodic workflow examples
