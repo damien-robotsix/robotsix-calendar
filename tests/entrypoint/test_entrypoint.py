@@ -42,11 +42,6 @@ def test_log_level_validation_normalises_case() -> None:
     assert s.LOG_LEVEL == "DEBUG"
 
 
-# ---------------------------------------------------------------------------
-# main()
-# ---------------------------------------------------------------------------
-
-
 class TestMain:
     def test_inprocess_blocks(self) -> None:
         from robotsix_calendar_agent import entrypoint

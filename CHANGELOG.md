@@ -1,6 +1,7 @@
 ## 0.0.0 (unreleased)
 
 
+- Enable ruff rules `N` (pep8-naming), `ERA` (eradicate), and `PGH` (pygrep-hooks)
 - Add `.python-version` file (3.14) for uv/pyenv version pinning.
 - Fix AGENT.md `Periodic workflows` section: correct the count from 15 to 14
   (repo-level stubs), credit the framework-level `langfuse_cleanup` as the

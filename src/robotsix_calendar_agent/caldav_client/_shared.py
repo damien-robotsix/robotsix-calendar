@@ -157,12 +157,12 @@ def _unescape_text(value: str) -> str:
         return value
     # Replace \\ with a sentinel to avoid it forming spurious
     # \; or \, sequences in later steps.
-    SENTINEL = "\x00"
-    result = value.replace("\\\\", SENTINEL)
+    sentinel = "\x00"
+    result = value.replace("\\\\", sentinel)
     result = result.replace("\\n", "\n")
     result = result.replace("\\;", ";")
     result = result.replace("\\,", ",")
-    result = result.replace(SENTINEL, "\\")
+    result = result.replace(sentinel, "\\")
     return result
 
 
