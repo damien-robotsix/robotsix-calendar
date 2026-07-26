@@ -120,6 +120,21 @@ class TestParse:
                 CalendarOperation.LIST_CALENDARS,
                 {},
             ),
+            (
+                "add a task: buy groceries by Friday",
+                TaskOperation.CREATE_TASK,
+                {"summary": "buy groceries", "due": "2026-06-26T23:59:59"},
+            ),
+            (
+                "mark the buy groceries task as completed",
+                TaskOperation.UPDATE_TASK,
+                {"uid": "", "status": "COMPLETED"},
+            ),
+            (
+                "remove the buy groceries task",
+                TaskOperation.DELETE_TASK,
+                {"uid": ""},
+            ),
         ],
     )
     def test_classifies_operation(
@@ -190,6 +205,13 @@ class TestSystemPrompt:
         today = datetime.now(tz=UTC).strftime("%Y-%m-%d")
 
         assert f"Today's date is {today} (UTC)" in prompt
+
+    def test_prompt_includes_task_ops(self) -> None:
+        prompt = _build_system_prompt()
+
+        assert "create_task" in prompt
+        assert "update_task" in prompt
+        assert "delete_task" in prompt
 
     def test_calendar_operation_has_list_calendars(self) -> None:
         assert hasattr(CalendarOperation, "LIST_CALENDARS")

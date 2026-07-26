@@ -183,6 +183,9 @@ Tasks operations:
 - list_tasks: params = {calendar_id?}
   Use this for any instruction asking to list, show, or retrieve to-do items,
   tasks, or VTODO entries. Do NOT use list_events for task requests.
+- create_task: params = {summary, description?, dtstart?, due?, status?, calendar_id?}
+- update_task: params = {uid, ...fields to update, calendar_id?}
+- delete_task: params = {uid, calendar_id?}
 
 Contacts operations:
 - list_contacts: params = {addressbook_id?}

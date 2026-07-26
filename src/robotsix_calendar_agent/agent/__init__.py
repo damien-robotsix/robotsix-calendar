@@ -157,6 +157,18 @@ def _build_event(params: dict[str, Any]) -> CalendarEvent:
     )
 
 
+def _build_task(params: dict[str, Any]) -> Task:
+    """Build a :class:`Task` from parsed intent *params*."""
+    return Task(
+        summary=params.get("summary", ""),
+        description=params.get("description", ""),
+        dtstart=params.get("dtstart", ""),
+        due=params.get("due", ""),
+        status=params.get("status", ""),
+        calendar_id=params.get("calendar_id", ""),
+    )
+
+
 def _build_contact(params: dict[str, Any]) -> Contact:
     """Build a :class:`Contact` from parsed intent *params*."""
     return Contact(
@@ -318,6 +330,31 @@ def _handle_delete_contact(
     )
 
 
+def _handle_create_or_update_task(
+    client: CalDavClient,
+    params: dict[str, Any],
+    operation: str = "",
+) -> dict[str, Any]:
+    return _entity_op(
+        params,
+        builder=_build_task,
+        serializer=asdict,
+        create_fn=client.create_task,
+        update_fn=client.update_task,
+        id_key="calendar_id",
+        operation=operation,
+    )
+
+
+def _handle_delete_task(
+    client: CalDavClient,
+    params: dict[str, Any],
+) -> dict[str, bool]:
+    return _delete_entity_op(
+        params, delete_fn=client.delete_task, id_key="calendar_id"
+    )
+
+
 _DISPATCH: dict[str, Callable[..., Any]] = {
     "list_events": _handle_list_events,
     "list_calendars": _handle_list_calendars,
@@ -329,6 +366,9 @@ _DISPATCH: dict[str, Callable[..., Any]] = {
     "create_contact": lambda c, p: _handle_create_or_update_contact(c, p, "create"),
     "update_contact": lambda c, p: _handle_create_or_update_contact(c, p, "update"),
     "delete_contact": _handle_delete_contact,
+    "create_task": lambda c, p: _handle_create_or_update_task(c, p, "create"),
+    "update_task": lambda c, p: _handle_create_or_update_task(c, p, "update"),
+    "delete_task": _handle_delete_task,
 }
 
 
@@ -370,8 +410,10 @@ _OPERATION_NOUN: dict[str, str] = {
 _OPERATION_VERB: dict[str, str] = {
     "create_event": "Created",
     "create_contact": "Created",
+    "create_task": "Created",
     "update_event": "Updated",
     "update_contact": "Updated",
+    "update_task": "Updated",
 }
 
 
@@ -417,9 +459,10 @@ assert (
     | {  # nosec B101
         "delete_event",
         "delete_contact",
+        "delete_task",
     }
     == _DISPATCH_KEYS
 ), (
     "_OPERATION_NOUN / _OPERATION_VERB missing entries for: "
-    f"{_DISPATCH_KEYS - _NOUN_VERB_KEYS - {'delete_event', 'delete_contact'}}"
+    f"{_DISPATCH_KEYS - _NOUN_VERB_KEYS - {'delete_event', 'delete_contact', 'delete_task'}}"
 )
