@@ -4,7 +4,7 @@ All configuration is loaded from a single JSON config file
 (`config/config.json` by default, overridable via the
 `ROBOTSIX_CONFIG_FILE` environment variable) using
 :func:`robotsix_config.load_config`. The settings model lives at
-`src/robotsix_calendar_agent/settings.py`.
+`src/robotsix_calendar_agent/settings/__init__.py`.
 
 ## Config file
 
