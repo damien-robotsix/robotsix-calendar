@@ -40,6 +40,9 @@ class TaskOperation(StrEnum):
     """Tasks (CalDAV VTODO) operation types."""
 
     LIST_TASKS = "list_tasks"
+    CREATE_TASK = "create_task"
+    UPDATE_TASK = "update_task"
+    DELETE_TASK = "delete_task"
 
 
 @dataclass(kw_only=True)
