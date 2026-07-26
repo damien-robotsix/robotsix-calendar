@@ -91,12 +91,12 @@ class CalendarAgent:
         password = settings.RADICALE_PASSWORD.get_secret_value()
 
         if not url or not username or not password:
-            _MISSING_CREDENTIALS_MSG = (
+            _missing_credentials_msg = (
                 "Radicale credentials are required. "
                 "Provide RADICALE_URL, RADICALE_USERNAME, and "
                 "RADICALE_PASSWORD in config/config.json."
             )
-            raise ValueError(_MISSING_CREDENTIALS_MSG)
+            raise ValueError(_missing_credentials_msg)
 
         self._caldav = CalDavClient(
             url,
