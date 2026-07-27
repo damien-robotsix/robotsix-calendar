@@ -16,10 +16,10 @@
 | src/robotsix\_calendar\_agent/caldav\_client/task\_ops.py     |       80 |        2 |       20 |        0 |     98% |   199-200 |
 | src/robotsix\_calendar\_agent/entrypoint/\_\_init\_\_.py      |       25 |        0 |        0 |        0 |    100% |           |
 | src/robotsix\_calendar\_agent/entrypoint/\_\_main\_\_.py      |        4 |        4 |        2 |        0 |      0% |       3-8 |
-| src/robotsix\_calendar\_agent/healthcheck/\_\_init\_\_.py     |       43 |        1 |        6 |        1 |     96% |        99 |
-| src/robotsix\_calendar\_agent/intent\_parser/\_\_init\_\_.py  |       63 |        0 |        2 |        0 |    100% |           |
-| src/robotsix\_calendar\_agent/settings/\_\_init\_\_.py        |       26 |        0 |        2 |        0 |    100% |           |
-| **TOTAL**                                                     |  **788** |   **32** |  **160** |   **10** | **95%** |           |
+| src/robotsix\_calendar\_agent/healthcheck/\_\_init\_\_.py     |       44 |        1 |        6 |        1 |     96% |       101 |
+| src/robotsix\_calendar\_agent/intent\_parser/\_\_init\_\_.py  |       64 |        0 |        2 |        0 |    100% |           |
+| src/robotsix\_calendar\_agent/settings/\_\_init\_\_.py        |       27 |        0 |        2 |        0 |    100% |           |
+| **TOTAL**                                                     |  **791** |   **32** |  **160** |   **10** | **95%** |           |
 
 
 ## Setup coverage badge
