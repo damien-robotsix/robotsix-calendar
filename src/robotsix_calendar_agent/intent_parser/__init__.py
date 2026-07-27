@@ -16,6 +16,15 @@ from pydantic import BaseModel, Field
 
 logger = logging.getLogger(__name__)
 
+__all__ = [
+    "CalendarOperation",
+    "ContactOperation",
+    "IntentParseError",
+    "IntentParser",
+    "ParsedIntent",
+    "TaskOperation",
+]
+
 
 class CalendarOperation(StrEnum):
     """Calendar (CalDAV) operation types."""

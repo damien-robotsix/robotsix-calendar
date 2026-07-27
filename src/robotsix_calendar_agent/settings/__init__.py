@@ -11,6 +11,8 @@ import logging
 
 from pydantic import BaseModel, SecretStr, field_validator
 
+__all__ = ["Settings"]
+
 
 class Settings(BaseModel):
     """Application settings loaded from ``config/config.json``.
