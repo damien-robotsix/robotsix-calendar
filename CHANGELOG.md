@@ -1,6 +1,7 @@
 ## 0.0.0 (unreleased)
 
 
+- Split `agent/__init__.py` (462 lines) into three submodules: `_dispatch.py` (dispatch table and handlers), `_reply.py` (reply rendering), and a slimmer `__init__.py` (CalendarAgent class and re-exports).
 - Add `create_task`, `update_task`, and `delete_task` CRUD methods to
   `_TaskOpsMixin`, with private helpers `_task_to_ical` and `_find_task_by_uid`.
   Fixes: use `save_todo` (not `save_event`) for VTODO persistence; use

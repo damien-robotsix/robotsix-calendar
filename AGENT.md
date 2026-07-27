@@ -87,6 +87,9 @@ Both are active and must not be disabled without coordination.
 src/robotsix_calendar_agent/
 ├── __init__.py
 ├── agent/                     # CalendarAgent — wires everything together
+│   ├── __init__.py             # CalendarAgent class, re-exports
+│   ├── _dispatch.py            # dispatch table & handler functions
+│   └── _reply.py               # reply rendering & formatting
 ├── caldav_client/              # typed CalDAV/CardDAV wrapper with retry logic via robotsix-http
 │   ├── __init__.py
 │   ├── _shared.py              # shared helpers
