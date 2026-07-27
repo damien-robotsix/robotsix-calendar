@@ -135,7 +135,7 @@ class TestDispatchNounVerbSync:
 
         dispatch_keys = set(_DISPATCH)
         noun_verb_keys = set(_OPERATION_NOUN) | set(_OPERATION_VERB)
-        exempt = {"delete_event", "delete_contact"}
+        exempt = {"delete_event", "delete_contact", "delete_task"}
 
         missing = dispatch_keys - noun_verb_keys - exempt
         assert not missing, (
@@ -297,6 +297,12 @@ class TestRenderReply:
         from robotsix_calendar_agent.agent import _render_reply
 
         result = _render_reply("create_event", {"summary": "New event", "uid": "e2"})
+        assert result.startswith("Created: ")
+
+    def test_dict_create_task_operation(self) -> None:
+        from robotsix_calendar_agent.agent import _render_reply
+
+        result = _render_reply("create_task", {"summary": "New task", "uid": "t2"})
         assert result.startswith("Created: ")
 
     def test_dict_other_operation(self) -> None:
@@ -691,6 +697,119 @@ class TestDispatch:
         with pytest.raises(AgentLogicError, match="UID is required to delete"):
             calendar_agent._dispatch(parsed)
 
+    # -- create / update task ----------------------------------------------
+
+    def test_create_task_calls_client_with_built_task(
+        self, calendar_agent: MagicMock
+    ) -> None:
+        from robotsix_calendar_agent.caldav_client import Task
+        from robotsix_calendar_agent.intent_parser import ParsedIntent
+
+        calendar_agent._caldav.create_task.return_value = Task(
+            summary="Buy groceries",
+            description="Get milk and eggs",
+            due="2026-06-21",
+            calendar_id="cal1",
+        )
+        parsed = ParsedIntent(
+            operation="create_task",
+            params={
+                "summary": "Buy groceries",
+                "description": "Get milk and eggs",
+                "due": "2026-06-21",
+                "calendar_id": "cal1",
+            },
+            original_text="",
+        )
+        result = calendar_agent._dispatch(parsed)
+
+        calendar_agent._caldav.create_task.assert_called_once()
+        call_args = calendar_agent._caldav.create_task.call_args
+        built_task = call_args[0][0]
+        assert isinstance(built_task, Task)
+        assert built_task.summary == "Buy groceries"
+        assert built_task.description == "Get milk and eggs"
+        assert built_task.due == "2026-06-21"
+        assert call_args[1] == {"calendar_id": "cal1"}
+
+        assert isinstance(result, dict)
+        assert result["summary"] == "Buy groceries"
+
+    def test_update_task_calls_client_with_uid_and_built_task(
+        self, calendar_agent: MagicMock
+    ) -> None:
+        from robotsix_calendar_agent.caldav_client import Task
+        from robotsix_calendar_agent.intent_parser import ParsedIntent
+
+        calendar_agent._caldav.update_task.return_value = Task(
+            summary="Buy groceries updated",
+            due="2026-06-22",
+            calendar_id="cal1",
+        )
+        parsed = ParsedIntent(
+            operation="update_task",
+            params={
+                "uid": "task-123",
+                "summary": "Buy groceries updated",
+                "due": "2026-06-22",
+                "calendar_id": "cal1",
+            },
+            original_text="",
+        )
+        result = calendar_agent._dispatch(parsed)
+
+        calendar_agent._caldav.update_task.assert_called_once()
+        call_args = calendar_agent._caldav.update_task.call_args
+        assert call_args[0][0] == "task-123"  # uid is first positional arg
+        built_task = call_args[0][1]
+        assert isinstance(built_task, Task)
+        assert built_task.summary == "Buy groceries updated"
+        assert call_args[1] == {"calendar_id": "cal1"}
+
+        assert isinstance(result, dict)
+        assert result["summary"] == "Buy groceries updated"
+
+    def test_update_task_without_uid_raises_agent_logic_error(
+        self, calendar_agent: MagicMock
+    ) -> None:
+        from robotsix_calendar_agent.agent import AgentLogicError
+        from robotsix_calendar_agent.intent_parser import ParsedIntent
+
+        parsed = ParsedIntent(
+            operation="update_task",
+            params={"summary": "No UID task"},
+            original_text="",
+        )
+        with pytest.raises(AgentLogicError, match="UID is required to update"):
+            calendar_agent._dispatch(parsed)
+
+    # -- delete task -------------------------------------------------------
+
+    def test_delete_task_calls_client_with_uid(self, calendar_agent: MagicMock) -> None:
+        from robotsix_calendar_agent.intent_parser import ParsedIntent
+
+        parsed = ParsedIntent(
+            operation="delete_task",
+            params={"uid": "task-123", "calendar_id": "cal1"},
+            original_text="",
+        )
+        result = calendar_agent._dispatch(parsed)
+
+        calendar_agent._caldav.delete_task.assert_called_once_with(
+            uid="task-123", calendar_id="cal1"
+        )
+        assert result == {"deleted": True}
+
+    def test_delete_task_without_uid_raises_agent_logic_error(
+        self, calendar_agent: MagicMock
+    ) -> None:
+        from robotsix_calendar_agent.agent import AgentLogicError
+        from robotsix_calendar_agent.intent_parser import ParsedIntent
+
+        parsed = ParsedIntent(operation="delete_task", params={}, original_text="")
+        with pytest.raises(AgentLogicError, match="UID is required to delete"):
+            calendar_agent._dispatch(parsed)
+
     # -- parametrized: all 10 operation strings route to correct handler ----
 
     @pytest.mark.parametrize(
@@ -756,6 +875,24 @@ class TestDispatch:
                 "delete_contact",
                 {"uid": "cnt-1", "addressbook_id": "ab1"},
             ),
+            (
+                "create_task",
+                {"summary": "Buy milk", "calendar_id": "cal1"},
+                "create_task",
+                None,
+            ),
+            (
+                "update_task",
+                {"uid": "task-1", "summary": "Buy milk", "calendar_id": "cal1"},
+                "update_task",
+                None,
+            ),
+            (
+                "delete_task",
+                {"uid": "task-1", "calendar_id": "cal1"},
+                "delete_task",
+                {"uid": "task-1", "calendar_id": "cal1"},
+            ),
         ],
     )
     def test_dispatch_routes_to_correct_handler(
@@ -770,6 +907,7 @@ class TestDispatch:
         from robotsix_calendar_agent.caldav_client import (
             CalendarEvent,
             Contact,
+            Task,
         )
         from robotsix_calendar_agent.intent_parser import ParsedIntent
 
@@ -791,6 +929,9 @@ class TestDispatch:
             mock.list_tasks.return_value = []
         elif operation == "list_calendars":
             mock.list_calendars.return_value = []
+        elif operation in ("create_task", "update_task"):
+            mock.create_task.return_value = Task(summary="x")
+            mock.update_task.return_value = Task(summary="x")
 
         parsed = ParsedIntent(operation=operation, params=params, original_text="")
         calendar_agent._dispatch(parsed)

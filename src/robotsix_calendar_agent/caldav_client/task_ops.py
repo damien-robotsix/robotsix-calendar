@@ -3,9 +3,11 @@
 from __future__ import annotations
 
 import logging
+import uuid
 from typing import TYPE_CHECKING, Any
 
 from ._shared import Task, _comp_dt, _comp_text, _wrap_caldav_op
+from .exceptions import NotFoundError
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +21,18 @@ class _TaskOpsMixin:
     if TYPE_CHECKING:
         # Provided by CalDavClient at runtime; declared here so mypy
         # understands the mixin contract without circular imports.
+        _caldav: Any
+
+        def _escape_text(self, value: str) -> str:
+            raise NotImplementedError
+
+        def _ical_dt(self, name: str, value: str) -> str:
+            raise NotImplementedError
+
         def _iter_calendars(self, calendar_id: str = "") -> list[Any]:
+            raise NotImplementedError
+
+        def _get_calendar(self, calendar_id: str = "") -> Any:
             raise NotImplementedError
 
     # ------------------------------------------------------------------
@@ -45,6 +58,44 @@ class _TaskOpsMixin:
             calendar_id=calendar_id,
         )
 
+    def _task_to_ical(self, task: Task) -> str:
+        """Build an iCalendar string from a :class:`Task`."""
+        import datetime
+
+        e = self._escape_text
+        dtstamp = datetime.datetime.now(datetime.UTC).strftime("%Y%m%dT%H%M%SZ")
+        ical = (
+            "BEGIN:VCALENDAR\n"
+            "VERSION:2.0\n"
+            "PRODID:-//robotsix-calendar-agent//EN\n"
+            "BEGIN:VTODO\n"
+            f"UID:{task.uid or ''}\n"
+            f"DTSTAMP:{dtstamp}\n"
+            f"SUMMARY:{e(task.summary)}\n"
+            f"DESCRIPTION:{e(task.description)}\n"
+        )
+        if task.dtstart:
+            ical += f"{self._ical_dt('DTSTART', task.dtstart)}\n"
+        if task.due:
+            ical += f"{self._ical_dt('DUE', task.due)}\n"
+        if task.status:
+            ical += f"STATUS:{task.status}\n"
+        ical += "END:VTODO\nEND:VCALENDAR\n"
+        return ical
+
+    def _find_task_by_uid(self, uid: str) -> tuple[Any, Any] | None:
+        """Locate a task by UID across all calendars.
+
+        Returns ``(calendar, task_obj)`` or ``None`` if not found.
+        """
+        for cal in self._iter_calendars(""):
+            try:
+                task_obj = cal.get_todo_by_uid(uid)
+                return cal, task_obj
+            except self._caldav.lib.error.NotFoundError:
+                continue
+        return None
+
     # ------------------------------------------------------------------
     # Task operations
     # ------------------------------------------------------------------
@@ -62,3 +113,95 @@ class _TaskOpsMixin:
             results = cal.search(todo=True)
             aggregated.extend(self._to_task(r, calendar_id=cal.name) for r in results)
         return aggregated
+
+    @_wrap_caldav_op("create task")
+    def create_task(self, task: Task, calendar_id: str = "") -> Task:
+        """Create a VTODO task; return the task with its server-assigned uid.
+
+        If *calendar_id* is empty, use the default calendar.
+        """
+        logger.debug(
+            "create_task uid=%r calendar_id=%r summary=%r",
+            task.uid,
+            calendar_id,
+            task.summary,
+        )
+        if not task.uid:
+            task = Task(
+                uid=str(uuid.uuid4()),
+                summary=task.summary,
+                description=task.description,
+                dtstart=task.dtstart,
+                due=task.due,
+                status=task.status,
+                calendar_id=task.calendar_id,
+            )
+        cal = self._get_calendar(calendar_id)
+        ical = self._task_to_ical(task)
+        saved = cal.save_todo(ical)
+        return self._to_task(saved, calendar_id=cal.name)
+
+    @_wrap_caldav_op("update task")
+    def update_task(self, uid: str, task: Task, calendar_id: str = "") -> Task:
+        """Update the task identified by *uid*; return the updated task.
+
+        When *calendar_id* is empty, iterates **all** calendars to locate
+        the UID (the UID may live in a non-default collection).  When
+        *calendar_id* is given, only that single calendar is searched.
+
+        Raises:
+            NotFoundError: If the UID doesn't exist.
+        """
+        logger.debug(
+            "update_task uid=%r calendar_id=%r summary=%r",
+            uid,
+            calendar_id,
+            task.summary,
+        )
+        if calendar_id:
+            cal = self._get_calendar(calendar_id)
+            cal.get_todo_by_uid(uid)
+        else:
+            result = self._find_task_by_uid(uid)
+            if result is None:
+                raise NotFoundError(
+                    f"Task with UID {uid!r} not found.",
+                )
+            cal, _ = result
+        # Build updated iCal with the same UID
+        updated = Task(
+            uid=uid,
+            summary=task.summary,
+            description=task.description,
+            dtstart=task.dtstart,
+            due=task.due,
+            status=task.status,
+            calendar_id=calendar_id or cal.name,
+        )
+        ical = self._task_to_ical(updated)
+        saved = cal.save_todo(ical)
+        return self._to_task(saved, calendar_id=cal.name)
+
+    @_wrap_caldav_op("delete task")
+    def delete_task(self, uid: str, calendar_id: str = "") -> None:
+        """Delete the task identified by *uid*. Idempotent.
+
+        When *calendar_id* is empty, iterates **all** calendars to locate
+        the UID.  Returns ``None`` when the UID does not exist in any
+        calendar (already deleted).
+        """
+        logger.debug("delete_task uid=%r calendar_id=%r", uid, calendar_id)
+        if calendar_id:
+            cal = self._get_calendar(calendar_id)
+            try:
+                task_obj = cal.get_todo_by_uid(uid)
+                task_obj.delete()
+            except self._caldav.lib.error.NotFoundError:
+                return None
+        else:
+            result = self._find_task_by_uid(uid)
+            if result is None:
+                return None
+            _cal, task_obj = result
+            task_obj.delete()
+        return None
