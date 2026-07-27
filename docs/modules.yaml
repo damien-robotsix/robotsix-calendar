@@ -30,6 +30,8 @@ modules:
       in-process agent.
     paths:
       - src/robotsix_calendar_agent/agent/__init__.py
+      - src/robotsix_calendar_agent/agent/_dispatch.py
+      - src/robotsix_calendar_agent/agent/_reply.py
       - tests/agent/__init__.py
       - tests/agent/test_agent.py
       - docs/agent/reference.md
