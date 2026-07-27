@@ -785,9 +785,7 @@ class TestDispatch:
 
     # -- delete task -------------------------------------------------------
 
-    def test_delete_task_calls_client_with_uid(
-        self, calendar_agent: MagicMock
-    ) -> None:
+    def test_delete_task_calls_client_with_uid(self, calendar_agent: MagicMock) -> None:
         from robotsix_calendar_agent.intent_parser import ParsedIntent
 
         parsed = ParsedIntent(

@@ -350,9 +350,7 @@ def _handle_delete_task(
     client: CalDavClient,
     params: dict[str, Any],
 ) -> dict[str, bool]:
-    return _delete_entity_op(
-        params, delete_fn=client.delete_task, id_key="calendar_id"
-    )
+    return _delete_entity_op(params, delete_fn=client.delete_task, id_key="calendar_id")
 
 
 _DISPATCH: dict[str, Callable[..., Any]] = {
@@ -454,15 +452,11 @@ assert _DISPATCH_KEYS == _ENUM_VALUES, (  # nosec B101 — import-time invariant
 # verb entry.  delete_event/delete_contact are handled by the
 # "deleted": True branch and need neither.
 _NOUN_VERB_KEYS = _OPERATION_NOUN.keys() | _OPERATION_VERB.keys()
+_DELETE_KEYS = {"delete_event", "delete_contact", "delete_task"}
 assert (
-    _NOUN_VERB_KEYS
-    | {  # nosec B101
-        "delete_event",
-        "delete_contact",
-        "delete_task",
-    }
+    _NOUN_VERB_KEYS | _DELETE_KEYS  # nosec B101
     == _DISPATCH_KEYS
 ), (
     "_OPERATION_NOUN / _OPERATION_VERB missing entries for: "
-    f"{_DISPATCH_KEYS - _NOUN_VERB_KEYS - {'delete_event', 'delete_contact', 'delete_task'}}"
+    f"{_DISPATCH_KEYS - _NOUN_VERB_KEYS - _DELETE_KEYS}"
 )
