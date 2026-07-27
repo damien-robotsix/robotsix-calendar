@@ -21,6 +21,8 @@ from robotsix_http.retry import RetryConfig, call_with_retry
 from robotsix_calendar_agent.caldav_client import CalDavClient
 from robotsix_calendar_agent.settings import Settings
 
+__all__ = ["main"]
+
 _tracer = trace.get_tracer(__name__)
 
 
