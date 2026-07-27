@@ -1,6 +1,11 @@
 ## 0.0.0 (unreleased)
 
 
+- Add `create_task`, `update_task`, and `delete_task` CRUD methods to
+  `_TaskOpsMixin`, with private helpers `_task_to_ical` and `_find_task_by_uid`.
+  Fixes: use `save_todo` (not `save_event`) for VTODO persistence; use
+  `get_todo_by_uid` for UID lookups; add conditional guards for optional
+  DTSTART/DUE/STATUS fields in iCal serialization.
 - Enable ruff rules `N` (pep8-naming), `ERA` (eradicate), and `PGH` (pygrep-hooks)
 - Add `.python-version` file (3.14) for uv/pyenv version pinning.
 - Fix AGENT.md `Periodic workflows` section: correct the count from 15 to 14

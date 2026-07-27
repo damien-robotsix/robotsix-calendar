@@ -12,6 +12,7 @@ import pytest
 from robotsix_calendar_agent.caldav_client import (
     CalDavClient,
     CalendarEvent,
+    Task,
 )
 
 # Mock object prepared at module level but NOT yet injected into
@@ -95,6 +96,20 @@ def _make_event(**overrides: str) -> CalendarEvent:
     }
     defaults.update(overrides)
     return CalendarEvent(**defaults)
+
+
+def _make_task(**overrides: str) -> Task:
+    defaults: dict[str, str] = {
+        "uid": "",
+        "summary": "Test Task",
+        "description": "task description",
+        "dtstart": "2026-06-20T08:00:00",
+        "due": "2026-06-21",
+        "status": "NEEDS-ACTION",
+        "calendar_id": "",
+    }
+    defaults.update(overrides)
+    return Task(**defaults)
 
 
 def _mock_vevent(**overrides: Any) -> MagicMock:

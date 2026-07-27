@@ -15,6 +15,9 @@ _ = LIST_CONTACTS
 _ = CREATE_CONTACT
 _ = UPDATE_CONTACT
 _ = DELETE_CONTACT
+_ = CREATE_TASK
+_ = UPDATE_TASK
+_ = DELETE_TASK
 
 # Dataclass field with default
 _ = original_text

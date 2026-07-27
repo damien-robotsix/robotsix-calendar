@@ -124,35 +124,35 @@ class TestToTask:
 
 class TestCreateTask:
     def test_generates_uid_when_empty(self, client: CalDavClient) -> None:
-        """When task.uid is empty, a UUID is generated and passed to save_event."""
+        """When task.uid is empty, a UUID is generated and passed to save_todo."""
         cal = client._principal.calendars.return_value[0]
         saved_mock = _mock_vtodo(uid="server-uid", summary="My Task")
-        cal.save_event.return_value = saved_mock
+        cal.save_todo.return_value = saved_mock
 
         task = Task(summary="My Task", uid="")
         client.create_task(task)
 
-        # The iCal string passed to save_event must contain a generated UID
-        ical: str = cal.save_event.call_args[0][0]
-        uid_line = [l for l in ical.split("\n") if l.startswith("UID:")][0]
-        generated_uid = uid_line[len("UID:"):]
+        # The iCal string passed to save_todo must contain a generated UID
+        ical: str = cal.save_todo.call_args[0][0]
+        uid_line = next(line for line in ical.split("\n") if line.startswith("UID:"))
+        generated_uid = uid_line[len("UID:") :]
         # A UUID4 is 36 chars (e.g. 550e8400-e29b-41d4-a716-446655440000)
         assert len(generated_uid) == 36
         assert generated_uid.count("-") == 4
 
-    def test_calls_save_event_with_vtodo(self, client: CalDavClient) -> None:
-        """cal.save_event is called with a VTODO iCal string containing task fields."""
+    def test_calls_save_todo_with_vtodo(self, client: CalDavClient) -> None:
+        """cal.save_todo is called with a VTODO iCal string containing task fields."""
         cal = client._principal.calendars.return_value[0]
         saved_mock = _mock_vtodo(uid="task-1", summary="Buy milk")
-        cal.save_event.return_value = saved_mock
+        cal.save_todo.return_value = saved_mock
 
         task = Task(
             uid="task-1", summary="Buy milk", description="2%", status="NEEDS-ACTION"
         )
         client.create_task(task)
 
-        cal.save_event.assert_called_once()
-        ical: str = cal.save_event.call_args[0][0]
+        cal.save_todo.assert_called_once()
+        ical: str = cal.save_todo.call_args[0][0]
         assert "BEGIN:VTODO" in ical
         assert "UID:task-1" in ical
         assert "SUMMARY:Buy milk" in ical
@@ -167,7 +167,7 @@ class TestCreateTask:
         cal = client._principal.calendars.return_value[0]
         cal.name = "MyCalendar"
         saved_mock = _mock_vtodo(uid="srv-uid-99", summary="Task X")
-        cal.save_event.return_value = saved_mock
+        cal.save_todo.return_value = saved_mock
 
         task = Task(uid="client-uid", summary="Task X")
         result = client.create_task(task)
@@ -184,19 +184,19 @@ class TestCreateTask:
 
 class TestUpdateTask:
     def test_finds_task_by_uid_and_updates(self, client: CalDavClient) -> None:
-        """When UID exists, update_task locates it and calls save_event with new data."""
+        """When UID exists, update_task locates it and calls save_todo with new data."""
         cal = client._principal.calendars.return_value[0]
         cal.name = "CalA"
         existing_obj = _mock_vtodo(uid="task-1", summary="Old summary")
-        cal.search.return_value = [existing_obj]
+        cal.get_todo_by_uid.return_value = existing_obj
         saved_mock = _mock_vtodo(uid="task-1", summary="New summary")
-        cal.save_event.return_value = saved_mock
+        cal.save_todo.return_value = saved_mock
 
         updated_task = Task(summary="New summary", description="new desc")
         result = client.update_task("task-1", updated_task)
 
-        cal.save_event.assert_called_once()
-        ical: str = cal.save_event.call_args[0][0]
+        cal.save_todo.assert_called_once()
+        ical: str = cal.save_todo.call_args[0][0]
         assert "UID:task-1" in ical
         assert "SUMMARY:New summary" in ical
         assert result.uid == "task-1"
@@ -206,10 +206,10 @@ class TestUpdateTask:
         """NotFoundError is raised when the UID doesn't exist in any calendar."""
         cal_a = MagicMock(name="CalA")
         cal_a.name = "CalA"
-        cal_a.search.return_value = [_mock_vtodo(uid="other-task")]
+        cal_a.get_todo_by_uid.side_effect = client._caldav.lib.error.NotFoundError
         cal_b = MagicMock(name="CalB")
         cal_b.name = "CalB"
-        cal_b.search.return_value = []
+        cal_b.get_todo_by_uid.side_effect = client._caldav.lib.error.NotFoundError
         client._principal.calendars.return_value = [cal_a, cal_b]
 
         import pytest
@@ -224,17 +224,17 @@ class TestUpdateTask:
         cal_target = MagicMock(name="TargetCal")
         cal_target.name = "TargetCal"
         existing_obj = _mock_vtodo(uid="task-1")
-        cal_target.search.return_value = [existing_obj]
+        cal_target.get_todo_by_uid.return_value = existing_obj
         saved_mock = _mock_vtodo(uid="task-1", summary="Updated")
-        cal_target.save_event.return_value = saved_mock
+        cal_target.save_todo.return_value = saved_mock
         client._principal.calendars.return_value = [cal_target]
 
         result = client.update_task(
             "task-1", Task(summary="Updated"), calendar_id="TargetCal"
         )
 
-        cal_target.search.assert_called_once_with(todo=True)
-        cal_target.save_event.assert_called_once()
+        cal_target.get_todo_by_uid.assert_called_once_with("task-1")
+        cal_target.save_todo.assert_called_once()
         assert result.uid == "task-1"
         assert result.calendar_id == "TargetCal"
 
@@ -249,7 +249,7 @@ class TestDeleteTask:
         """When UID exists, delete_task calls obj.delete() and returns None."""
         cal = client._principal.calendars.return_value[0]
         existing_obj = _mock_vtodo(uid="task-to-delete")
-        cal.search.return_value = [existing_obj]
+        cal.get_todo_by_uid.return_value = existing_obj
 
         result = client.delete_task("task-to-delete")
 
@@ -257,19 +257,19 @@ class TestDeleteTask:
         assert result is None
 
     def test_returns_none_when_uid_not_found(self, client: CalDavClient) -> None:
-        """delete_task returns None (idempotent) when UID is absent from all calendars."""
+        """delete_task returns None (idempotent) when UID absent from all calendars."""
         cal_a = MagicMock(name="CalA")
         cal_a.name = "CalA"
-        cal_a.search.return_value = [_mock_vtodo(uid="other")]
+        cal_a.get_todo_by_uid.side_effect = client._caldav.lib.error.NotFoundError
         cal_b = MagicMock(name="CalB")
         cal_b.name = "CalB"
-        cal_b.search.return_value = []
+        cal_b.get_todo_by_uid.side_effect = client._caldav.lib.error.NotFoundError
         client._principal.calendars.return_value = [cal_a, cal_b]
 
         result = client.delete_task("nonexistent")
 
-        cal_a.search.assert_called_once_with(todo=True)
-        cal_b.search.assert_called_once_with(todo=True)
+        cal_a.get_todo_by_uid.assert_called_once_with("nonexistent")
+        cal_b.get_todo_by_uid.assert_called_once_with("nonexistent")
         assert result is None
 
     def test_with_explicit_calendar_id(self, client: CalDavClient) -> None:
@@ -277,7 +277,7 @@ class TestDeleteTask:
         cal_target = MagicMock(name="TargetCal")
         cal_target.name = "TargetCal"
         existing_obj = _mock_vtodo(uid="task-1")
-        cal_target.search.return_value = [existing_obj]
+        cal_target.get_todo_by_uid.return_value = existing_obj
         client._principal.calendars.return_value = [cal_target]
 
         result = client.delete_task("task-1", calendar_id="TargetCal")
@@ -317,9 +317,28 @@ class TestTaskToIcal:
         assert "STATUS:NEEDS-ACTION" in ical
         assert "END:VTODO" in ical
         assert "END:VCALENDAR" in ical
-        # DTSTART and DUE are formatted via _ical_dt; presence is enough
         assert "DTSTART" in ical
         assert "DUE" in ical
+
+    def test_omits_empty_fields(self, client: CalDavClient) -> None:
+        """DTSTART, DUE, and STATUS are omitted when empty."""
+        task = Task(
+            uid="task-2",
+            summary="Simple task",
+            description="",
+            dtstart="",
+            due="",
+            status="",
+            calendar_id="",
+        )
+
+        ical = client._task_to_ical(task)
+
+        assert "DTSTART" not in ical
+        assert "DUE" not in ical
+        assert "STATUS" not in ical
+        assert "UID:task-2" in ical
+        assert "SUMMARY:Simple task" in ical
 
 
 # ---------------------------------------------------------------------------
@@ -332,14 +351,11 @@ class TestFindTaskByUid:
         """_find_task_by_uid locates a task by UID across all calendars."""
         cal_a = MagicMock(name="CalA")
         cal_a.name = "CalA"
-        task_a1 = _mock_vtodo(uid="task-a1")
         task_a2 = _mock_vtodo(uid="task-a2")
-        cal_a.search.return_value = [task_a1, task_a2]
+        cal_a.get_todo_by_uid.return_value = task_a2
 
         cal_b = MagicMock(name="CalB")
         cal_b.name = "CalB"
-        task_b1 = _mock_vtodo(uid="task-b1")
-        cal_b.search.return_value = [task_b1]
 
         client._principal.calendars.return_value = [cal_a, cal_b]
 
@@ -352,8 +368,13 @@ class TestFindTaskByUid:
 
     def test_returns_none_when_not_found(self, client: CalDavClient) -> None:
         """_find_task_by_uid returns None when no calendar holds the UID."""
-        cal = client._principal.calendars.return_value[0]
-        cal.search.return_value = [_mock_vtodo(uid="something-else")]
+        cal_a = MagicMock(name="CalA")
+        cal_a.name = "CalA"
+        cal_a.get_todo_by_uid.side_effect = client._caldav.lib.error.NotFoundError
+        cal_b = MagicMock(name="CalB")
+        cal_b.name = "CalB"
+        cal_b.get_todo_by_uid.side_effect = client._caldav.lib.error.NotFoundError
+        client._principal.calendars.return_value = [cal_a, cal_b]
 
         result = client._find_task_by_uid("nonexistent")
 

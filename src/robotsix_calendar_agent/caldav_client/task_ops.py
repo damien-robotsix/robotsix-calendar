@@ -21,6 +21,8 @@ class _TaskOpsMixin:
     if TYPE_CHECKING:
         # Provided by CalDavClient at runtime; declared here so mypy
         # understands the mixin contract without circular imports.
+        _caldav: Any
+
         def _escape_text(self, value: str) -> str:
             raise NotImplementedError
 
@@ -62,7 +64,7 @@ class _TaskOpsMixin:
 
         e = self._escape_text
         dtstamp = datetime.datetime.now(datetime.UTC).strftime("%Y%m%dT%H%M%SZ")
-        return (
+        ical = (
             "BEGIN:VCALENDAR\n"
             "VERSION:2.0\n"
             "PRODID:-//robotsix-calendar-agent//EN\n"
@@ -71,12 +73,15 @@ class _TaskOpsMixin:
             f"DTSTAMP:{dtstamp}\n"
             f"SUMMARY:{e(task.summary)}\n"
             f"DESCRIPTION:{e(task.description)}\n"
-            f"{self._ical_dt('DTSTART', task.dtstart)}\n"
-            f"{self._ical_dt('DUE', task.due)}\n"
-            f"STATUS:{task.status or 'NEEDS-ACTION'}\n"
-            "END:VTODO\n"
-            "END:VCALENDAR\n"
         )
+        if task.dtstart:
+            ical += f"{self._ical_dt('DTSTART', task.dtstart)}\n"
+        if task.due:
+            ical += f"{self._ical_dt('DUE', task.due)}\n"
+        if task.status:
+            ical += f"STATUS:{task.status}\n"
+        ical += "END:VTODO\nEND:VCALENDAR\n"
+        return ical
 
     def _find_task_by_uid(self, uid: str) -> tuple[Any, Any] | None:
         """Locate a task by UID across all calendars.
@@ -84,11 +89,11 @@ class _TaskOpsMixin:
         Returns ``(calendar, task_obj)`` or ``None`` if not found.
         """
         for cal in self._iter_calendars(""):
-            results = cal.search(todo=True)
-            for obj in results:
-                comp = obj.icalendar_component
-                if _comp_text(comp, "UID") == uid:
-                    return cal, obj
+            try:
+                task_obj = cal.get_todo_by_uid(uid)
+                return cal, task_obj
+            except self._caldav.lib.error.NotFoundError:
+                continue
         return None
 
     # ------------------------------------------------------------------
@@ -133,7 +138,7 @@ class _TaskOpsMixin:
             )
         cal = self._get_calendar(calendar_id)
         ical = self._task_to_ical(task)
-        saved = cal.save_event(ical)
+        saved = cal.save_todo(ical)
         return self._to_task(saved, calendar_id=cal.name)
 
     @_wrap_caldav_op("update task")
@@ -155,17 +160,7 @@ class _TaskOpsMixin:
         )
         if calendar_id:
             cal = self._get_calendar(calendar_id)
-            results = cal.search(todo=True)
-            existing = None
-            for obj in results:
-                comp = obj.icalendar_component
-                if _comp_text(comp, "UID") == uid:
-                    existing = obj
-                    break
-            if existing is None:
-                raise NotFoundError(
-                    f"Task with UID {uid!r} not found.",
-                )
+            cal.get_todo_by_uid(uid)
         else:
             result = self._find_task_by_uid(uid)
             if result is None:
@@ -184,7 +179,7 @@ class _TaskOpsMixin:
             calendar_id=calendar_id or cal.name,
         )
         ical = self._task_to_ical(updated)
-        saved = cal.save_event(ical)
+        saved = cal.save_todo(ical)
         return self._to_task(saved, calendar_id=cal.name)
 
     @_wrap_caldav_op("delete task")
@@ -198,17 +193,15 @@ class _TaskOpsMixin:
         logger.debug("delete_task uid=%r calendar_id=%r", uid, calendar_id)
         if calendar_id:
             cal = self._get_calendar(calendar_id)
-            results = cal.search(todo=True)
-            for obj in results:
-                comp = obj.icalendar_component
-                if _comp_text(comp, "UID") == uid:
-                    obj.delete()
-                    return None
-            return None
+            try:
+                task_obj = cal.get_todo_by_uid(uid)
+                task_obj.delete()
+            except self._caldav.lib.error.NotFoundError:
+                return None
         else:
             result = self._find_task_by_uid(uid)
             if result is None:
                 return None
-            _cal, obj = result
-            obj.delete()
-            return None
+            _cal, task_obj = result
+            task_obj.delete()
+        return None
