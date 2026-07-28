@@ -21,7 +21,7 @@ from .agent import (  # noqa: F401 — re-exports for package namespace
     TaskOperation,
 )
 from .agent import __all__ as _agent_all
-from .caldav_client.exceptions import (  # noqa: F401 — typed exceptions
+from .caldav_client.exceptions import (
     AgentLogicError,
     AuthError,
     CalDAVError,
@@ -31,6 +31,16 @@ from .caldav_client.exceptions import (  # noqa: F401 — typed exceptions
     RateLimitError,
 )
 
-__all__ = [*_agent_all, "__version__"]
+__all__ = [
+    *_agent_all,
+    "AgentLogicError",
+    "AuthError",
+    "CalDAVError",
+    "CalendarError",
+    "ConflictError",
+    "NotFoundError",
+    "RateLimitError",
+    "__version__",
+]
 
 __version__ = "0.1.0"
