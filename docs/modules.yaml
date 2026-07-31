@@ -33,6 +33,7 @@ modules:
       - src/robotsix_calendar_agent/agent/_dispatch.py
       - src/robotsix_calendar_agent/agent/_reply.py
       - tests/agent/__init__.py
+      - tests/agent/test__dispatch.py
       - tests/agent/test_agent.py
       - docs/agent/reference.md
       - docs/reference/component_agent.md

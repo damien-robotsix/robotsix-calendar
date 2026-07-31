@@ -1,6 +1,7 @@
 ## 0.0.0 (unreleased)
 
 
+- Added dedicated unit tests for `agent/_dispatch.py` helpers (`tests/agent/test__dispatch.py`): 47 pure unit tests covering `_build_event`, `_build_task`, `_build_contact` default-value fallbacks, `_entity_op` create/update branching and UID validation, `_delete_entity_op` blank-UID and missing-UID edge cases, and all `_handle_*` functions.
 - Remove stale `llm_model_config` references from README and docs index — the parameter
   was removed from `CalendarAgent.__init__` in PR #393.
 - Remove dead `_intent_parser` field and `llm_model_config` parameter from `CalendarAgent.__init__`. The agent never invoked `IntentParser.parse()` — intents are pre-parsed by the caller. Also removes the inaccurate vulture whitelist entry that was masking this dead code.
