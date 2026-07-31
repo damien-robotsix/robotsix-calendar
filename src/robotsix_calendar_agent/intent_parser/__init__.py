@@ -1,7 +1,7 @@
 """llmio-based intent parser for calendar/contact/task instructions.
 
 Converts natural-language text into a structured :class:`ParsedIntent`
-with one of 10 operation types and extracted parameters.
+with one of several operation types and extracted parameters.
 """
 
 from __future__ import annotations
