@@ -54,10 +54,12 @@ Shared fixtures live in `tests/conftest.py`.
 
 **Integration test**: `tests/caldav_client/test_caldav_integration.py`
 uses a session-scoped `caldav_client` fixture from
-`tests/caldav_client/caldav_test_server.py`. This fixture spins up a
-real Radicale container via docker-compose and is the only test that
-touches a live CalDAV server — it is skipped in CI unless a Radicale
-service is available.
+`tests/caldav_client/caldav_test_server.py`. This fixture builds an
+in-process wsgiref server wrapping ``radicale.app.Application`` on an
+ephemeral port with a daemon thread — a real ``caldav.DAVClient``
+pointed at an in-process Radicale. The CI integration job runs these
+tests unconditionally and does not depend on a pre-provisioned Radicale
+server or docker-compose.
 
 ## Tracing
 

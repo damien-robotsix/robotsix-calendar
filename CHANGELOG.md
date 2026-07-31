@@ -1,6 +1,7 @@
 ## 0.0.0 (unreleased)
 
 
+- Correct stale integration-test documentation: AGENT.md and the "first agent" tutorial no longer claim the test server uses docker-compose or is skipped in CI. Both now describe the actual in-process wsgiref Radicale fixture.
 - Added dedicated unit tests for `agent/_dispatch.py` helpers (`tests/agent/test__dispatch.py`): 47 pure unit tests covering `_build_event`, `_build_task`, `_build_contact` default-value fallbacks, `_entity_op` create/update branching and UID validation, `_delete_entity_op` blank-UID and missing-UID edge cases, and all `_handle_*` functions.
 - Remove stale `llm_model_config` references from README and docs index — the parameter
   was removed from `CalendarAgent.__init__` in PR #393.
