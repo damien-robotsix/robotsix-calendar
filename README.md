@@ -5,7 +5,7 @@
 | Name                                                          |    Stmts |     Miss |   Branch |   BrPart |   Cover |   Missing |
 |-------------------------------------------------------------- | -------: | -------: | -------: | -------: | ------: | --------: |
 | src/robotsix\_calendar\_agent/\_\_init\_\_.py                 |        6 |        0 |        0 |        0 |    100% |           |
-| src/robotsix\_calendar\_agent/agent/\_\_init\_\_.py           |       43 |        0 |        4 |        0 |    100% |           |
+| src/robotsix\_calendar\_agent/agent/\_\_init\_\_.py           |       42 |        0 |        4 |        0 |    100% |           |
 | src/robotsix\_calendar\_agent/agent/\_dispatch.py             |       55 |        0 |        6 |        0 |    100% |           |
 | src/robotsix\_calendar\_agent/agent/\_reply.py                |       45 |        0 |       24 |        1 |     99% |   18-\>20 |
 | src/robotsix\_calendar\_agent/caldav\_client/\_\_init\_\_.py  |       97 |       11 |       34 |        1 |     91% |194-195, 205-208, 238-244 |
@@ -19,7 +19,7 @@
 | src/robotsix\_calendar\_agent/healthcheck/\_\_init\_\_.py     |       44 |        1 |        6 |        1 |     96% |       101 |
 | src/robotsix\_calendar\_agent/intent\_parser/\_\_init\_\_.py  |       64 |        0 |        2 |        0 |    100% |           |
 | src/robotsix\_calendar\_agent/settings/\_\_init\_\_.py        |       27 |        0 |        2 |        0 |    100% |           |
-| **TOTAL**                                                     |  **791** |   **32** |  **160** |   **10** | **95%** |           |
+| **TOTAL**                                                     |  **790** |   **32** |  **160** |   **10** | **95%** |           |
 
 
 ## Setup coverage badge
