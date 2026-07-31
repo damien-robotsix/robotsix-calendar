@@ -62,8 +62,6 @@ class CalendarAgent:
 
     Args:
         agent_id: Agent ID (default ``"calendar"``).
-        llm_model_config: Forwarded to :class:`IntentParser` for llmio
-            model selection.
 
     Raises:
         ValueError: If Radicale credentials are missing in the config file.
@@ -72,8 +70,6 @@ class CalendarAgent:
     def __init__(
         self,
         agent_id: str = "calendar",
-        *,
-        llm_model_config: dict[str, Any] | None = None,
     ) -> None:
         from robotsix_config import load_config
 
@@ -102,7 +98,6 @@ class CalendarAgent:
             default_calendar=settings.RADICALE_DEFAULT_CALENDAR,
             timeout=settings.CALDAV_TIMEOUT,
         )
-        self._intent_parser = IntentParser(model_config=llm_model_config)
 
     # ------------------------------------------------------------------
     # dispatch
