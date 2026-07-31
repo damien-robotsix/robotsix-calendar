@@ -120,4 +120,4 @@ Four additional optional keys (`RADICALE_DEFAULT_CALENDAR`, `CALDAV_TIMEOUT`,
 | Parameter | Type | Default | Description |
 |---|---|---|---|
 | `agent_id` | `str` | `"calendar"` | Agent identifier |
-| `llm_model_config` | `dict \| None` | `None` | Forwarded to llmio for model selection |
+

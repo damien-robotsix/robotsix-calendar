@@ -1,6 +1,8 @@
 ## 0.0.0 (unreleased)
 
 
+- Remove stale `llm_model_config` references from README and docs index — the parameter
+  was removed from `CalendarAgent.__init__` in PR #393.
 - Remove dead `_intent_parser` field and `llm_model_config` parameter from `CalendarAgent.__init__`. The agent never invoked `IntentParser.parse()` — intents are pre-parsed by the caller. Also removes the inaccurate vulture whitelist entry that was masking this dead code.
 - Add exception types (`AgentLogicError`, `AuthError`, `CalDAVError`, `CalendarError`, `ConflictError`, `NotFoundError`, `RateLimitError`) to top-level `__all__` so static analysis tools recognise them as intentional public API re-exports.
 - Add missing `__all__` declarations to `healthcheck/`, `intent_parser/`, and `settings/` subpackage `__init__.py` files to prevent private symbols from leaking via wildcard imports.
