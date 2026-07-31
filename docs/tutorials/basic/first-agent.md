@@ -40,9 +40,11 @@ environment variable.  For a full reference of every supported setting, see
 
 !!! tip "No Radicale server handy?"
     The project's test suite includes a CalDAV test server fixture
-    (``tests/caldav_client/caldav_test_server.py``)
-    that spins up a local Radicale container via docker-compose.  You can
-    point `radicale_url` at `http://localhost:5232` in your config after running it.
+    (``tests/caldav_client/caldav_test_server.py``) that runs an
+    ephemeral Radicale server entirely in-process via ``wsgiref`` —
+    no container or docker-compose needed.  The fixture manages the
+    server lifecycle automatically and tears down after the test
+    session.
 
 ---
 
