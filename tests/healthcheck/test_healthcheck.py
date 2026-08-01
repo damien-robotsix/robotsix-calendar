@@ -44,9 +44,7 @@ class TestMainSuccess:
 
     def test_success_on_first_attempt(self, healthcheck_main) -> None:
         client = _make_mock_client({"connected": True, "calendar_count": 3})
-        excinfo, output = healthcheck_main(
-            caldav_spec={"return_value": client}
-        )
+        excinfo, output = healthcheck_main(caldav_spec={"return_value": client})
         assert excinfo.value.code == 0
         assert "healthcheck OK:" in output.out
         assert "connected" in output.out
@@ -62,9 +60,7 @@ class TestMainFailure:
 
     def test_failure_when_connected_false(self, healthcheck_main) -> None:
         client = _make_mock_client({"connected": False, "error": "refused"})
-        excinfo, output = healthcheck_main(
-            caldav_spec={"return_value": client}
-        )
+        excinfo, output = healthcheck_main(caldav_spec={"return_value": client})
         assert excinfo.value.code == 1
         assert "healthcheck FAILED" in output.err
 
