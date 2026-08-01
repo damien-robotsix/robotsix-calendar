@@ -1,6 +1,9 @@
 ## 0.0.0 (unreleased)
 
 
+- Healthcheck probe now uses a dedicated `CALDAV_HEALTHCHECK_TIMEOUT` (default 5s) and makes a single
+  fast attempt instead of retrying internally with the full 30s `CALDAV_TIMEOUT`. Docker's own
+  `--retries=3 --interval=30s` provides transient-failure recovery across invocations.
 - Fix stale periodic workflow count in AGENT.md (14 → 16).
 - Enable `mypy_baseline` periodic workflow to track type-safety drift and file targeted draft tickets for new mypy errors.
 - Correct stale integration-test documentation: AGENT.md and the "first agent" tutorial no longer claim the test server uses docker-compose or is skipped in CI. Both now describe the actual in-process wsgiref Radicale fixture.

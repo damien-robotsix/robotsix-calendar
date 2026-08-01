@@ -40,6 +40,14 @@ class Settings(BaseModel):
     CALDAV_TIMEOUT: int = 30
     """Timeout in seconds for CalDAV HTTP requests."""
 
+    CALDAV_HEALTHCHECK_TIMEOUT: int = 5
+    """Timeout in seconds for the Docker HEALTHCHECK probe's CalDAV request.
+
+    Keep this well under Docker's ``--timeout=10s`` so the probe exits
+    before Docker kills it. Docker's own ``--retries`` and ``--interval``
+    provide transient-failure recovery across healthcheck invocations.
+    """
+
     # -- Logging -------------------------------------------------------------
     LOG_LEVEL: str = "INFO"
     """Log level - one of DEBUG, INFO, WARNING, ERROR, CRITICAL."""
