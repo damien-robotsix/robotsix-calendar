@@ -6,17 +6,20 @@ and calls :meth:`~robotsix_calendar_agent.caldav_client.CalDavClient.health`.
 
 Exit codes:
     0 — CalDAV server is reachable and responsive.
-    1 — health probe failed after retries.
+    1 — health probe failed.
+
+The probe makes a single fast attempt with a short timeout so it
+completes well within Docker's ``--timeout=10s``. Docker's own
+``--retries=3 --interval=30s`` handles transient failures across
+healthcheck invocations — the probe does not retry internally.
 """
 
 from __future__ import annotations
 
 import sys
-from typing import Any
 
 from opentelemetry import trace
 from robotsix_config import load_config
-from robotsix_http.retry import RetryConfig, call_with_retry
 
 from robotsix_calendar_agent.caldav_client import CalDavClient
 from robotsix_calendar_agent.settings import Settings
@@ -30,17 +33,17 @@ def main() -> None:
     """Run the Docker HEALTHCHECK probe.
 
     Validates CalDAV reachability using credentials from the config file.
-    Sets OpenTelemetry spans for each attempt. Exits with code 0 on success
-    or 1 if all retry attempts fail.
+    Sets an OpenTelemetry span for the attempt. Exits with code 0 on
+    success or 1 on failure.
 
     Exit codes:
         0: CalDAV server is reachable and responsive.
-        1: Health probe failed after all retry attempts.
+        1: Health probe failed.
 
-    The probe retries with exponential backoff via
-    :func:`robotsix_http.retry.call_with_retry`. Requires
-    ``RADICALE_URL``, ``RADICALE_USERNAME``, and ``RADICALE_PASSWORD`` to
-    be set in the config file.
+    Uses ``CALDAV_HEALTHCHECK_TIMEOUT`` (default 5s) to stay inside
+    Docker's ``--timeout=10s`` window. Does **not** retry internally —
+    Docker's own ``--retries`` and ``--interval`` handle transient
+    failures across invocations.
     """
     settings = load_config(Settings)
     url = settings.RADICALE_URL
@@ -56,45 +59,38 @@ def main() -> None:
         )
         sys.exit(1)
 
-    def _probe() -> dict[str, Any]:
-        with _tracer.start_as_current_span("healthcheck.probe") as span:
-            try:
-                client = CalDavClient(
-                    url=url,
-                    username=username,
-                    password=password,
-                    default_calendar=default_calendar,
-                    timeout=settings.CALDAV_TIMEOUT,
-                )
-                result = client.health()
-            except Exception as exc:
-                span.set_attribute("healthcheck.result", "error")
-                span.set_attribute("error", True)
-                span.record_exception(exc)
-                raise
+    with _tracer.start_as_current_span("healthcheck.probe") as span:
+        try:
+            client = CalDavClient(
+                url=url,
+                username=username,
+                password=password,
+                default_calendar=default_calendar,
+                timeout=settings.CALDAV_HEALTHCHECK_TIMEOUT,
+            )
+            result = client.health()
+        except Exception as exc:
+            span.set_attribute("healthcheck.result", "error")
+            span.set_attribute("error", True)
+            span.record_exception(exc)
+            print(
+                f"healthcheck FAILED: {exc}",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+        else:
+            if result.get("connected"):
+                span.set_attribute("healthcheck.result", "ok")
+                print(f"healthcheck OK: {result}")
+                sys.exit(0)
             else:
-                if result.get("connected"):
-                    span.set_attribute("healthcheck.result", "ok")
-                    return result
-                else:
-                    span.set_attribute("healthcheck.result", "failed")
-                    span.set_attribute("error", True)
-                    raise RuntimeError(result.get("error", "unknown error"))
-
-    try:
-        result = call_with_retry(
-            _probe,
-            config=RetryConfig(max_retries=3),
-            what="healthcheck",
-        )
-        print(f"healthcheck OK: {result}")
-        sys.exit(0)
-    except Exception as exc:
-        print(
-            f"healthcheck FAILED after retries: {exc}",
-            file=sys.stderr,
-        )
-        sys.exit(1)
+                span.set_attribute("healthcheck.result", "failed")
+                span.set_attribute("error", True)
+                print(
+                    f"healthcheck FAILED: {result.get('error', 'unknown error')}",
+                    file=sys.stderr,
+                )
+                sys.exit(1)
 
 
 if __name__ == "__main__":

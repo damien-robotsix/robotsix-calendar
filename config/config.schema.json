@@ -26,6 +26,11 @@
       "title": "Caldav Timeout",
       "type": "integer"
     },
+    "CALDAV_HEALTHCHECK_TIMEOUT": {
+      "default": 5,
+      "title": "Caldav Healthcheck Timeout",
+      "type": "integer"
+    },
     "LOG_LEVEL": {
       "default": "INFO",
       "title": "Log Level",
