@@ -1,6 +1,7 @@
 ## 0.0.0 (unreleased)
 
 
+- Enable `pin_bump` periodic workflow to keep internal fleet dependency SHAs current.
 - Healthcheck probe now uses a dedicated `CALDAV_HEALTHCHECK_TIMEOUT` (default 5s) and makes a single
   fast attempt instead of retrying internally with the full 30s `CALDAV_TIMEOUT`. Docker's own
   `--retries=3 --interval=30s` provides transient-failure recovery across invocations.
