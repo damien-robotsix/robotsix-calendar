@@ -3,14 +3,29 @@ name: Docs
 on:
   push:
     branches: [main]
+  # On-demand trigger so a permissions/startup fix can be verified without
+  # waiting for the next push to main (matches robotsix-config). This
+  # workflow only ever ran on push, which is part of why four consecutive
+  # startup_failures went unnoticed.
+  workflow_dispatch:
 
-permissions:
-  contents: read
+permissions: {}
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
 
 jobs:
   deploy:
+    # A calling job's permissions REPLACE the workflow-level block rather
+    # than merging with it, so this must list every scope the called
+    # workflow declares — python-docs.yml asks for contents: read plus
+    # pages/id-token: write on its deploy job. Omitting any of them makes
+    # GitHub reject the call before it starts (startup_failure).
     permissions:
-      contents: write  # needed to push published docs to gh-pages branch
+      contents: read
+      pages: write  # deploy the built site to GitHub Pages
+      id-token: write  # OIDC token the Pages deployment authenticates with
     uses: damien-robotsix/robotsix-github-workflows/.github/workflows/python-docs.yml@77e10e286717cfe0eeb6b8d9ce985f3794236d15  # main  # pragma: allowlist secret  # zizmor: ignore[secrets-inherit]
     with:
       docs-install-args: "--group docs"
