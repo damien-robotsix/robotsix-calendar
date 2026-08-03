@@ -1,6 +1,7 @@
 ## 0.0.0 (unreleased)
 
 
+- Update AGENT.md periodic workflow count from 16 to 18 to reflect added `credit_balance` and `pin_bump` stubs.
 - Enable `credit_balance` periodic workflow to monitor OpenRouter credit balance
 - Enable `pin_bump` periodic workflow to keep internal fleet dependency SHAs current.
 - Healthcheck probe now uses a dedicated `CALDAV_HEALTHCHECK_TIMEOUT` (default 5s) and makes a single
