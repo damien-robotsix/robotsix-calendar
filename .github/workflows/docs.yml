@@ -3,6 +3,11 @@ name: Docs
 on:
   push:
     branches: [main]
+  # On-demand trigger so a permissions/startup fix can be verified without
+  # waiting for the next push to main (matches robotsix-config). This
+  # workflow only ever ran on push, which is part of why four consecutive
+  # startup_failures went unnoticed.
+  workflow_dispatch:
 
 permissions: {}
 
