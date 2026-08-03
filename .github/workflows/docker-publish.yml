@@ -6,8 +6,7 @@ on:
     tags: ['v*']
   workflow_dispatch:
 
-permissions:
-  contents: read
+permissions: {}
 
 concurrency:
   group: release-${{ github.ref }}
@@ -15,10 +14,14 @@ concurrency:
 
 jobs:
   publish:
+    # Must be a superset of docker-release.yml's declared permissions — a
+    # calling job's block replaces the workflow-level one instead of
+    # merging, so a missing scope is a startup_failure, not a late error.
     permissions:
       contents: read
       packages: write  # needed to push container image to GHCR
       id-token: write  # needed for OIDC token for attestations
       attestations: write  # needed to write image attestations
+      security-events: write  # upload the Trivy SARIF to Code Scanning
     uses: damien-robotsix/robotsix-github-workflows/.github/workflows/docker-release.yml@77e10e286717cfe0eeb6b8d9ce985f3794236d15  # pragma: allowlist secret  # zizmor: ignore[secrets-inherit]
     secrets: inherit  # pragma: allowlist secret  # zizmor: ignore[secrets-inherit]

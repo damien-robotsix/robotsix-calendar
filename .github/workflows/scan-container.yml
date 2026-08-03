@@ -3,10 +3,14 @@ on:
   schedule:
     - cron: '0 6 * * 1'
   workflow_dispatch:
-permissions:
-  contents: read
+permissions: {}
 jobs:
   rescan:
+    # scan-container.yml declares contents: read + security-events: write.
+    # The calling job's block replaces the workflow-level one rather than
+    # merging, so listing only the "extra" scope dropped contents: read and
+    # GitHub refused to start the run.
     permissions:
+      contents: read  # checkout in the called workflow
       security-events: write  # needed to upload SARIF results for container scanning
     uses: damien-robotsix/robotsix-github-workflows/.github/workflows/scan-container.yml@5fdc956e980cfb70ea36e33bc670a0376750dec6

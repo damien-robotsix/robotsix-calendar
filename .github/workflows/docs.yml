@@ -4,13 +4,23 @@ on:
   push:
     branches: [main]
 
-permissions:
-  contents: read
+permissions: {}
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
 
 jobs:
   deploy:
+    # A calling job's permissions REPLACE the workflow-level block rather
+    # than merging with it, so this must list every scope the called
+    # workflow declares — python-docs.yml asks for contents: read plus
+    # pages/id-token: write on its deploy job. Omitting any of them makes
+    # GitHub reject the call before it starts (startup_failure).
     permissions:
-      contents: write  # needed to push published docs to gh-pages branch
+      contents: read
+      pages: write  # deploy the built site to GitHub Pages
+      id-token: write  # OIDC token the Pages deployment authenticates with
     uses: damien-robotsix/robotsix-github-workflows/.github/workflows/python-docs.yml@77e10e286717cfe0eeb6b8d9ce985f3794236d15  # main  # pragma: allowlist secret  # zizmor: ignore[secrets-inherit]
     with:
       docs-install-args: "--group docs"
