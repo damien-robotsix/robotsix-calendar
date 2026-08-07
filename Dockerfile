@@ -28,9 +28,17 @@ COPY . .
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-dev
 
-
 # Runtime stage: minimal image with only the virtualenv and source.
 FROM python:3.14-slim-bookworm AS runtime
+
+# Upgrade vulnerable system packages, then remove pip (not needed at
+# runtime).  Removing pip also removes its vendored msgpack 1.1.2 which
+# triggers GHSA-6v7p-g79w-8964.  setuptools<78.1.1 has CVE-2025-47273.
+RUN python -m pip install --no-cache-dir --upgrade 'setuptools>=78.1.1' \
+    && find /usr/local/lib/python3.14/site-packages \
+        -maxdepth 1 \( -name 'pip' -o -name 'pip-*.dist-info' \) \
+        -exec rm -rf {} + \
+    && rm -f /usr/local/bin/pip /usr/local/bin/pip3 /usr/local/bin/pip3.14
 
 # Create a dedicated non-root user.
 RUN groupadd -g 1001 app && useradd -u 1001 -g app -m -d /app -s /bin/false app
