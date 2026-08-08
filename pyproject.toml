@@ -102,7 +102,7 @@ filterwarnings = [
     "ignore::DeprecationWarning:importlib",
     "error",
 ]
-markers = ["integration: Slower tests requiring a live Radicale server"]
+markers = ["integration: Slower tests using an in-process Radicale server"]
 strict_markers = true
 
 [tool.coverage.run]
