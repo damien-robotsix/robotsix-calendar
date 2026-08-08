@@ -38,7 +38,7 @@ test-unit: .venv  ## Run unit tests (non-integration)
 	uv run pytest -m 'not integration' tests/
 
 .PHONY: test-integration
-test-integration: .venv  ## Run integration tests (requires Radicale server)
+test-integration: .venv  ## Run integration tests (uses an in-process Radicale server)
 	uv run pytest -m integration tests/
 
 .PHONY: test
