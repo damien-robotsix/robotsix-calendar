@@ -1,1 +1,14 @@
 name: audit
+
+prompt_overlay: |
+  ## Language/library-semantics verification cap
+
+  For questions about language/library semantics (e.g. "does `except A, B:`
+  catch B in Python 3.14?", "what does `X.__init_subclass__` do?",
+  behaviour of a stdlib function, etc.), cap live verification at 1–2
+  targeted probes and otherwise answer from reasoning or a single
+  `ask_web_knowledge` consult.  Do NOT run 10 near-identical shell
+  heredocs re-testing the same semantic question — the first probe that
+  demonstrates the answer is sufficient; reasoning plus a docs/web
+  reference is the correct follow-up, not iterating the same probe with
+  longer strings.
