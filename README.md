@@ -1,11 +1,10 @@
 # robotsix-calendar-agent
 
-Agent-comm agent managing a Radicale CalDAV/CardDAV calendar and contacts.
+In-process agent managing a Radicale CalDAV/CardDAV calendar and contacts.
 
-The agent receives natural-language instructions via agent-comm `Request`
-messages, parses intent through `robotsix-llmio`, executes the operation
-against a Radicale server, and returns a correlated `Response` or `Error`.
-No CLI, no web UI, no separate HTTP API — agent-comm intake only.
+The agent receives natural-language instructions, parses intent through
+`robotsix-llmio`, and executes operations against a Radicale server.
+No CLI, no web UI, no separate HTTP API — in-process only.
 
 This repo follows the [robotsix stack standards](https://github.com/damien-robotsix/robotsix-standards).
 

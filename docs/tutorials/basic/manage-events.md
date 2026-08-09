@@ -86,7 +86,8 @@ The agent also bundles an LLM-based intent parser that converts
 free-form instructions into structured operations:
 
 ```python
-parsed = agent._intent_parser.parse("add a dentist appointment next Tuesday at 3pm")
+parser = IntentParser()
+parsed = parser.parse("add a dentist appointment next Tuesday at 3pm")
 # parsed.operation → "create_event"
 # parsed.params → {"summary": "Dentist appointment", "dtstart": "...", ...}
 ```
