@@ -10,6 +10,7 @@ modules:
       - changelog.d/20260806T231101Z-fix-multiple-stale-incorrect-documentati-3257.doc.md
       - changelog.d/20260807T203848Z-ci-failure-ci-on-main-3752.bugfix.md
       - changelog.d/20260808T205956Z-fix-stale-documentation-in-readme-md-and-8388.doc.md
+      - changelog.d/20260808T213745Z-pattern-prescriptive-spec-ci-error-log-a-fd2d.misc.md
       - src/robotsix_calendar_agent/__init__.py
       - src/robotsix_calendar_agent/py.typed
       - tests/test_smoke.py
@@ -159,6 +160,7 @@ modules:
       - .robotsix-mill/boilerplate/doc-recommendation-only-boilerplate.md
       - .robotsix-mill/boilerplate/maintenance-triage-boilerplate.md
       - .robotsix-mill/boilerplate/mechanical-fastpath-boilerplate.md
+      - .robotsix-mill/boilerplate/prescriptive-spec-ci-triage-boilerplate.md
       - .robotsix-mill/boilerplate/triage-skip-boilerplate.md
       - .robotsix-mill/periodic/agent_check.yaml
       - .robotsix-mill/periodic/audit.yaml
