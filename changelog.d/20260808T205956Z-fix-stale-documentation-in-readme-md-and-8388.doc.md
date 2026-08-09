@@ -1,0 +1,1 @@
+Fixed stale documentation: README no longer references decommissioned agent-comm; manage-events tutorial uses standalone IntentParser instead of removed `_intent_parser` attribute; first-agent tutorial uses correct UPPERCASE config keys matching the Settings model.
