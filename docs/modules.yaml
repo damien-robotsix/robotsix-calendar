@@ -7,6 +7,7 @@ modules:
       and wires module-level imports.
     paths:
       - changelog.d/20260805T161403Z-fix-stale-requires-a-live-radicale-serve-1de5.bugfix.md
+      - changelog.d/20260806T231101Z-fix-multiple-stale-incorrect-documentati-3257.doc.md
       - changelog.d/20260807T203848Z-ci-failure-ci-on-main-3752.bugfix.md
       - src/robotsix_calendar_agent/__init__.py
       - src/robotsix_calendar_agent/py.typed
