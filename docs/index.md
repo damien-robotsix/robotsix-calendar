@@ -13,7 +13,7 @@ Caller → CalendarAgent → IntentParser (llmio)
 1. The caller sends a natural-language instruction (or a structured
    ``add_to_calendar`` payload) to the agent.
 2. `CalendarAgent` passes NL instructions to `IntentParser`, which uses
-   `robotsix-llmio` to classify them into one of 10 operations and extract
+   `robotsix-llmio` to classify them into one of 13 operations and extract
    structured parameters.
 3. The parsed intent is dispatched to `CalDavClient`, which wraps the
    `caldav` library to perform CRUD operations against the Radicale server.
@@ -27,9 +27,9 @@ Edit (or create) `config/config.json` with your Radicale server details:
 
 ```json
 {
-  "radicale_url": "https://radicale.example.com",
-  "radicale_username": "your-username",
-  "radicale_password": "your-password"
+  "RADICALE_URL": "https://radicale.example.com",
+  "RADICALE_USERNAME": "your-username",
+  "RADICALE_PASSWORD": "your-password"
 }
 ```
 
@@ -56,23 +56,29 @@ with agent:
 
 ### 4. Use the agent directly
 
-The agent provides a :class:`CalDavClient` for calendar operations
-and an :class:`IntentParser` for natural-language instruction parsing.
-Callers interact with these components directly:
+The agent provides an :class:`IntentParser` for natural-language
+instruction parsing.  Construct one alongside the agent and dispatch
+parsed intents through :meth:`CalendarAgent._dispatch`:
 
 ```python
 from robotsix_calendar_agent import CalendarAgent
+from robotsix_calendar_agent.intent_parser import IntentParser
 
 agent = CalendarAgent()
+parser = IntentParser()
 
-# List calendars
+# Parse a natural-language instruction
+parsed = parser.parse("create event Team Lunch tomorrow at noon")
+
+# Dispatch the parsed intent through the agent
+with agent:
+    result = agent._dispatch(parsed)
+    print(result)
+
+# List calendars through the CalDAV client
 with agent:
     calendars = agent._caldav.list_calendars()
     print(calendars)
-
-# Parse a natural-language instruction
-parsed = agent._intent_parser.parse("create event Team Lunch tomorrow at noon")
-print(parsed)
 ```
 
 ## Deployment
@@ -99,6 +105,9 @@ with agent:
 | `update_event` | "reschedule the dentist to 4pm" | `uid`, updated fields |
 | `delete_event` | "cancel the dentist appointment" | `uid` |
 | `list_tasks` | "show me my pending tasks" | `calendar_id?` |
+| `create_task` | "add task buy groceries" | `summary`, `due?`, `status?` |
+| `update_task` | "mark buy groceries as done" | `uid`, updated fields |
+| `delete_task` | "remove buy groceries from tasks" | `uid` |
 | `list_contacts` | "show all contacts" | (none) |
 | `create_contact` | "add John Doe, john@example.com" | `full_name`, `email`, `phone` |
 | `update_contact` | "change John's email to john.doe@example.com" | `uid`, updated fields |
