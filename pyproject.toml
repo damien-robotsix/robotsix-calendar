@@ -41,7 +41,7 @@ Issues = "https://github.com/damien-robotsix/robotsix-calendar-agent/issues"
 
 [dependency-groups]
 dev = [
-    "commitizen>=4.16.5,<5",
+    "commitizen>=4.17.0,<5",
     "ruff",
     "mypy",
     "pytest",
@@ -50,7 +50,7 @@ dev = [
     "vulture",
     "deptry>=0.20",
     "radicale",
-    "hypothesis>=6.163.0",
+    "hypothesis>=6.165.0",
     "robotsix-modules",
 ]
 docs = [
