@@ -61,7 +61,7 @@ docs = [
 ]
 
 [tool.uv]
-exclude-newer = "7d"
+exclude-newer = "2026-08-05"
 
 [tool.uv.sources]
 robotsix-config = { git = "https://github.com/damien-robotsix/robotsix-config.git", rev = "f557bffaf8f7d26d86a508ab7f634133c748c347" }

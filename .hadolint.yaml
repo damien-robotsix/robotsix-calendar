@@ -4,3 +4,4 @@ ignored:
               # version to pin; the version is this repo.
 trustedRegistries:
   - docker.io
+  - ghcr.io
