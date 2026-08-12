@@ -5,10 +5,12 @@ on:
     paths:
       - "src/robotsix_calendar_agent/settings/__init__.py"
       - "config/config.schema.json"
+      - "config/config.json"
   pull_request:
     paths:
       - "src/robotsix_calendar_agent/settings/__init__.py"
       - "config/config.schema.json"
+      - "config/config.json"
 
 concurrency:
   group: config-schema-${{ github.workflow }}-${{ github.ref }}
@@ -42,3 +44,19 @@ jobs:
 
       - name: Check for drift
         run: git diff --exit-code config/config.schema.json
+
+      - name: Check config.json keys
+        run: |
+          uv run --frozen python -c "
+          from robotsix_calendar_agent.settings import Settings
+          import json, sys
+          with open('config/config.json') as f:
+              config_keys = set(json.load(f).keys())
+          settings_keys = set(Settings.model_fields.keys())
+          missing = settings_keys - config_keys
+          if missing:
+              print(f'ERROR: config/config.json is missing keys: {sorted(missing)}')
+              print('Add them with their default values to config/config.json.')
+              sys.exit(1)
+          print('config/config.json has all expected keys.')
+          "

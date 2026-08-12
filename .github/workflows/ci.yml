@@ -158,7 +158,7 @@ jobs:
           uv run --frozen python -c "
           from robotsix_config import config_schema_json
           from robotsix_calendar_agent.settings import Settings
-          import sys
+          import json, sys
           expected = config_schema_json(Settings)
           with open('config/config.schema.json') as f:
               actual = f.read()
@@ -167,6 +167,16 @@ jobs:
               print('Run: python -c \"from robotsix_config import config_schema_json; from robotsix_calendar_agent.settings import Settings; print(config_schema_json(Settings), end=\\\"\\\")\" > config/config.schema.json')
               sys.exit(1)
           print('config/config.schema.json is in sync.')
+
+          with open('config/config.json') as f:
+              config_keys = set(json.load(f).keys())
+          settings_keys = set(Settings.model_fields.keys())
+          missing = settings_keys - config_keys
+          if missing:
+              print(f'ERROR: config/config.json is missing keys: {sorted(missing)}')
+              print('Add them with their default values to config/config.json.')
+              sys.exit(1)
+          print('config/config.json has all expected keys.')
           "
 
   # hand-rolled: no shared workflow equivalent in robotsix-github-workflows

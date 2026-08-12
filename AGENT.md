@@ -29,11 +29,14 @@ via **`robotsix_config.load_config(Settings)`** from
 in `docs/configuration.md` with its type, default, and description.
 
 **Rule:** When you add, remove, or change a `Settings` field in
-`settings/__init__.py`, update `docs/configuration.md` and regenerate
-`config/config.schema.json` in the same change. The
-`config-schema-drift` CI job enforces that the committed schema stays
-in sync with the model — it compares `config_schema_json(Settings)`
-against the file and blocks merges that drift.
+`settings/__init__.py`, update `docs/configuration.md`,
+`config/config.json`, and regenerate `config/config.schema.json`
+in the same change. The `config-schema-drift` CI job enforces that
+the committed schema stays in sync with the model and that the
+default config contains every expected key — it compares
+`config_schema_json(Settings)` against the schema file and validates
+`config/config.json`'s keys against the model, blocking merges that
+drift.
 
 **Settings loaded at import/construction time** — `Settings()` is
 instantiated inside `CalendarAgent.__init__` and `main()`, not at module
