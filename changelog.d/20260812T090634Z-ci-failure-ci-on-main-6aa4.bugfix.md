@@ -1,0 +1,1 @@
+Fix CI failures: resolve `exclude-newer` parse error in pyproject.toml (relative `"7d"` → absolute `"2026-08-05"` for uv 0.8.x compat), add `ghcr.io` to hadolint trusted registries, and fix Dockerfile hadolint warnings (numeric UID, JSON HEALTHCHECK CMD).

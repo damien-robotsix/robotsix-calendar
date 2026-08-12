@@ -57,9 +57,9 @@ RUN mkdir -p /app/config && chown app:app /app/config
 ENV PATH="/app/.venv/bin:${PATH}" \
     ROBOTSIX_CONFIG_FILE=/app/config/config.json
 
-USER app
+USER 1001
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
-    CMD calendar-agent-healthcheck
+    CMD ["calendar-agent-healthcheck"]
 
 CMD ["calendar-agent"]
