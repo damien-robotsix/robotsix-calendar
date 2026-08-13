@@ -1,0 +1,1 @@
+Remove the OpenSSF Scorecard workflow (`.github/workflows/scorecard.yml`) — it is dropped fleet-wide as a duplicate of gates already enforced repo-locally (zizmor, actionlint, workflow-permissions audit, Dependabot/uv audit, Trivy).
