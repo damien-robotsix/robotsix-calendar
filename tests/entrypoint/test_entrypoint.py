@@ -76,6 +76,24 @@ class TestMain:
             loggers=("robotsix_calendar_agent",),
         )
 
+    def test_runtime_credentials_setup_called_with_settings(self) -> None:
+        from robotsix_calendar_agent import entrypoint
+
+        with (
+            patch("robotsix_calendar_agent.entrypoint._serve_blocking"),
+            patch("robotsix_config.load_config") as mock_load,
+            patch("robotsix_llmio.logging.setup_logging"),
+            patch(
+                "robotsix_calendar_agent.agent._setup_runtime_credentials"
+            ) as mock_credentials,
+        ):
+            mock_settings = MagicMock()
+            mock_load.return_value = mock_settings
+
+            entrypoint.main()
+
+        mock_credentials.assert_called_once_with(mock_settings)
+
     def test_setup_logging_console_fmt(self) -> None:
         from robotsix_calendar_agent import entrypoint
 

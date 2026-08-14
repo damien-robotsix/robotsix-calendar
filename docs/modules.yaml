@@ -14,6 +14,7 @@ modules:
       - changelog.d/20260808T213745Z-pattern-prescriptive-spec-ci-error-log-a-fd2d.misc.md
       - changelog.d/20260812T090634Z-ci-failure-ci-on-main-6aa4.bugfix.md
       - changelog.d/20260814T131741Z-declare-canonical-langfuse-openrouter-cr-4664.feature.md
+      - changelog.d/20260814T135351Z-run-tracing-key-wiring-on-the-actual-ser-dc38.bugfix.md
       - src/robotsix_calendar_agent/__init__.py
       - src/robotsix_calendar_agent/py.typed
       - tests/test_smoke.py

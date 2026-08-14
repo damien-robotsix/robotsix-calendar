@@ -65,6 +65,43 @@ def _setup_tracing(settings: Settings | None = None) -> None:
         pass
 
 
+def _setup_openrouter_key(settings: Settings | None = None) -> None:
+    """Export the canonical OpenRouter key into the process environment.
+
+    The llmio OpenRouter provider reads ``OPENROUTER_API_KEY`` at
+    construction time, so exporting it before any :class:`IntentParser`
+    use ensures LLM calls use the canonical key from the config block.
+
+    When *settings* is ``None`` the function is a no-op — the canonical
+    config is not available.
+    """
+    if settings is None or settings.openrouter is None:
+        return
+
+    key = settings.openrouter.keys.get("robotsix-calendar-agent")
+    if key is None:
+        return
+
+    secret = key.get_secret_value()
+    if not isinstance(secret, str):
+        return  # guard against MagicMock in test environments
+
+    os.environ.setdefault("OPENROUTER_API_KEY", secret)
+
+
+def _setup_runtime_credentials(settings: Settings | None = None) -> None:
+    """Initialise runtime LLM credentials before any llmio/SDK use.
+
+    Exports the canonical Langfuse and OpenRouter credentials into the
+    process environment and starts Langfuse tracing.  The deployed
+    service entrypoint must invoke this before any :class:`IntentParser`
+    (or other llmio/SDK) use — not only when :class:`CalendarAgent` is
+    constructed.
+    """
+    _setup_tracing(settings)
+    _setup_openrouter_key(settings)
+
+
 logger = logging.getLogger(__name__)
 
 _tracer = trace.get_tracer(__name__)
@@ -115,8 +152,8 @@ class CalendarAgent:
         else:
             settings = root_settings
 
-        # -- Initialise Langfuse tracing from the canonical block ------
-        _setup_tracing(settings)
+        # -- Initialise runtime credentials from the canonical block ---
+        _setup_runtime_credentials(settings)
 
         self._agent_id = agent_id
 
