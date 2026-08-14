@@ -41,6 +41,14 @@ def main() -> None:
     from ..settings import Settings
 
     settings = load_config(Settings)
+
+    # Wire canonical Langfuse/OpenRouter credentials before any llmio/SDK
+    # use in the real runtime path (the entrypoint never constructs
+    # CalendarAgent).
+    from ..agent import _setup_runtime_credentials
+
+    _setup_runtime_credentials(settings)
+
     setup_logging(
         level=settings.LOG_LEVEL,
         fmt="json" if settings.JSON_LOGS else "console",

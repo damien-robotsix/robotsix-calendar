@@ -82,6 +82,30 @@ class TestCalendarAgentInit:
                 CalendarAgent()
 
 
+class TestRuntimeCredentials:
+    def test_exports_openrouter_key_from_canonical_block(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        from pydantic import SecretStr
+
+        from robotsix_calendar_agent.agent import _setup_runtime_credentials
+        from robotsix_calendar_agent.settings import OpenRouterSettings, Settings
+
+        monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
+        settings = Settings(
+            RADICALE_URL="https://x.com",
+            RADICALE_USERNAME="u",
+            RADICALE_PASSWORD=SecretStr("p"),
+            openrouter=OpenRouterSettings(
+                keys={"robotsix-calendar-agent": SecretStr("sk-canonical")}
+            ),
+        )
+
+        _setup_runtime_credentials(settings)
+
+        assert os.environ["OPENROUTER_API_KEY"] == "sk-canonical"
+
+
 # ---------------------------------------------------------------------------
 # Lifecycle
 # ---------------------------------------------------------------------------
