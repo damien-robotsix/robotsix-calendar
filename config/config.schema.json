@@ -1,7 +1,7 @@
 {
   "$defs": {
     "LangfuseProjectSettings": {
-      "description": "Credentials for a single Langfuse project corresponding to one component alias.",
+      "description": "Credentials for a single Langfuse project for one component alias.",
       "properties": {
         "public_key": {
           "format": "password",

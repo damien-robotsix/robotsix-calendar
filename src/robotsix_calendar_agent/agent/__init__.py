@@ -12,6 +12,21 @@ from typing import Any
 
 from opentelemetry import trace
 
+from ..caldav_client import (
+    CalDavClient,
+    CalendarEvent,
+    Contact,
+    Task,
+)
+from ..caldav_client.exceptions import AgentLogicError
+from ..intent_parser import (
+    CalendarOperation,
+    ContactOperation,
+    IntentParseError,
+    IntentParser,
+    ParsedIntent,
+    TaskOperation,
+)
 from ..settings import Settings
 
 
@@ -49,22 +64,6 @@ def _setup_tracing(settings: Settings | None = None) -> None:
     except ImportError:  # pragma: no cover
         pass
 
-
-from ..caldav_client import (
-    CalDavClient,
-    CalendarEvent,
-    Contact,
-    Task,
-)
-from ..caldav_client.exceptions import AgentLogicError
-from ..intent_parser import (
-    CalendarOperation,
-    ContactOperation,
-    IntentParseError,
-    IntentParser,
-    ParsedIntent,
-    TaskOperation,
-)
 
 logger = logging.getLogger(__name__)
 
