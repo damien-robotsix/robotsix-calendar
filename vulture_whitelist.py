@@ -49,3 +49,8 @@ _ = parse
 # CalendarError.code — public attribute set in __init__; the only in-tree
 # consumer (add_to_calendar_handler.py's exc.code check) was removed.
 _ = code
+
+# Canonical credential blocks — field access by deployment engine / settings
+# panel, not by application code
+_ = project_id
+_ = openrouter

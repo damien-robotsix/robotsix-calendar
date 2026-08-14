@@ -13,6 +13,7 @@ modules:
       - changelog.d/20260808T205956Z-fix-stale-documentation-in-readme-md-and-8388.doc.md
       - changelog.d/20260808T213745Z-pattern-prescriptive-spec-ci-error-log-a-fd2d.misc.md
       - changelog.d/20260812T090634Z-ci-failure-ci-on-main-6aa4.bugfix.md
+      - changelog.d/20260814T131741Z-declare-canonical-langfuse-openrouter-cr-4664.feature.md
       - src/robotsix_calendar_agent/__init__.py
       - src/robotsix_calendar_agent/py.typed
       - tests/test_smoke.py
@@ -47,6 +48,7 @@ modules:
     dependencies:
       - caldav-client
       - intent-parser
+      - settings
 
   - id: caldav-client
     description: >-

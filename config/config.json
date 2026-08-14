@@ -5,6 +5,8 @@
   "RADICALE_DEFAULT_CALENDAR": "Robotsix",
   "CALDAV_TIMEOUT": 30,
   "CALDAV_HEALTHCHECK_TIMEOUT": 5,
+  "langfuse": null,
+  "openrouter": null,
   "LOG_LEVEL": "INFO",
   "JSON_LOGS": false
 }

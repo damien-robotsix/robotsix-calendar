@@ -1,4 +1,75 @@
 {
+  "$defs": {
+    "LangfuseProjectSettings": {
+      "description": "Credentials for a single Langfuse project corresponding to one component alias.",
+      "properties": {
+        "public_key": {
+          "format": "password",
+          "title": "Public Key",
+          "type": "string",
+          "writeOnly": true
+        },
+        "secret_key": {
+          "format": "password",
+          "title": "Secret Key",
+          "type": "string",
+          "writeOnly": true
+        },
+        "project_id": {
+          "default": "",
+          "title": "Project Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "public_key",
+        "secret_key"
+      ],
+      "title": "LangfuseProjectSettings",
+      "type": "object"
+    },
+    "LangfuseSettings": {
+      "description": "Canonical Langfuse observability block.\n\nOne project entry per LLM-facing component alias so the deployment\nengine can enumerate and reconcile credential coverage.",
+      "properties": {
+        "host": {
+          "title": "Host",
+          "type": "string"
+        },
+        "projects": {
+          "additionalProperties": {
+            "$ref": "#/$defs/LangfuseProjectSettings"
+          },
+          "title": "Projects",
+          "type": "object"
+        }
+      },
+      "required": [
+        "host",
+        "projects"
+      ],
+      "title": "LangfuseSettings",
+      "type": "object"
+    },
+    "OpenRouterSettings": {
+      "description": "Canonical OpenRouter credentials block.\n\nOne key per LLM-facing component alias, matching the aliases\ndeclared in ``langfuse.projects``.",
+      "properties": {
+        "keys": {
+          "additionalProperties": {
+            "format": "password",
+            "type": "string",
+            "writeOnly": true
+          },
+          "title": "Keys",
+          "type": "object"
+        }
+      },
+      "required": [
+        "keys"
+      ],
+      "title": "OpenRouterSettings",
+      "type": "object"
+    }
+  },
   "additionalProperties": false,
   "description": "Application settings loaded from ``config/config.json``.\n\nLocated via the ``ROBOTSIX_CONFIG_FILE`` environment variable (or\nthe default ``config/config.json``).  All values live in the config\nfile \u2014 no environment overlay, no CLI merge.",
   "properties": {
@@ -30,6 +101,28 @@
       "default": 5,
       "title": "Caldav Healthcheck Timeout",
       "type": "integer"
+    },
+    "langfuse": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/LangfuseSettings"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "openrouter": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/OpenRouterSettings"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     },
     "LOG_LEVEL": {
       "default": "INFO",
