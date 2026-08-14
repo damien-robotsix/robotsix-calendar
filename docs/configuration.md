@@ -24,6 +24,54 @@ print(config_schema_json(Settings), end='')
 " > config/config.schema.json
 ```
 
+## Langfuse
+
+The `langfuse` block provides Langfuse observability credentials as a
+canonical block for the deployment engine.  It is optional — when
+omitted (or set to ``null``), Langfuse tracing is not initialised.
+
+```json
+{
+  "langfuse": {
+    "host": "https://langfuse.example.com",
+    "projects": {
+      "robotsix-calendar-agent": {
+        "public_key": "pk-...",
+        "secret_key": "sk-...",
+        "project_id": ""
+      }
+    }
+  }
+}
+```
+
+The `projects` map uses the component alias as the key — currently
+``robotsix-calendar-agent``.  When set, the agent exports ``LANGFUSE_HOST``,
+``LANGFUSE_PUBLIC_KEY``, and ``LANGFUSE_SECRET_KEY`` to the process
+environment before calling ``setup_langfuse_tracing()``.
+
+## OpenRouter
+
+The `openrouter` block provides OpenRouter API keys as a canonical block
+for the deployment engine.  It is optional — when omitted (or set to
+``null``), the LLM provider falls back to the ``OPENROUTER_API_KEY``
+environment variable.
+
+```json
+{
+  "openrouter": {
+    "keys": {
+      "robotsix-calendar-agent": "sk-or-..."
+    }
+  }
+}
+```
+
+The `keys` map uses the same component alias as ``langfuse.projects``.
+Currently the key is declared for future wiring (the
+:class:`~robotsix_calendar_agent.intent_parser.IntentParser` accepts
+an ``api_key`` parameter for this purpose).
+
 !!! note "Component agent removed"
     The component-agent management package has been removed.  See
     [`reference/component_agent.md`](reference/component_agent.md) for details

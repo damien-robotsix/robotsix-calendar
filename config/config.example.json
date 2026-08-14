@@ -5,6 +5,21 @@
   "RADICALE_DEFAULT_CALENDAR": "Robotsix",
   "CALDAV_TIMEOUT": 30,
   "CALDAV_HEALTHCHECK_TIMEOUT": 5,
+  "langfuse": {
+    "host": "https://langfuse.example.com",
+    "projects": {
+      "robotsix-calendar-agent": {
+        "public_key": "pk-...",
+        "secret_key": "sk-...",
+        "project_id": ""
+      }
+    }
+  },
+  "openrouter": {
+    "keys": {
+      "robotsix-calendar-agent": "sk-or-..."
+    }
+  },
   "LOG_LEVEL": "INFO",
   "JSON_LOGS": false
 }

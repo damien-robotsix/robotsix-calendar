@@ -11,7 +11,53 @@ import logging
 
 from pydantic import BaseModel, SecretStr, field_validator
 
-__all__ = ["Settings"]
+__all__ = [
+    "LangfuseProjectSettings",
+    "LangfuseSettings",
+    "OpenRouterSettings",
+    "Settings",
+]
+
+
+class LangfuseProjectSettings(BaseModel):
+    """Credentials for a single Langfuse project for one component alias."""
+
+    public_key: SecretStr
+    """Langfuse public key (telemetry SDK key)."""
+
+    secret_key: SecretStr
+    """Langfuse secret key (telemetry SDK secret)."""
+
+    project_id: str = ""
+    """Optional project identifier override; empty means the public key scope."""
+
+
+class LangfuseSettings(BaseModel):
+    """Canonical Langfuse observability block.
+
+    One project entry per LLM-facing component alias so the deployment
+    engine can enumerate and reconcile credential coverage.
+    """
+
+    host: str
+    """Langfuse server host (e.g. https://langfuse.example.com)."""
+
+    projects: dict[str, LangfuseProjectSettings]
+    """Map of component alias → project credentials.  Every component
+    that emits LLM traffic must have an entry here keyed by the same
+    alias used in ``openrouter.keys``.
+    """
+
+
+class OpenRouterSettings(BaseModel):
+    """Canonical OpenRouter credentials block.
+
+    One key per LLM-facing component alias, matching the aliases
+    declared in ``langfuse.projects``.
+    """
+
+    keys: dict[str, SecretStr]
+    """Map of component alias → OpenRouter API key for that component."""
 
 
 class Settings(BaseModel):
@@ -46,6 +92,21 @@ class Settings(BaseModel):
     Keep this well under Docker's ``--timeout=10s`` so the probe exits
     before Docker kills it. Docker's own ``--retries`` and ``--interval``
     provide transient-failure recovery across healthcheck invocations.
+    """
+
+    # -- LLM credential blocks (canonical) ------------------------------------
+    langfuse: LangfuseSettings | None = None
+    """Langfuse observability credentials — host and per-alias project keys.
+
+    Every component that emits LLM traffic must declare its projects here
+    so the deployment engine can enumerate credential coverage.
+    """
+
+    openrouter: OpenRouterSettings | None = None
+    """OpenRouter API credentials — per-alias keys.
+
+    Every component that emits LLM traffic must have an entry whose alias
+    matches the corresponding ``langfuse.projects`` key.
     """
 
     # -- Logging -------------------------------------------------------------

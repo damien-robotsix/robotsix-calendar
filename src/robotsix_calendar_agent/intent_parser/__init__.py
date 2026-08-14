@@ -82,10 +82,20 @@ class IntentParser:
     Args:
         model_config: Forwarded to the llmio provider for model
             selection/temperature/etc.  If ``None``, llmio defaults apply.
+        api_key: OpenRouter API key passed as ``provider_kwargs``.  When
+            both *api_key* and *model_config* are set, *api_key* takes
+            precedence (it replaces any existing ``api_key`` key in
+            *model_config*).
     """
 
-    def __init__(self, model_config: dict[str, Any] | None = None) -> None:
-        self._model_config = model_config or {}
+    def __init__(
+        self,
+        model_config: dict[str, Any] | None = None,
+        api_key: str | None = None,
+    ) -> None:
+        self._model_config = dict(model_config) if model_config else {}
+        if api_key is not None:
+            self._model_config["api_key"] = api_key
 
     def parse(self, text: str) -> ParsedIntent:
         """Parse natural-language *text* into a :class:`ParsedIntent`.

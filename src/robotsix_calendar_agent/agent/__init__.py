@@ -7,16 +7,10 @@ single runnable agent.
 from __future__ import annotations
 
 import logging
+import os
 from typing import Any
 
 from opentelemetry import trace
-
-try:
-    from robotsix_llmio.core import setup_langfuse_tracing  # pragma: no cover
-
-    setup_langfuse_tracing()
-except ImportError:  # pragma: no cover
-    pass
 
 from ..caldav_client import (
     CalDavClient,
@@ -33,6 +27,43 @@ from ..intent_parser import (
     ParsedIntent,
     TaskOperation,
 )
+from ..settings import Settings
+
+
+def _setup_tracing(settings: Settings | None = None) -> None:
+    """Initialise Langfuse tracing from the canonical config block.
+
+    Exports ``LANGFUSE_HOST``, ``LANGFUSE_PUBLIC_KEY`` and
+    ``LANGFUSE_SECRET_KEY`` into the process environment (the
+    OpenTelemetry SDK reads these at span-export time) **before**
+    calling ``setup_langfuse_tracing``.
+
+    When *settings* is ``None`` (module-load-time fallback), the
+    function is a no-op — the canonical config is not available until
+    :class:`CalendarAgent` is instantiated.
+    """
+    if settings is None or settings.langfuse is None:
+        return
+
+    langfuse_host = settings.langfuse.host
+    if not isinstance(langfuse_host, str):
+        return  # guard against MagicMock in test environments
+
+    project = settings.langfuse.projects.get("robotsix-calendar-agent")
+    if project is None:
+        return
+
+    os.environ.setdefault("LANGFUSE_HOST", langfuse_host)
+    os.environ.setdefault("LANGFUSE_PUBLIC_KEY", project.public_key.get_secret_value())
+    os.environ.setdefault("LANGFUSE_SECRET_KEY", project.secret_key.get_secret_value())
+
+    try:
+        from robotsix_llmio.core import setup_langfuse_tracing  # pragma: no cover
+
+        setup_langfuse_tracing()
+    except ImportError:  # pragma: no cover
+        pass
+
 
 logger = logging.getLogger(__name__)
 
@@ -62,6 +93,9 @@ class CalendarAgent:
 
     Args:
         agent_id: Agent ID (default ``"calendar"``).
+        root_settings: An existing :class:`Settings` instance.  When
+            ``None`` (default), settings are loaded from the config
+            file on construction.
 
     Raises:
         ValueError: If Radicale credentials are missing in the config file.
@@ -70,12 +104,19 @@ class CalendarAgent:
     def __init__(
         self,
         agent_id: str = "calendar",
+        root_settings: Settings | None = None,
     ) -> None:
-        from robotsix_config import load_config
+        if root_settings is None:
+            from robotsix_config import load_config
 
-        from ..settings import Settings
+            from ..settings import Settings as _Settings
 
-        settings = load_config(Settings)
+            settings = load_config(_Settings)
+        else:
+            settings = root_settings
+
+        # -- Initialise Langfuse tracing from the canonical block ------
+        _setup_tracing(settings)
 
         self._agent_id = agent_id
 
