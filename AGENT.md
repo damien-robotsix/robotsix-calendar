@@ -66,18 +66,15 @@ server or docker-compose.
 
 ## Tracing
 
-Langfuse tracing is initialised at **module level** on `CalendarAgent`
-import (`src/robotsix_calendar_agent/agent/__init__.py`):
-
-```python
-from robotsix_llmio.core import setup_langfuse_tracing
-
-setup_langfuse_tracing()
-```
-
-This means importing `CalendarAgent` (or any module that imports it)
-activates OpenTelemetry/OTLP export. The `robotsix-llmio[tracing]`
-extra provides the required OTLP dependencies.
+Langfuse tracing is initialised inside `_setup_tracing()`
+(`src/robotsix_calendar_agent/agent/__init__.py`), which is called
+from `CalendarAgent.__init__()`. The `setup_langfuse_tracing()` call
+was moved from module level to this helper, so importing
+`CalendarAgent` (or any module that imports it) no longer activates
+OpenTelemetry/OTLP export. The canonical `langfuse` config block must
+be populated with host/projects for tracing to work. The
+`robotsix-llmio[tracing]` extra provides the required OTLP
+dependencies.
 
 Two periodic workflows operate on tracing data:
 
