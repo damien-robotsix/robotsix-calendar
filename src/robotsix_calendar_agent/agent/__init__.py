@@ -27,7 +27,7 @@ from ..intent_parser import (
     ParsedIntent,
     TaskOperation,
 )
-from ..settings import Settings
+from ..settings import COMPONENT_ALIAS, Settings
 
 
 def _setup_tracing(settings: Settings | None = None) -> None:
@@ -49,7 +49,7 @@ def _setup_tracing(settings: Settings | None = None) -> None:
     if not isinstance(langfuse_host, str):
         return  # guard against MagicMock in test environments
 
-    project = settings.langfuse.projects.get("robotsix-calendar-agent")
+    project = settings.langfuse.projects.get(COMPONENT_ALIAS)
     if project is None:
         return
 
@@ -78,7 +78,7 @@ def _setup_openrouter_key(settings: Settings | None = None) -> None:
     if settings is None or settings.openrouter is None:
         return
 
-    key = settings.openrouter.keys.get("robotsix-calendar-agent")
+    key = settings.openrouter.keys.get(COMPONENT_ALIAS)
     if key is None:
         return
 

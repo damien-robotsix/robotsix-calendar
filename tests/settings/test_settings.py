@@ -7,9 +7,16 @@ import os
 import tempfile
 
 import pytest
+from pydantic import SecretStr
 from robotsix_config import load_config
 
-from robotsix_calendar_agent.settings import Settings
+from robotsix_calendar_agent.settings import (
+    COMPONENT_ALIAS,
+    LangfuseProjectSettings,
+    LangfuseSettings,
+    OpenRouterSettings,
+    Settings,
+)
 
 # ---------------------------------------------------------------------------
 # _normalize_log_level
@@ -146,3 +153,58 @@ class TestSettingsConstruction:
 
         with pytest.raises(InvalidConfigError):
             load_config(Settings, path=path)
+
+
+# ---------------------------------------------------------------------------
+# Component-alias drift enforcement
+# ---------------------------------------------------------------------------
+
+
+class TestCredentialAliasMatching:
+    """Tests for the ``_check_credential_aliases_match`` model validator."""
+
+    def _settings(
+        self,
+        langfuse_aliases: set[str],
+        openrouter_aliases: set[str],
+    ) -> Settings:
+        langfuse = LangfuseSettings(
+            host="https://langfuse.example.com",
+            projects={
+                alias: LangfuseProjectSettings(
+                    public_key=SecretStr("pk"),
+                    secret_key=SecretStr("sk"),
+                )
+                for alias in langfuse_aliases
+            },
+        )
+        openrouter = OpenRouterSettings(
+            keys={alias: SecretStr("sk-or") for alias in openrouter_aliases}
+        )
+        return Settings(
+            RADICALE_URL="https://x.com",
+            RADICALE_USERNAME="u",
+            RADICALE_PASSWORD=SecretStr("p"),
+            langfuse=langfuse,
+            openrouter=openrouter,
+        )
+
+    def test_matching_aliases_are_accepted(self) -> None:
+        settings = self._settings({COMPONENT_ALIAS}, {COMPONENT_ALIAS})
+        assert settings.langfuse is not None
+        assert COMPONENT_ALIAS in settings.langfuse.projects
+        assert COMPONENT_ALIAS in settings.openrouter.keys
+
+    def test_drifted_aliases_raise(self) -> None:
+        with pytest.raises(ValueError, match="must be keyed by the same"):
+            self._settings({COMPONENT_ALIAS}, {"other-alias"})
+
+    def test_only_openrouter_block_is_accepted(self) -> None:
+        settings = Settings(
+            RADICALE_URL="https://x.com",
+            RADICALE_USERNAME="u",
+            RADICALE_PASSWORD=SecretStr("p"),
+            openrouter=OpenRouterSettings(keys={COMPONENT_ALIAS: SecretStr("sk-or")}),
+        )
+        assert settings.langfuse is None
+        assert COMPONENT_ALIAS in settings.openrouter.keys
