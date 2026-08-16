@@ -67,7 +67,7 @@
             <a id="nextFileLink" class="nav" href="z_701644b5381899ec__dispatch_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.15.4">coverage.py v7.15.4</a>,
-            created at 2026-08-14 14:30 +0000
+            created at 2026-08-16 06:01 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -111,7 +111,7 @@
     <p class="run run2"><span class="n"><a id="t27" href="#t27">27</a></span><span class="t">    <span class="nam">ParsedIntent</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t28" href="#t28">28</a></span><span class="t">    <span class="nam">TaskOperation</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t29" href="#t29">29</a></span><span class="t"><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t30" href="#t30">30</a></span><span class="t"><span class="key">from</span> <span class="op">.</span><span class="op">.</span><span class="nam">settings</span> <span class="key">import</span> <span class="nam">Settings</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t30" href="#t30">30</a></span><span class="t"><span class="key">from</span> <span class="op">.</span><span class="op">.</span><span class="nam">settings</span> <span class="key">import</span> <span class="nam">COMPONENT_ALIAS</span><span class="op">,</span> <span class="nam">Settings</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t31" href="#t31">31</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t32" href="#t32">32</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t33" href="#t33">33</a></span><span class="t"><span class="key">def</span> <span class="nam">_setup_tracing</span><span class="op">(</span><span class="nam">settings</span><span class="op">:</span> <span class="nam">Settings</span> <span class="op">|</span> <span class="key">None</span> <span class="op">=</span> <span class="key">None</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="key">None</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -133,7 +133,7 @@
     <p class="par run show_par"><span class="n"><a id="t49" href="#t49">49</a></span><span class="t">    <span class="key">if</span> <span class="key">not</span> <span class="nam">isinstance</span><span class="op">(</span><span class="nam">langfuse_host</span><span class="op">,</span> <span class="nam">str</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"><span class="annotate short">49&#x202F;&#x219B;&#x202F;52</span><span class="annotate long">line 49 didn't jump to line 52 because the condition on line 49 was always true</span></span></p>
     <p class="run"><span class="n"><a id="t50" href="#t50">50</a></span><span class="t">        <span class="key">return</span>  <span class="com"># guard against MagicMock in test environments</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t51" href="#t51">51</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t52" href="#t52">52</a></span><span class="t">    <span class="nam">project</span> <span class="op">=</span> <span class="nam">settings</span><span class="op">.</span><span class="nam">langfuse</span><span class="op">.</span><span class="nam">projects</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="str">&quot;robotsix-calendar-agent&quot;</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t52" href="#t52">52</a></span><span class="t">    <span class="nam">project</span> <span class="op">=</span> <span class="nam">settings</span><span class="op">.</span><span class="nam">langfuse</span><span class="op">.</span><span class="nam">projects</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="nam">COMPONENT_ALIAS</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t53" href="#t53">53</a></span><span class="t">    <span class="key">if</span> <span class="nam">project</span> <span class="key">is</span> <span class="key">None</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t54" href="#t54">54</a></span><span class="t">        <span class="key">return</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t55" href="#t55">55</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
@@ -162,7 +162,7 @@
     <p class="run"><span class="n"><a id="t78" href="#t78">78</a></span><span class="t">    <span class="key">if</span> <span class="nam">settings</span> <span class="key">is</span> <span class="key">None</span> <span class="key">or</span> <span class="nam">settings</span><span class="op">.</span><span class="nam">openrouter</span> <span class="key">is</span> <span class="key">None</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t79" href="#t79">79</a></span><span class="t">        <span class="key">return</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t80" href="#t80">80</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t81" href="#t81">81</a></span><span class="t">    <span class="nam">key</span> <span class="op">=</span> <span class="nam">settings</span><span class="op">.</span><span class="nam">openrouter</span><span class="op">.</span><span class="nam">keys</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="str">&quot;robotsix-calendar-agent&quot;</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t81" href="#t81">81</a></span><span class="t">    <span class="nam">key</span> <span class="op">=</span> <span class="nam">settings</span><span class="op">.</span><span class="nam">openrouter</span><span class="op">.</span><span class="nam">keys</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="nam">COMPONENT_ALIAS</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="par run show_par"><span class="n"><a id="t82" href="#t82">82</a></span><span class="t">    <span class="key">if</span> <span class="nam">key</span> <span class="key">is</span> <span class="key">None</span><span class="op">:</span>&nbsp;</span><span class="r"><span class="annotate short">82&#x202F;&#x219B;&#x202F;83</span><span class="annotate long">line 82 didn't jump to line 83 because the condition on line 82 was never true</span></span></p>
     <p class="mis show_mis"><span class="n"><a id="t83" href="#t83">83</a></span><span class="t">        <span class="key">return</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t84" href="#t84">84</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
@@ -312,7 +312,7 @@
             <a class="nav" href="z_701644b5381899ec__dispatch_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.15.4">coverage.py v7.15.4</a>,
-            created at 2026-08-14 14:30 +0000
+            created at 2026-08-16 06:01 +0000
         </p>
     </div>
 </footer>
