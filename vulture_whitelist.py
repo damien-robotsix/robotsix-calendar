@@ -26,8 +26,9 @@ _ = original_text
 _ = due
 _ = status
 
-# Pydantic field-validator methods — invoked by the framework, not dead code
+# Pydantic validator methods — invoked by the framework, not dead code
 _ = _normalize_log_level
+_ = _check_credential_aliases_match
 _ = cls
 
 # logging.Formatter subclass — format() called by logging framework internals
