@@ -13,6 +13,7 @@ modules:
       - changelog.d/20260808T205956Z-fix-stale-documentation-in-readme-md-and-8388.doc.md
       - changelog.d/20260808T213745Z-pattern-prescriptive-spec-ci-error-log-a-fd2d.misc.md
       - changelog.d/20260812T090634Z-ci-failure-ci-on-main-6aa4.bugfix.md
+      - changelog.d/20260813T072816Z-remove-openssf-scorecard-workflow-droppe-f8fb.misc.md
       - changelog.d/20260814T131741Z-declare-canonical-langfuse-openrouter-cr-4664.feature.md
       - changelog.d/20260814T135351Z-run-tracing-key-wiring-on-the-actual-ser-dc38.bugfix.md
       - changelog.d/20260816T053929Z-deduplicate-the-hardcoded-robotsix-calen-20a6.bugfix.md
@@ -158,7 +159,6 @@ modules:
       - .github/workflows/lint-workflows.yml
       - .github/workflows/release.yml
       - .github/workflows/scan-container.yml
-      - .github/workflows/scorecard.yml
       - .robotsix-mill/config.yaml
       - .robotsix-mill/boilerplate/auto-approve-boilerplate.md
       - .robotsix-mill/boilerplate/auto-approve-reject-boilerplate.md
