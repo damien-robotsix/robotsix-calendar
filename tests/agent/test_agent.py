@@ -9,7 +9,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from robotsix_calendar_agent.settings import Settings
+from robotsix_calendar_agent.settings import COMPONENT_ALIAS, Settings
 
 # Shared helpers live in conftest.
 
@@ -97,7 +97,7 @@ class TestRuntimeCredentials:
             RADICALE_USERNAME="u",
             RADICALE_PASSWORD=SecretStr("p"),
             openrouter=OpenRouterSettings(
-                keys={"robotsix-calendar-agent": SecretStr("sk-canonical")}
+                keys={COMPONENT_ALIAS: SecretStr("sk-canonical")}
             ),
         )
 

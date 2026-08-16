@@ -9,9 +9,18 @@ from __future__ import annotations
 
 import logging
 
-from pydantic import BaseModel, SecretStr, field_validator
+from pydantic import BaseModel, SecretStr, field_validator, model_validator
+
+COMPONENT_ALIAS = "robotsix-calendar-agent"
+"""Canonical component alias.
+
+Single source of truth for the alias that keys both ``langfuse.projects``
+and ``openrouter.keys``.  Referenced by the runtime credential setup so the
+two credential maps and the source lookups can never silently drift apart.
+"""
 
 __all__ = [
+    "COMPONENT_ALIAS",
     "LangfuseProjectSettings",
     "LangfuseSettings",
     "OpenRouterSettings",
@@ -129,3 +138,26 @@ class Settings(BaseModel):
                 f"{sorted(logging.getLevelNamesMapping())}"
             )
         return v
+
+    @model_validator(mode="after")
+    def _check_credential_aliases_match(self) -> Settings:
+        """Enforce that Langfuse and OpenRouter maps share the same aliases.
+
+        Both blocks are optional, but when both are supplied they must be
+        keyed by the same component aliases.  Otherwise ``_setup_tracing``
+        and ``_setup_openrouter_key`` silently no-op for the drifted alias.
+        """
+        if self.langfuse is None or self.openrouter is None:
+            return self
+
+        langfuse_aliases = set(self.langfuse.projects)
+        openrouter_aliases = set(self.openrouter.keys)
+        if langfuse_aliases != openrouter_aliases:
+            raise ValueError(
+                "langfuse.projects and openrouter.keys must be keyed by the "
+                "same component aliases; missing in langfuse: "
+                f"{sorted(openrouter_aliases - langfuse_aliases)}, "
+                "missing in openrouter: "
+                f"{sorted(langfuse_aliases - openrouter_aliases)}"
+            )
+        return self
