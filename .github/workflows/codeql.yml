@@ -8,10 +8,21 @@ permissions: {}
 
 jobs:
   analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       security-events: write  # needed to upload SARIF results from CodeQL
-    uses: damien-robotsix/robotsix-github-workflows/.github/workflows/codeql.yml@2d66a20eef37f8b8dd5bb66cc134c76dbbf9ad39  # main
-    with:
-      languages: python
-      queries: security-and-quality
+    steps:
+      - uses: step-security/harden-runner@b09bb98e06d4d774595224525879c09bc6e98c40  # v2.20.1
+        with:
+          egress-policy: audit
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: github/codeql-action/init@5595ccaf912efad79be6eef63a5619ff05969be3  # v4
+        with:
+          languages: python
+          build-mode: none
+          queries: security-and-quality
+      - uses: github/codeql-action/analyze@5595ccaf912efad79be6eef63a5619ff05969be3  # v4

@@ -141,6 +141,7 @@ modules:
       - .github/dependency-review-config.yml
       - .github/actions/setup-uv/action.yml
       - .github/workflows/ci.yml
+      - .github/workflows/codeql.yml
       - .github/workflows/config-schema-drift.yml
       - .github/workflows/dependabot-auto-merge.yml
       - .github/workflows/docker-publish.yml
