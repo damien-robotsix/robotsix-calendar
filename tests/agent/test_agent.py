@@ -105,6 +105,102 @@ class TestRuntimeCredentials:
 
         assert os.environ["OPENROUTER_API_KEY"] == "sk-canonical"
 
+    _LANGFUSE_ENV_VARS = (
+        "LANGFUSE_HOST",
+        "LANGFUSE_PUBLIC_KEY",
+        "LANGFUSE_SECRET_KEY",
+    )
+
+    def test_exports_langfuse_credentials_from_canonical_block(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        from pydantic import SecretStr
+
+        from robotsix_calendar_agent.agent import _setup_tracing
+        from robotsix_calendar_agent.settings import (
+            LangfuseProjectSettings,
+            LangfuseSettings,
+            Settings,
+        )
+
+        for var in self._LANGFUSE_ENV_VARS:
+            monkeypatch.delenv(var, raising=False)
+
+        settings = Settings(
+            RADICALE_URL="https://x.com",
+            RADICALE_USERNAME="u",
+            RADICALE_PASSWORD=SecretStr("p"),
+            langfuse=LangfuseSettings(
+                host="https://langfuse.example.com",
+                projects={
+                    COMPONENT_ALIAS: LangfuseProjectSettings(
+                        public_key=SecretStr("pk-canonical"),
+                        secret_key=SecretStr("sk-canonical"),
+                    ),
+                },
+            ),
+        )
+
+        with patch("robotsix_llmio.core.setup_langfuse_tracing") as mock_setup:
+            _setup_tracing(settings)
+
+        assert os.environ["LANGFUSE_HOST"] == "https://langfuse.example.com"
+        assert os.environ["LANGFUSE_PUBLIC_KEY"] == "pk-canonical"
+        assert os.environ["LANGFUSE_SECRET_KEY"] == "sk-canonical"
+        mock_setup.assert_called_once()
+
+    def test_setup_tracing_noop_when_alias_missing(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        from pydantic import SecretStr
+
+        from robotsix_calendar_agent.agent import _setup_tracing
+        from robotsix_calendar_agent.settings import (
+            LangfuseProjectSettings,
+            LangfuseSettings,
+            Settings,
+        )
+
+        for var in self._LANGFUSE_ENV_VARS:
+            monkeypatch.delenv(var, raising=False)
+
+        settings = Settings(
+            RADICALE_URL="https://x.com",
+            RADICALE_USERNAME="u",
+            RADICALE_PASSWORD=SecretStr("p"),
+            langfuse=LangfuseSettings(
+                host="https://langfuse.example.com",
+                projects={
+                    "other-alias": LangfuseProjectSettings(
+                        public_key=SecretStr("pk-other"),
+                        secret_key=SecretStr("sk-other"),
+                    ),
+                },
+            ),
+        )
+
+        with patch("robotsix_llmio.core.setup_langfuse_tracing") as mock_setup:
+            _setup_tracing(settings)
+
+        for var in self._LANGFUSE_ENV_VARS:
+            assert var not in os.environ
+        mock_setup.assert_not_called()
+
+    def test_setup_tracing_noop_without_settings(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        from robotsix_calendar_agent.agent import _setup_tracing
+
+        for var in self._LANGFUSE_ENV_VARS:
+            monkeypatch.delenv(var, raising=False)
+
+        with patch("robotsix_llmio.core.setup_langfuse_tracing") as mock_setup:
+            _setup_tracing(None)
+
+        for var in self._LANGFUSE_ENV_VARS:
+            assert var not in os.environ
+        mock_setup.assert_not_called()
+
 
 # ---------------------------------------------------------------------------
 # Lifecycle
