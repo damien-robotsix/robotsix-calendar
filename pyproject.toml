@@ -20,6 +20,10 @@ dependencies = [
     "robotsix-http",
     "caldav",
     "pydantic",
+    # opentelemetry-api provides opentelemetry.trace used directly by
+    # healthcheck; declared explicitly so the healthcheck entry point does not
+    # rely on robotsix-llmio[tracing] pulling it in transitively.
+    "opentelemetry-api",
 ]
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
@@ -74,9 +78,6 @@ packages = ["src/robotsix_calendar_agent"]
 
 [tool.deptry]
 known_first_party = ["robotsix_calendar_agent"]
-
-[tool.deptry.per_rule_ignores]
-DEP003 = ["opentelemetry"]
 
 [tool.ruff]
 target-version = "py314"
