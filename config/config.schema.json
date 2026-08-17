@@ -4,12 +4,14 @@
       "description": "Credentials for a single Langfuse project for one component alias.",
       "properties": {
         "public_key": {
+          "description": "Langfuse public key (telemetry SDK key).",
           "format": "password",
           "title": "Public Key",
           "type": "string",
           "writeOnly": true
         },
         "secret_key": {
+          "description": "Langfuse secret key (telemetry SDK secret).",
           "format": "password",
           "title": "Secret Key",
           "type": "string",
@@ -17,6 +19,7 @@
         },
         "project_id": {
           "default": "",
+          "description": "Optional project identifier override; empty means the public key scope.",
           "title": "Project Id",
           "type": "string"
         }
@@ -32,6 +35,7 @@
       "description": "Canonical Langfuse observability block.\n\nOne project entry per LLM-facing component alias so the deployment\nengine can enumerate and reconcile credential coverage.",
       "properties": {
         "host": {
+          "description": "Langfuse server host (e.g. https://langfuse.example.com).",
           "title": "Host",
           "type": "string"
         },
@@ -39,6 +43,7 @@
           "additionalProperties": {
             "$ref": "#/$defs/LangfuseProjectSettings"
           },
+          "description": "Map of component alias \u2192 project credentials.  Every component that emits LLM traffic must have an entry here keyed by the same alias used in ``openrouter.keys``.",
           "title": "Projects",
           "type": "object"
         }
@@ -59,6 +64,7 @@
             "type": "string",
             "writeOnly": true
           },
+          "description": "Map of component alias \u2192 OpenRouter API key for that component.",
           "title": "Keys",
           "type": "object"
         }
@@ -74,14 +80,17 @@
   "description": "Application settings loaded from ``config/config.json``.\n\nLocated via the ``ROBOTSIX_CONFIG_FILE`` environment variable (or\nthe default ``config/config.json``).  All values live in the config\nfile \u2014 no environment overlay, no CLI merge.",
   "properties": {
     "RADICALE_URL": {
+      "description": "Radicale server URL (e.g. https://radicale.example.com).",
       "title": "Radicale Url",
       "type": "string"
     },
     "RADICALE_USERNAME": {
+      "description": "Radicale username for authentication.",
       "title": "Radicale Username",
       "type": "string"
     },
     "RADICALE_PASSWORD": {
+      "description": "Radicale password for authentication.",
       "format": "password",
       "title": "Radicale Password",
       "type": "string",
@@ -89,16 +98,19 @@
     },
     "RADICALE_DEFAULT_CALENDAR": {
       "default": "Robotsix",
+      "description": "Default calendar name when no calendar_id is provided.",
       "title": "Radicale Default Calendar",
       "type": "string"
     },
     "CALDAV_TIMEOUT": {
       "default": 30,
+      "description": "Timeout in seconds for CalDAV HTTP requests.",
       "title": "Caldav Timeout",
       "type": "integer"
     },
     "CALDAV_HEALTHCHECK_TIMEOUT": {
       "default": 5,
+      "description": "Timeout in seconds for the Docker HEALTHCHECK probe's CalDAV request. Keep this well under Docker's ``--timeout=10s`` so the probe exits before Docker kills it. Docker's own ``--retries`` and ``--interval`` provide transient-failure recovery across healthcheck invocations.",
       "title": "Caldav Healthcheck Timeout",
       "type": "integer"
     },
@@ -111,7 +123,8 @@
           "type": "null"
         }
       ],
-      "default": null
+      "default": null,
+      "description": "Langfuse observability credentials \u2014 host and per-alias project keys. Every component that emits LLM traffic must declare its projects here so the deployment engine can enumerate credential coverage."
     },
     "openrouter": {
       "anyOf": [
@@ -122,15 +135,18 @@
           "type": "null"
         }
       ],
-      "default": null
+      "default": null,
+      "description": "OpenRouter API credentials \u2014 per-alias keys. Every component that emits LLM traffic must have an entry whose alias matches the corresponding ``langfuse.projects`` key."
     },
     "LOG_LEVEL": {
       "default": "INFO",
+      "description": "Log level - one of DEBUG, INFO, WARNING, ERROR, CRITICAL.",
       "title": "Log Level",
       "type": "string"
     },
     "JSON_LOGS": {
       "default": false,
+      "description": "When True, emit logs as JSON for structured-log ingestion.",
       "title": "Json Logs",
       "type": "boolean"
     }
