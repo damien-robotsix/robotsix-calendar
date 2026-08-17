@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import logging
 
-from pydantic import BaseModel, SecretStr, field_validator, model_validator
+from pydantic import BaseModel, Field, SecretStr, field_validator, model_validator
 
 COMPONENT_ALIAS = "robotsix-calendar-agent"
 """Canonical component alias.
@@ -31,14 +31,20 @@ __all__ = [
 class LangfuseProjectSettings(BaseModel):
     """Credentials for a single Langfuse project for one component alias."""
 
-    public_key: SecretStr
-    """Langfuse public key (telemetry SDK key)."""
+    public_key: SecretStr = Field(
+        description="Langfuse public key (telemetry SDK key)."
+    )
 
-    secret_key: SecretStr
-    """Langfuse secret key (telemetry SDK secret)."""
+    secret_key: SecretStr = Field(
+        description="Langfuse secret key (telemetry SDK secret)."
+    )
 
-    project_id: str = ""
-    """Optional project identifier override; empty means the public key scope."""
+    project_id: str = Field(
+        default="",
+        description=(
+            "Optional project identifier override; empty means the public key scope."
+        ),
+    )
 
 
 class LangfuseSettings(BaseModel):
@@ -48,14 +54,17 @@ class LangfuseSettings(BaseModel):
     engine can enumerate and reconcile credential coverage.
     """
 
-    host: str
-    """Langfuse server host (e.g. https://langfuse.example.com)."""
+    host: str = Field(
+        description="Langfuse server host (e.g. https://langfuse.example.com)."
+    )
 
-    projects: dict[str, LangfuseProjectSettings]
-    """Map of component alias → project credentials.  Every component
-    that emits LLM traffic must have an entry here keyed by the same
-    alias used in ``openrouter.keys``.
-    """
+    projects: dict[str, LangfuseProjectSettings] = Field(
+        description=(
+            "Map of component alias → project credentials.  Every component "
+            "that emits LLM traffic must have an entry here keyed by the same "
+            "alias used in ``openrouter.keys``."
+        )
+    )
 
 
 class OpenRouterSettings(BaseModel):
@@ -65,8 +74,9 @@ class OpenRouterSettings(BaseModel):
     declared in ``langfuse.projects``.
     """
 
-    keys: dict[str, SecretStr]
-    """Map of component alias → OpenRouter API key for that component."""
+    keys: dict[str, SecretStr] = Field(
+        description="Map of component alias → OpenRouter API key for that component."
+    )
 
 
 class Settings(BaseModel):
@@ -80,50 +90,66 @@ class Settings(BaseModel):
     model_config = {"extra": "forbid"}
 
     # -- Radicale credentials ------------------------------------------------
-    RADICALE_URL: str
-    """Radicale server URL (e.g. https://radicale.example.com)."""
+    RADICALE_URL: str = Field(
+        description="Radicale server URL (e.g. https://radicale.example.com)."
+    )
 
-    RADICALE_USERNAME: str
-    """Radicale username for authentication."""
+    RADICALE_USERNAME: str = Field(description="Radicale username for authentication.")
 
-    RADICALE_PASSWORD: SecretStr
-    """Radicale password for authentication."""
+    RADICALE_PASSWORD: SecretStr = Field(
+        description="Radicale password for authentication."
+    )
 
-    RADICALE_DEFAULT_CALENDAR: str = "Robotsix"
-    """Default calendar name when no calendar_id is provided."""
+    RADICALE_DEFAULT_CALENDAR: str = Field(
+        default="Robotsix",
+        description="Default calendar name when no calendar_id is provided.",
+    )
 
-    CALDAV_TIMEOUT: int = 30
-    """Timeout in seconds for CalDAV HTTP requests."""
+    CALDAV_TIMEOUT: int = Field(
+        default=30, description="Timeout in seconds for CalDAV HTTP requests."
+    )
 
-    CALDAV_HEALTHCHECK_TIMEOUT: int = 5
-    """Timeout in seconds for the Docker HEALTHCHECK probe's CalDAV request.
-
-    Keep this well under Docker's ``--timeout=10s`` so the probe exits
-    before Docker kills it. Docker's own ``--retries`` and ``--interval``
-    provide transient-failure recovery across healthcheck invocations.
-    """
+    CALDAV_HEALTHCHECK_TIMEOUT: int = Field(
+        default=5,
+        description=(
+            "Timeout in seconds for the Docker HEALTHCHECK probe's CalDAV "
+            "request. Keep this well under Docker's ``--timeout=10s`` so the "
+            "probe exits before Docker kills it. Docker's own ``--retries`` "
+            "and ``--interval`` provide transient-failure recovery across "
+            "healthcheck invocations."
+        ),
+    )
 
     # -- LLM credential blocks (canonical) ------------------------------------
-    langfuse: LangfuseSettings | None = None
-    """Langfuse observability credentials — host and per-alias project keys.
+    langfuse: LangfuseSettings | None = Field(
+        default=None,
+        description=(
+            "Langfuse observability credentials — host and per-alias project "
+            "keys. Every component that emits LLM traffic must declare its "
+            "projects here so the deployment engine can enumerate credential "
+            "coverage."
+        ),
+    )
 
-    Every component that emits LLM traffic must declare its projects here
-    so the deployment engine can enumerate credential coverage.
-    """
-
-    openrouter: OpenRouterSettings | None = None
-    """OpenRouter API credentials — per-alias keys.
-
-    Every component that emits LLM traffic must have an entry whose alias
-    matches the corresponding ``langfuse.projects`` key.
-    """
+    openrouter: OpenRouterSettings | None = Field(
+        default=None,
+        description=(
+            "OpenRouter API credentials — per-alias keys. Every component "
+            "that emits LLM traffic must have an entry whose alias matches "
+            "the corresponding ``langfuse.projects`` key."
+        ),
+    )
 
     # -- Logging -------------------------------------------------------------
-    LOG_LEVEL: str = "INFO"
-    """Log level - one of DEBUG, INFO, WARNING, ERROR, CRITICAL."""
+    LOG_LEVEL: str = Field(
+        default="INFO",
+        description="Log level - one of DEBUG, INFO, WARNING, ERROR, CRITICAL.",
+    )
 
-    JSON_LOGS: bool = False
-    """When True, emit logs as JSON for structured-log ingestion."""
+    JSON_LOGS: bool = Field(
+        default=False,
+        description="When True, emit logs as JSON for structured-log ingestion.",
+    )
 
     # -- Validators ----------------------------------------------------------
 
