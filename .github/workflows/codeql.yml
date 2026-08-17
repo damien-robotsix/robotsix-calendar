@@ -1,0 +1,17 @@
+name: CodeQL
+
+on:
+  push:
+  pull_request:
+
+permissions: {}
+
+jobs:
+  analyze:
+    permissions:
+      contents: read
+      security-events: write  # needed to upload SARIF results from CodeQL
+    uses: damien-robotsix/robotsix-github-workflows/.github/workflows/codeql.yml@2d66a20eef37f8b8dd5bb66cc134c76dbbf9ad39  # main
+    with:
+      languages: python
+      queries: security-and-quality
