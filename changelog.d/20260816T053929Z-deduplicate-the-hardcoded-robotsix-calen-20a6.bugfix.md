@@ -1,1 +1,0 @@
-Deduplicate the hardcoded `robotsix-calendar-agent` component alias into a single `COMPONENT_ALIAS` constant and enforce that the `langfuse.projects` and `openrouter.keys` maps are keyed by matching aliases, so credential-map drift fails loudly instead of silently disabling tracing.
