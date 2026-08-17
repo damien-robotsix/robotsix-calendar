@@ -66,6 +66,9 @@ docs = [
 
 [tool.uv]
 exclude-newer = "2026-08-05"
+# Exempt ruff from the `exclude-newer` cutoff: dependabot bumps ruff frequently
+# and a fixed cutoff freezes it out of every release published after it.
+exclude-newer-package = { ruff = false }
 
 [tool.uv.sources]
 robotsix-config = { git = "https://github.com/damien-robotsix/robotsix-config.git", rev = "f557bffaf8f7d26d86a508ab7f634133c748c347" }
