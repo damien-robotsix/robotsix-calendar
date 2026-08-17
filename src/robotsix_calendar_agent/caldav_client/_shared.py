@@ -146,7 +146,7 @@ def _comp_dt(comp: Any, name: str) -> str:
 
 
 def _unescape_text(value: str) -> str:
-    """Reverse the escaping applied by ``_escape_text``.
+    r"""Reverse the escaping applied by ``_escape_text``.
 
     Uses a placeholder for ``\\\\`` to avoid creating spurious
     escape sequences during sequential replacement.  Restores
