@@ -1562,6 +1562,7 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "caldav" },
+    { name = "opentelemetry-api" },
     { name = "pydantic" },
     { name = "robotsix-config" },
     { name = "robotsix-http" },
@@ -1592,6 +1593,7 @@ docs = [
 [package.metadata]
 requires-dist = [
     { name = "caldav" },
+    { name = "opentelemetry-api" },
     { name = "pydantic" },
     { name = "robotsix-config", git = "https://github.com/damien-robotsix/robotsix-config.git?rev=f557bffaf8f7d26d86a508ab7f634133c748c347" },
     { name = "robotsix-http", git = "https://github.com/damien-robotsix/robotsix-http.git?rev=70baf170b66904c9a6570563cce0ac75b6103f58" },
