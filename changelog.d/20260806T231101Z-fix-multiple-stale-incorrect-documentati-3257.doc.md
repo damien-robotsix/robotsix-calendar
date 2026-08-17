@@ -1,1 +1,0 @@
-Fixed four stale documentation entries in docs/index.md: operation count (10→13), missing task CRUD ops in reference table, config key casing (lowercase→UPPERCASE), and removed `_intent_parser` reference in code example.

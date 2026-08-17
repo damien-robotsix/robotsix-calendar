@@ -1,1 +1,0 @@
-Fix stale "requires a live Radicale server" descriptions in `pyproject.toml` integration marker and `Makefile` test-integration help text — integration tests use an in-process Radicale server, not an external one.

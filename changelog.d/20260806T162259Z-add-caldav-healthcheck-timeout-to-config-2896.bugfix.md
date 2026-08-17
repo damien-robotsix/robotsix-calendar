@@ -1,1 +1,0 @@
-Added `CALDAV_HEALTHCHECK_TIMEOUT` to `config/config.json` (was missing; default of 5 now explicit). Extended `config-schema-drift` checks (standalone workflow + CI) to validate `config/config.json` keys against the Settings model so future omissions fail CI. Updated AGENT.md sync-mandate rule to include `config/config.json`.
