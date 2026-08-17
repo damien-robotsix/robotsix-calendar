@@ -1,6 +1,12 @@
 ## 0.0.0 (unreleased)
 
 
+- Convert attribute docstrings to `Field(description=...)` in settings models so
+  descriptions are emitted into `config/config.schema.json` and rendered in the
+  deploy UI. Affects `LangfuseProjectSettings` (public_key, secret_key,
+  project_id), `LangfuseSettings` (host, projects), `OpenRouterSettings` (keys),
+  and `Settings` (all fields). Regenerated `config/config.schema.json` with
+  per-property description keys.
 - Update AGENT.md periodic workflow count from 16 to 18 to reflect added `credit_balance` and `pin_bump` stubs.
 - Enable `credit_balance` periodic workflow to monitor OpenRouter credit balance
 - Enable `pin_bump` periodic workflow to keep internal fleet dependency SHAs current.
