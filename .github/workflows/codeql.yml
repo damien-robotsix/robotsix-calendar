@@ -2,7 +2,10 @@ name: CodeQL
 
 on:
   push:
+    branches: [main]
   pull_request:
+  schedule:
+    - cron: '0 6 * * 1'  # every Monday 06:00 UTC
 
 concurrency:
   group: codeql-${{ github.workflow }}-${{ github.ref }}
@@ -11,22 +14,10 @@ concurrency:
 permissions: {}
 
 jobs:
-  analyze:
-    name: Analyze
-    runs-on: ubuntu-latest
+  codeql:
+    uses: damien-robotsix/robotsix-github-workflows/.github/workflows/codeql.yml@2d66a20
+    with:
+      languages: python
+      queries: security-extended
     permissions:
-      contents: read
-      security-events: write  # needed to upload SARIF results from CodeQL
-    steps:
-      - uses: step-security/harden-runner@b09bb98e06d4d774595224525879c09bc6e98c40  # v2.20.1
-        with:
-          egress-policy: audit
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: github/codeql-action/init@5595ccaf912efad79be6eef63a5619ff05969be3  # v4
-        with:
-          languages: python
-          build-mode: none
-          queries: security-and-quality
-      - uses: github/codeql-action/analyze@5595ccaf912efad79be6eef63a5619ff05969be3  # v4
+      security-events: write
