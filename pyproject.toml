@@ -65,7 +65,7 @@ docs = [
 ]
 
 [tool.uv]
-exclude-newer = "2026-08-05"
+exclude-newer = "2026-08-06T00:00:00Z"
 # Exempt ruff from the `exclude-newer` cutoff: dependabot bumps ruff frequently
 # and a fixed cutoff freezes it out of every release published after it.
 exclude-newer-package = { ruff = false }

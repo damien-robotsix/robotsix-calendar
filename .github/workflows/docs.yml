@@ -29,4 +29,9 @@ jobs:
     uses: damien-robotsix/robotsix-github-workflows/.github/workflows/python-docs.yml@77e10e286717cfe0eeb6b8d9ce985f3794236d15  # main  # pragma: allowlist secret  # zizmor: ignore[secrets-inherit]
     with:
       docs-install-args: "--group docs"
+      # The reusable workflow defaults to uv 0.8.15, which cannot parse
+      # lockfiles written by uv >= 0.9 (`exclude-newer` date-only strings and
+      # boolean `exclude-newer-package` entries). Pin the same version ci.yml
+      # uses so the lockfile this repo generates is always readable.
+      uv-version: "0.12.5"
     secrets: inherit  # pragma: allowlist secret  # zizmor: ignore[secrets-inherit]
