@@ -15,9 +15,9 @@ permissions: {}
 
 jobs:
   codeql:
-    uses: damien-robotsix/robotsix-github-workflows/.github/workflows/codeql.yml@2d66a20
+    uses: damien-robotsix/robotsix-github-workflows/.github/workflows/codeql.yml@2d66a20eef37f8b8dd5bb66cc134c76dbbf9ad39
     with:
       languages: python
       queries: security-extended
     permissions:
-      security-events: write
+      security-events: write  # needed to upload SARIF results from CodeQL
