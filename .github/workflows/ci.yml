@@ -12,42 +12,39 @@ permissions:
   contents: read
 
 jobs:
+  python-ci:
+    name: Python CI (shared)
+    uses: damien-robotsix/robotsix-github-workflows/.github/workflows/python-ci.yml@77e10e286717cfe0eeb6b8d9ce985f3794236d15  # main
+    with:
+      python-version: "3.14"
+      uv-version: "0.12.5"
+      install-extras: ""
+      cov-package: robotsix_calendar_agent
+      coverage-threshold: "85"
+      # The in-process Radicale integration suite runs in the dedicated
+      # `integration` job below; the shared spine should cover only the
+      # unit suite (and its coverage gate).
+      pytest-args: -m "not integration"
+
   security:
-    uses: damien-robotsix/robotsix-github-workflows/.github/workflows/python-security.yml@77e10e286717cfe0eeb6b8d9ce985f3794236d15  # main
+    uses: damien-robotsix/robotsix-github-workflows/.github/workflows/python-security.yml@f343f5ca84b1d54bb4c2fdcb83568724aa9f743c  # main
     with:
       uv-version: "0.12.5"
       install-extras: ""
       trufflehog-pr-diff: true
       trufflehog-extra-args: "--results=verified,unknown"
 
-  # hand-rolled: CodeQL taint-tracking SAST covers injection vulnerabilities
-  # (command injection, SSRF, LDAP injection, SSTI) that Bandit/ruff can't catch.
-  codeql:
-    name: CodeQL (Python)
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      security-events: write  # needed to upload SARIF results from CodeQL
-    steps:
-      - uses: step-security/harden-runner@b09bb98e06d4d774595224525879c09bc6e98c40  # v2.20.1
-        with:
-          egress-policy: audit
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: github/codeql-action/init@5595ccaf912efad79be6eef63a5619ff05969be3  # v4
-        with:
-          languages: python
-          build-mode: none
-          queries: security-and-quality
-      - uses: github/codeql-action/analyze@5595ccaf912efad79be6eef63a5619ff05969be3  # v4
-
   baseline:
     permissions:
       contents: read
-    uses: damien-robotsix/robotsix-github-workflows/.github/workflows/baseline-check.yml@77e10e286717cfe0eeb6b8d9ce985f3794236d15  # main
+    uses: damien-robotsix/robotsix-github-workflows/.github/workflows/baseline-check.yml@f343f5ca84b1d54bb4c2fdcb83568724aa9f743c  # main
     with:
       has-docker: true
+      # has-board enables the shared modules-drift job (validate +
+      # check-registration + validate-paths), replacing the hand-rolled
+      # modules-validate job.
+      has-board: true
+      uv-version: "0.12.5"
 
   docker-pr-scan:
     permissions:
@@ -86,272 +83,3 @@ jobs:
       - uses: ./.github/actions/setup-uv
       - run: uv sync --frozen
       - run: uv run pytest -m integration tests/
-
-  # hand-rolled: no shared workflow equivalent in robotsix-github-workflows
-  lockfile-check:
-    name: Lockfile check
-    runs-on: ubuntu-latest
-    steps:
-      - uses: step-security/harden-runner@b09bb98e06d4d774595224525879c09bc6e98c40  # v2.20.1
-        with:
-          egress-policy: audit
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: ./.github/actions/setup-uv
-      - run: uv lock --check
-
-  # hand-rolled: no shared workflow equivalent in robotsix-github-workflows
-  vulture:
-    name: Vulture dead code check
-    runs-on: ubuntu-latest
-    steps:
-      - uses: step-security/harden-runner@b09bb98e06d4d774595224525879c09bc6e98c40  # v2.20.1
-        with:
-          egress-policy: audit
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: ./.github/actions/setup-uv
-      - run: uv run --frozen vulture src/ vulture_whitelist.py
-
-  # hand-rolled: no shared workflow equivalent in robotsix-github-workflows
-  deptry:
-    name: Deptry unused dependency check
-    runs-on: ubuntu-latest
-    steps:
-      - uses: step-security/harden-runner@b09bb98e06d4d774595224525879c09bc6e98c40  # v2.20.1
-        with:
-          egress-policy: audit
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: ./.github/actions/setup-uv
-      - run: uv run --frozen deptry src/
-
-  # hand-rolled: no shared workflow equivalent in robotsix-github-workflows
-  modules-validate:
-    name: Modules manifest validation
-    runs-on: ubuntu-latest
-    steps:
-      - uses: step-security/harden-runner@b09bb98e06d4d774595224525879c09bc6e98c40  # v2.20.1
-        with:
-          egress-policy: audit
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: ./.github/actions/setup-uv
-      - run: uv run --frozen robotsix-modules validate docs/modules.yaml
-
-  # hand-rolled: no shared workflow equivalent in robotsix-github-workflows
-  config-schema-drift:
-    name: Config schema drift check
-    runs-on: ubuntu-latest
-    steps:
-      - uses: step-security/harden-runner@b09bb98e06d4d774595224525879c09bc6e98c40  # v2.20.1
-        with:
-          egress-policy: audit
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: ./.github/actions/setup-uv
-      - run: |
-          uv run --frozen python -c "
-          from robotsix_config import config_schema_json
-          from robotsix_calendar_agent.settings import Settings
-          import json, sys
-          expected = config_schema_json(Settings)
-          with open('config/config.schema.json') as f:
-              actual = f.read()
-          if expected != actual:
-              print('ERROR: config/config.schema.json is out of sync with Settings model.')
-              print('Run: python -c \"from robotsix_config import config_schema_json; from robotsix_calendar_agent.settings import Settings; print(config_schema_json(Settings), end=\\\"\\\")\" > config/config.schema.json')
-              sys.exit(1)
-          print('config/config.schema.json is in sync.')
-
-          with open('config/config.json') as f:
-              config_keys = set(json.load(f).keys())
-          settings_keys = set(Settings.model_fields.keys())
-          missing = settings_keys - config_keys
-          if missing:
-              print(f'ERROR: config/config.json is missing keys: {sorted(missing)}')
-              print('Add them with their default values to config/config.json.')
-              sys.exit(1)
-          print('config/config.json has all expected keys.')
-          "
-
-  # hand-rolled: no shared workflow equivalent in robotsix-github-workflows
-  dependency-audit:
-    name: Dependency audit
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: step-security/harden-runner@b09bb98e06d4d774595224525879c09bc6e98c40  # v2.20.1
-        with:
-          egress-policy: audit
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: ./.github/actions/setup-uv
-      - run: |
-          for i in 1 2 3; do
-            uv audit --frozen && exit 0
-            echo "Attempt $i failed, retrying in 40s..."
-            sleep 40
-          done
-          exit 1
-
-  # hand-rolled: no shared workflow equivalent in robotsix-github-workflows
-  dependency-review:
-    name: Dependency review
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: write  # needed to comment dependency review findings on PRs
-    steps:
-      - uses: step-security/harden-runner@b09bb98e06d4d774595224525879c09bc6e98c40  # v2.20.1
-        with:
-          egress-policy: audit
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294  # v5.0.0
-        with:
-          config-file: .github/dependency-review-config.yml
-
-  # hand-rolled: no shared workflow equivalent in robotsix-github-workflows
-  sbom:
-    name: Generate SBOM (CycloneDX)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: step-security/harden-runner@b09bb98e06d4d774595224525879c09bc6e98c40  # v2.20.1
-        with:
-          egress-policy: audit
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: ./.github/actions/setup-uv
-      - run: uv sync --frozen --no-dev
-      - run: uv run --no-dev --with cyclonedx-bom cyclonedx-py environment --output-file sbom.cyclonedx.json
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
-        with:
-          name: sbom
-          path: sbom.cyclonedx.json
-
-  # hand-rolled: no shared workflow equivalent in robotsix-github-workflows
-  workflow-audit:
-    name: Workflow audit (zizmor)
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      security-events: write  # needed to upload SARIF results from zizmor
-    steps:
-      - uses: step-security/harden-runner@b09bb98e06d4d774595224525879c09bc6e98c40  # v2.20.1
-        with:
-          egress-policy: audit
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: ./.github/actions/setup-uv
-      - run: uv run --with zizmor zizmor . --format=sarif > zizmor.sarif
-      - uses: github/codeql-action/upload-sarif@5595ccaf912efad79be6eef63a5619ff05969be3  # v4
-        if: ${{ always() }}
-        with:
-          sarif_file: zizmor.sarif
-
-  # hand-rolled: no shared workflow equivalent in robotsix-github-workflows
-  # Uses direct binary download to avoid Docker Hub dependency (rhysd/actionlint
-  # Docker action fails when Docker Hub is unreachable).
-  actionlint:
-    name: Actionlint
-    runs-on: ubuntu-latest
-    steps:
-      - uses: step-security/harden-runner@b09bb98e06d4d774595224525879c09bc6e98c40  # v2.20.1
-        with:
-          egress-policy: audit
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
-        with:
-          persist-credentials: false
-      - name: Install actionlint and shellcheck
-        run: |
-          sudo apt-get update -qq && sudo apt-get install -y -qq shellcheck
-          curl -sSL "https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_linux_amd64.tar.gz" | sudo tar xz -C /usr/local/bin actionlint
-      - name: Run actionlint
-        run: actionlint
-
-  # hand-rolled: no shared workflow equivalent in robotsix-github-workflows
-  commitizen-check:
-    name: Commitizen check
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: step-security/harden-runner@b09bb98e06d4d774595224525879c09bc6e98c40  # v2.20.1
-        with:
-          egress-policy: audit
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-      - uses: commitizen-tools/commitizen-action@338bbd841b75aaee6bf5340e1fa12f6ab58ff9ff  # 0.27.1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          push: false
-          commit: false
-
-  ci:
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: ["3.14"]
-    permissions:
-      contents: read
-      security-events: write  # needed to upload SARIF results from Python CI
-    uses: damien-robotsix/robotsix-github-workflows/.github/workflows/python-ci.yml@77e10e286717cfe0eeb6b8d9ce985f3794236d15  # main
-    with:
-      python-version: ${{ matrix.python-version }}
-      uv-version: "0.12.5"
-      install-extras: ""
-      cov-package: "robotsix_calendar_agent"
-      coverage-threshold: "85"
-      mypy-advisory: false
-
-  # hand-rolled: no shared workflow equivalent in robotsix-github-workflows
-  coverage-report:
-    name: Coverage report
-    if: ${{ !cancelled() }}
-    needs: [ci]
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write  # needed to write coverage badge to the repo
-      pull-requests: write  # needed to post coverage comment on PRs
-    steps:
-      - uses: step-security/harden-runner@b09bb98e06d4d774595224525879c09bc6e98c40  # v2.20.1
-        with:
-          egress-policy: audit
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
-        with:
-          persist-credentials: true
-      - uses: ./.github/actions/setup-uv
-      - run: uv sync --frozen
-      - name: Generate coverage report
-        run: |
-          uv run pytest --cov=robotsix_calendar_agent --cov-report=xml --cov-report=html --cov-report=term \
-            -m 'not integration' tests/
-      - name: Upload HTML coverage report
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
-        with:
-          name: coverage-html
-          path: htmlcov/
-      - name: Post PR coverage comment
-        uses: py-cov-action/python-coverage-comment-action@a05be3d2e8a6272d3ef5fb2840ab20368bb2eb71  # v4.3
-        if: github.event_name == 'pull_request'
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Generate coverage badge
-        uses: py-cov-action/python-coverage-comment-action@a05be3d2e8a6272d3ef5fb2840ab20368bb2eb71  # v4.3
-        if: github.ref == 'refs/heads/main'
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          MINIMUM_GREEN: 90
-          MINIMUM_ORANGE: 80
