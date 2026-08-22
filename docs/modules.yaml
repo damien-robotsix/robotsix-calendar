@@ -178,6 +178,7 @@ modules:
       - .robotsix-mill/periodic/triage_boilerplate.yaml
       - AGENT.md
       - CHANGELOG.md
+      - changelog.d/*.md
       - CONTRIBUTING.md
       - Dockerfile
       - LICENSE

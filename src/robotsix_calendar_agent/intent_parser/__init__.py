@@ -107,7 +107,7 @@ class IntentParser:
         try:
             from robotsix_llmio.core import build_agent_for_level, run_agent
 
-            # level=2 is the standard LLMIO default (DeepSeek V4 Pro).
+            # level=2 is llmio's standard intermediate tier.
             # The implement agent already uses this tier successfully for
             # tool calls and structured output via pydantic-ai.
             handle = build_agent_for_level(
