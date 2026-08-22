@@ -33,30 +33,10 @@ jobs:
 
       - uses: ./.github/actions/setup-uv
 
-      - name: Regenerate config schema
+      - name: Check config schema is up to date
         run: |
-          uv run --frozen python -c "
-          from robotsix_config import config_schema_json
-          from robotsix_calendar_agent.settings import Settings
-          with open('config/config.schema.json', 'w') as f:
-              f.write(config_schema_json(Settings))
-          "
-
-      - name: Check for drift
-        run: git diff --exit-code config/config.schema.json
+          uv run --frozen robotsix-config schema --check robotsix_calendar_agent.settings.Settings
 
       - name: Check config.json keys
         run: |
-          uv run --frozen python -c "
-          from robotsix_calendar_agent.settings import Settings
-          import json, sys
-          with open('config/config.json') as f:
-              config_keys = set(json.load(f).keys())
-          settings_keys = set(Settings.model_fields.keys())
-          missing = settings_keys - config_keys
-          if missing:
-              print(f'ERROR: config/config.json is missing keys: {sorted(missing)}')
-              print('Add them with their default values to config/config.json.')
-              sys.exit(1)
-          print('config/config.json has all expected keys.')
-          "
+          uv run --frozen robotsix-config config --check-keys robotsix_calendar_agent.settings.Settings --config config/config.json
