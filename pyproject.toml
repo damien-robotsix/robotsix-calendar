@@ -71,7 +71,7 @@ exclude-newer = "2026-08-06T00:00:00Z"
 exclude-newer-package = { ruff = false }
 
 [tool.uv.sources]
-robotsix-config = { git = "https://github.com/damien-robotsix/robotsix-config.git", rev = "48e736bad05ff514360f93092a5f486a6aee1fe1" }
+robotsix-config = { git = "https://github.com/damien-robotsix/robotsix-config.git", rev = "b68476fa9aab58f70697d870da956220ecf9cf48" }
 robotsix-llmio = { git = "https://github.com/damien-robotsix/robotsix-llmio.git", rev = "73f2d555caa21de47a3732824d776e04719b3011" }  # pragma: allowlist secret
 robotsix-http = { git = "https://github.com/damien-robotsix/robotsix-http.git", rev = "70baf170b66904c9a6570563cce0ac75b6103f58" }
 robotsix-modules = { git = "https://github.com/damien-robotsix/robotsix-modules.git", rev = "b2e82231fa2f260589be9ba757c6be450f4e5d3e" }

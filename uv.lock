@@ -1598,7 +1598,7 @@ requires-dist = [
     { name = "caldav" },
     { name = "opentelemetry-api" },
     { name = "pydantic" },
-    { name = "robotsix-config", git = "https://github.com/damien-robotsix/robotsix-config.git?rev=48e736bad05ff514360f93092a5f486a6aee1fe1" },
+    { name = "robotsix-config", git = "https://github.com/damien-robotsix/robotsix-config.git?rev=b68476fa9aab58f70697d870da956220ecf9cf48" },
     { name = "robotsix-http", git = "https://github.com/damien-robotsix/robotsix-http.git?rev=70baf170b66904c9a6570563cce0ac75b6103f58" },
     { name = "robotsix-llmio", extras = ["openrouter", "tracing"], git = "https://github.com/damien-robotsix/robotsix-llmio.git?rev=73f2d555caa21de47a3732824d776e04719b3011" },
 ]
@@ -1626,8 +1626,8 @@ docs = [
 
 [[package]]
 name = "robotsix-config"
-version = "0.4.0"
-source = { git = "https://github.com/damien-robotsix/robotsix-config.git?rev=48e736bad05ff514360f93092a5f486a6aee1fe1#48e736bad05ff514360f93092a5f486a6aee1fe1" }
+version = "0.5.0"
+source = { git = "https://github.com/damien-robotsix/robotsix-config.git?rev=b68476fa9aab58f70697d870da956220ecf9cf48#b68476fa9aab58f70697d870da956220ecf9cf48" }
 dependencies = [
     { name = "pydantic" },
 ]
