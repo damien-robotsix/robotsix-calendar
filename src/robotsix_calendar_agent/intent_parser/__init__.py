@@ -107,7 +107,8 @@ class IntentParser:
         try:
             from robotsix_llmio.core import build_agent_for_level, run_agent
 
-            # level=2 is llmio's standard intermediate tier.
+            # level=2 is llmio's cheap flat-rate tier (Claude haiku): intent
+            # parsing is frequent and simple, a good fit for the subscription.
             # The implement agent already uses this tier successfully for
             # tool calls and structured output via pydantic-ai.
             handle = build_agent_for_level(

@@ -1599,8 +1599,8 @@ requires-dist = [
     { name = "opentelemetry-api" },
     { name = "pydantic" },
     { name = "robotsix-config", git = "https://github.com/damien-robotsix/robotsix-config.git?rev=48e736bad05ff514360f93092a5f486a6aee1fe1" },
-    { name = "robotsix-http", git = "https://github.com/damien-robotsix/robotsix-http.git?rev=70baf170b66904c9a6570563cce0ac75b6103f58" },
-    { name = "robotsix-llmio", extras = ["openrouter", "tracing"], git = "https://github.com/damien-robotsix/robotsix-llmio.git?rev=73f2d555caa21de47a3732824d776e04719b3011" },
+    { name = "robotsix-http", git = "https://github.com/damien-robotsix/robotsix-http.git?rev=cdfd4d1c42679fef73081439562872792e202dc4" },
+    { name = "robotsix-llmio", extras = ["openrouter", "tracing"], git = "https://github.com/damien-robotsix/robotsix-llmio.git?rev=f9f3e5c9fd4243462e428686bbde357ed2466407" },
 ]
 
 [package.metadata.requires-dev]
@@ -1634,24 +1634,27 @@ dependencies = [
 
 [[package]]
 name = "robotsix-http"
-version = "0.1.dev24+g70baf170b"
-source = { git = "https://github.com/damien-robotsix/robotsix-http.git?rev=70baf170b66904c9a6570563cce0ac75b6103f58#70baf170b66904c9a6570563cce0ac75b6103f58" }
+version = "0.3.2"
+source = { git = "https://github.com/damien-robotsix/robotsix-http.git?rev=cdfd4d1c42679fef73081439562872792e202dc4#cdfd4d1c42679fef73081439562872792e202dc4" }
 dependencies = [
     { name = "httpx" },
 ]
 
 [[package]]
 name = "robotsix-llmio"
-version = "0.1.0"
-source = { git = "https://github.com/damien-robotsix/robotsix-llmio.git?rev=73f2d555caa21de47a3732824d776e04719b3011#73f2d555caa21de47a3732824d776e04719b3011" }
+version = "0.5.0"
+source = { git = "https://github.com/damien-robotsix/robotsix-llmio.git?rev=f9f3e5c9fd4243462e428686bbde357ed2466407#f9f3e5c9fd4243462e428686bbde357ed2466407" }
 dependencies = [
     { name = "httpx" },
+    { name = "pydantic" },
     { name = "pydantic-ai-slim" },
+    { name = "robotsix-http" },
     { name = "starlette" },
 ]
 
 [package.optional-dependencies]
 openrouter = [
+    { name = "openai" },
     { name = "pydantic-ai-slim", extra = ["openrouter"] },
 ]
 tracing = [
