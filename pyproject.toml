@@ -71,10 +71,10 @@ exclude-newer = "2026-08-06T00:00:00Z"
 exclude-newer-package = { ruff = false }
 
 [tool.uv.sources]
-robotsix-config = { git = "https://github.com/damien-robotsix/robotsix-config.git", rev = "48e736bad05ff514360f93092a5f486a6aee1fe1" }
-robotsix-llmio = { git = "https://github.com/damien-robotsix/robotsix-llmio.git", rev = "f9f3e5c9fd4243462e428686bbde357ed2466407" }  # pragma: allowlist secret
-robotsix-http = { git = "https://github.com/damien-robotsix/robotsix-http.git", rev = "cdfd4d1c42679fef73081439562872792e202dc4" }
-robotsix-modules = { git = "https://github.com/damien-robotsix/robotsix-modules.git", rev = "b2e82231fa2f260589be9ba757c6be450f4e5d3e" }
+robotsix-config = { git = "https://github.com/damien-robotsix/robotsix-config.git", rev = "a94fedae6e29c750588c809cdd6f5968ee04b494" }
+robotsix-llmio = { git = "https://github.com/damien-robotsix/robotsix-llmio.git", rev = "551c5ffb7d26daa266434bf267e3caa525884a4a" }  # pragma: allowlist secret
+robotsix-http = { git = "https://github.com/damien-robotsix/robotsix-http.git", rev = "31eec4957cc73bc98e8df2ae2d0909f32236d790" }
+robotsix-modules = { git = "https://github.com/damien-robotsix/robotsix-modules.git", rev = "d916d1c14198dd00bb136605224177289c73352c" }
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/robotsix_calendar_agent"]
