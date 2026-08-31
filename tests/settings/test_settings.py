@@ -39,7 +39,7 @@ class TestNormalizeLogLevel:
         assert Settings._normalize_log_level("ERROR") == "ERROR"
 
     def test_invalid_level_raises(self) -> None:
-        with pytest.raises(ValueError, match="Invalid LOG_LEVEL"):
+        with pytest.raises(ValueError, match="Invalid log_level"):
             Settings._normalize_log_level("BOGUS")
 
 
@@ -67,81 +67,81 @@ class TestSettingsConstruction:
     def test_defaults(self) -> None:
         path = _write_config(
             {
-                "RADICALE_URL": "https://radicale.example.com",
-                "RADICALE_USERNAME": "user",
-                "RADICALE_PASSWORD": "secret",  # pragma: allowlist secret
+                "radicale_url": "https://radicale.example.com",
+                "radicale_username": "user",
+                "radicale_password": "secret",  # pragma: allowlist secret
             }
         )
         s = load_config(Settings, path=path)
-        assert s.RADICALE_URL == "https://radicale.example.com"
-        assert s.RADICALE_USERNAME == "user"
-        assert s.RADICALE_PASSWORD.get_secret_value() == "secret"
-        assert s.RADICALE_DEFAULT_CALENDAR == "Robotsix"
-        assert s.LOG_LEVEL == "INFO"
-        assert s.JSON_LOGS is False
+        assert s.radicale_url == "https://radicale.example.com"
+        assert s.radicale_username == "user"
+        assert s.radicale_password.get_secret_value() == "secret"
+        assert s.radicale_default_calendar == "Robotsix"
+        assert s.log_level == "INFO"
+        assert s.json_logs is False
 
     def test_radicale_fields_from_config(self) -> None:
         path = _write_config(
             {
-                "RADICALE_URL": "https://radicale.example.com",
-                "RADICALE_USERNAME": "user",
-                "RADICALE_PASSWORD": "secret",  # pragma: allowlist secret
+                "radicale_url": "https://radicale.example.com",
+                "radicale_username": "user",
+                "radicale_password": "secret",  # pragma: allowlist secret
             }
         )
         s = load_config(Settings, path=path)
-        assert s.RADICALE_URL == "https://radicale.example.com"
-        assert s.RADICALE_USERNAME == "user"
-        assert s.RADICALE_PASSWORD.get_secret_value() == "secret"
+        assert s.radicale_url == "https://radicale.example.com"
+        assert s.radicale_username == "user"
+        assert s.radicale_password.get_secret_value() == "secret"
 
     def test_radicale_default_calendar_from_config(self) -> None:
         path = _write_config(
             {
-                "RADICALE_URL": "https://x.com",
-                "RADICALE_USERNAME": "u",
-                "RADICALE_PASSWORD": "p",  # pragma: allowlist secret
-                "RADICALE_DEFAULT_CALENDAR": "Damien",
+                "radicale_url": "https://x.com",
+                "radicale_username": "u",
+                "radicale_password": "p",  # pragma: allowlist secret
+                "radicale_default_calendar": "Damien",
             }
         )
         s = load_config(Settings, path=path)
-        assert s.RADICALE_DEFAULT_CALENDAR == "Damien"
+        assert s.radicale_default_calendar == "Damien"
 
     def test_radicale_default_calendar_defaults_to_robotsix(self) -> None:
         path = _write_config(
             {
-                "RADICALE_URL": "https://x.com",
-                "RADICALE_USERNAME": "u",
-                "RADICALE_PASSWORD": "p",  # pragma: allowlist secret
+                "radicale_url": "https://x.com",
+                "radicale_username": "u",
+                "radicale_password": "p",  # pragma: allowlist secret
             }
         )
         s = load_config(Settings, path=path)
-        assert s.RADICALE_DEFAULT_CALENDAR == "Robotsix"
+        assert s.radicale_default_calendar == "Robotsix"
 
     def test_log_level_from_config(self) -> None:
         path = _write_config(
             {
-                "RADICALE_URL": "https://x.com",
-                "RADICALE_USERNAME": "u",
-                "RADICALE_PASSWORD": "p",  # pragma: allowlist secret
-                "LOG_LEVEL": "DEBUG",
+                "radicale_url": "https://x.com",
+                "radicale_username": "u",
+                "radicale_password": "p",  # pragma: allowlist secret
+                "log_level": "DEBUG",
             }
         )
         s = load_config(Settings, path=path)
-        assert s.LOG_LEVEL == "DEBUG"
+        assert s.log_level == "DEBUG"
 
     def test_json_logs_from_config(self) -> None:
         path = _write_config(
             {
-                "RADICALE_URL": "https://x.com",
-                "RADICALE_USERNAME": "u",
-                "RADICALE_PASSWORD": "p",  # pragma: allowlist secret
-                "JSON_LOGS": True,
+                "radicale_url": "https://x.com",
+                "radicale_username": "u",
+                "radicale_password": "p",  # pragma: allowlist secret
+                "json_logs": True,
             }
         )
         s = load_config(Settings, path=path)
-        assert s.JSON_LOGS is True
+        assert s.json_logs is True
 
     def test_invalid_log_level_raises_during_load(self) -> None:
-        path = _write_config({"LOG_LEVEL": "BOGUS"})
+        path = _write_config({"log_level": "BOGUS"})
         from robotsix_config import InvalidConfigError
 
         with pytest.raises(InvalidConfigError):
@@ -182,9 +182,9 @@ class TestCredentialAliasMatching:
             keys={alias: SecretStr("sk-or") for alias in openrouter_aliases}
         )
         return Settings(
-            RADICALE_URL="https://x.com",
-            RADICALE_USERNAME="u",
-            RADICALE_PASSWORD=SecretStr("p"),
+            radicale_url="https://x.com",
+            radicale_username="u",
+            radicale_password=SecretStr("p"),
             langfuse=langfuse,
             openrouter=openrouter,
         )
@@ -201,9 +201,9 @@ class TestCredentialAliasMatching:
 
     def test_only_openrouter_block_is_accepted(self) -> None:
         settings = Settings(
-            RADICALE_URL="https://x.com",
-            RADICALE_USERNAME="u",
-            RADICALE_PASSWORD=SecretStr("p"),
+            radicale_url="https://x.com",
+            radicale_username="u",
+            radicale_password=SecretStr("p"),
             openrouter=OpenRouterSettings(keys={COMPONENT_ALIAS: SecretStr("sk-or")}),
         )
         assert settings.langfuse is None

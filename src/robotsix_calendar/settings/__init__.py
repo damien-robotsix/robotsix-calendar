@@ -90,26 +90,26 @@ class Settings(BaseModel):
     model_config = {"extra": "forbid"}
 
     # -- Radicale credentials ------------------------------------------------
-    RADICALE_URL: str = Field(
+    radicale_url: str = Field(
         description="Radicale server URL (e.g. https://radicale.example.com)."
     )
 
-    RADICALE_USERNAME: str = Field(description="Radicale username for authentication.")
+    radicale_username: str = Field(description="Radicale username for authentication.")
 
-    RADICALE_PASSWORD: SecretStr = Field(
+    radicale_password: SecretStr = Field(
         description="Radicale password for authentication."
     )
 
-    RADICALE_DEFAULT_CALENDAR: str = Field(
+    radicale_default_calendar: str = Field(
         default="Robotsix",
         description="Default calendar name when no calendar_id is provided.",
     )
 
-    CALDAV_TIMEOUT: int = Field(
+    caldav_timeout: int = Field(
         default=30, description="Timeout in seconds for CalDAV HTTP requests."
     )
 
-    CALDAV_HEALTHCHECK_TIMEOUT: int = Field(
+    caldav_healthcheck_timeout: int = Field(
         default=5,
         description=(
             "Timeout in seconds for the Docker HEALTHCHECK probe's CalDAV "
@@ -141,26 +141,26 @@ class Settings(BaseModel):
     )
 
     # -- Logging -------------------------------------------------------------
-    LOG_LEVEL: str = Field(
+    log_level: str = Field(
         default="INFO",
         description="Log level - one of DEBUG, INFO, WARNING, ERROR, CRITICAL.",
     )
 
-    JSON_LOGS: bool = Field(
+    json_logs: bool = Field(
         default=False,
         description="When True, emit logs as JSON for structured-log ingestion.",
     )
 
     # -- Validators ----------------------------------------------------------
 
-    @field_validator("LOG_LEVEL")
+    @field_validator("log_level")
     @classmethod
     def _normalize_log_level(cls, v: str) -> str:
         """Normalise to uppercase and reject invalid log levels."""
         v = v.strip().upper()
         if v not in logging.getLevelNamesMapping():
             raise ValueError(
-                f"Invalid LOG_LEVEL={v!r}; must be one of "
+                f"Invalid log_level={v!r}; must be one of "
                 f"{sorted(logging.getLevelNamesMapping())}"
             )
         return v

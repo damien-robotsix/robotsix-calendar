@@ -1,10 +1,10 @@
 {
-  "RADICALE_URL": "https://radicale.example.com",
-  "RADICALE_USERNAME": "your-username",
-  "RADICALE_PASSWORD": "your-password",
-  "RADICALE_DEFAULT_CALENDAR": "Robotsix",
-  "CALDAV_TIMEOUT": 30,
-  "CALDAV_HEALTHCHECK_TIMEOUT": 5,
+  "radicale_url": "https://radicale.example.com",
+  "radicale_username": "your-username",
+  "radicale_password": "your-password",
+  "radicale_default_calendar": "Robotsix",
+  "caldav_timeout": 30,
+  "caldav_healthcheck_timeout": 5,
   "langfuse": {
     "host": "https://langfuse.example.com",
     "projects": {
@@ -20,6 +20,6 @@
       "robotsix-calendar": "sk-or-..."
     }
   },
-  "LOG_LEVEL": "INFO",
-  "JSON_LOGS": false
+  "log_level": "INFO",
+  "json_logs": false
 }

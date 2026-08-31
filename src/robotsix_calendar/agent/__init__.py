@@ -157,15 +157,15 @@ class CalendarAgent:
 
         self._agent_id = agent_id
 
-        url = settings.RADICALE_URL
-        username = settings.RADICALE_USERNAME
-        password = settings.RADICALE_PASSWORD.get_secret_value()
+        url = settings.radicale_url
+        username = settings.radicale_username
+        password = settings.radicale_password.get_secret_value()
 
         if not url or not username or not password:
             _missing_credentials_msg = (
                 "Radicale credentials are required. "
-                "Provide RADICALE_URL, RADICALE_USERNAME, and "
-                "RADICALE_PASSWORD in config/config.json."
+                "Provide radicale_url, radicale_username, and "
+                "radicale_password in config/config.json."
             )
             raise ValueError(_missing_credentials_msg)
 
@@ -173,8 +173,8 @@ class CalendarAgent:
             url,
             username,
             password,
-            default_calendar=settings.RADICALE_DEFAULT_CALENDAR,
-            timeout=settings.CALDAV_TIMEOUT,
+            default_calendar=settings.radicale_default_calendar,
+            timeout=settings.caldav_timeout,
         )
 
         self._parser = IntentParser()

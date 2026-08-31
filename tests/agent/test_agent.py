@@ -17,9 +17,9 @@ from robotsix_calendar.settings import COMPONENT_ALIAS, Settings
 def _write_temp_config(overrides: dict | None = None) -> str:
     """Write a temporary config.json and return its path."""
     data: dict = {
-        "RADICALE_URL": "https://radicale.example.com",
-        "RADICALE_USERNAME": "user",
-        "RADICALE_PASSWORD": "pass",  # pragma: allowlist secret
+        "radicale_url": "https://radicale.example.com",
+        "radicale_username": "user",
+        "radicale_password": "pass",  # pragma: allowlist secret
     }
     if overrides:
         data.update(overrides)
@@ -45,9 +45,9 @@ class TestCalendarAgentInit:
             patch("robotsix_config.load_config") as mock_load,
         ):
             mock_load.return_value = Settings(
-                RADICALE_URL="https://x.com",
-                RADICALE_USERNAME="u",
-                RADICALE_PASSWORD="p",  # type: ignore[arg-type]  # pragma: allowlist secret
+                radicale_url="https://x.com",
+                radicale_username="u",
+                radicale_password="p",  # type: ignore[arg-type]  # pragma: allowlist secret
             )
 
             from robotsix_calendar.agent import CalendarAgent
@@ -58,9 +58,9 @@ class TestCalendarAgentInit:
     def test_raises_value_error_for_missing_credentials(self) -> None:
         config_path = _write_temp_config(
             {
-                "RADICALE_URL": "",
-                "RADICALE_USERNAME": "",
-                "RADICALE_PASSWORD": "",
+                "radicale_url": "",
+                "radicale_username": "",
+                "radicale_password": "",
             }
         )
         os.environ["ROBOTSIX_CONFIG_FILE"] = config_path
@@ -71,9 +71,9 @@ class TestCalendarAgentInit:
             patch("robotsix_config.load_config") as mock_load,
         ):
             mock_load.return_value = Settings(
-                RADICALE_URL="",
-                RADICALE_USERNAME="",
-                RADICALE_PASSWORD="",  # type: ignore[arg-type]  # pragma: allowlist secret
+                radicale_url="",
+                radicale_username="",
+                radicale_password="",  # type: ignore[arg-type]  # pragma: allowlist secret
             )
 
             from robotsix_calendar.agent import CalendarAgent
@@ -129,9 +129,9 @@ class TestRuntimeCredentials:
 
         monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
         settings = Settings(
-            RADICALE_URL="https://x.com",
-            RADICALE_USERNAME="u",
-            RADICALE_PASSWORD=SecretStr("p"),
+            radicale_url="https://x.com",
+            radicale_username="u",
+            radicale_password=SecretStr("p"),
             openrouter=OpenRouterSettings(
                 keys={COMPONENT_ALIAS: SecretStr("sk-canonical")}
             ),
@@ -163,9 +163,9 @@ class TestRuntimeCredentials:
             monkeypatch.delenv(var, raising=False)
 
         settings = Settings(
-            RADICALE_URL="https://x.com",
-            RADICALE_USERNAME="u",
-            RADICALE_PASSWORD=SecretStr("p"),
+            radicale_url="https://x.com",
+            radicale_username="u",
+            radicale_password=SecretStr("p"),
             langfuse=LangfuseSettings(
                 host="https://langfuse.example.com",
                 projects={
@@ -201,9 +201,9 @@ class TestRuntimeCredentials:
             monkeypatch.delenv(var, raising=False)
 
         settings = Settings(
-            RADICALE_URL="https://x.com",
-            RADICALE_USERNAME="u",
-            RADICALE_PASSWORD=SecretStr("p"),
+            radicale_url="https://x.com",
+            radicale_username="u",
+            radicale_password=SecretStr("p"),
             langfuse=LangfuseSettings(
                 host="https://langfuse.example.com",
                 projects={
