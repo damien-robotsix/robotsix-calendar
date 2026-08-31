@@ -48,6 +48,7 @@ class TestMain:
 
         with (
             patch("robotsix_calendar_agent.entrypoint._serve_blocking") as mock_serve,
+            patch("robotsix_calendar_agent.entrypoint._start_http_server"),
             patch("robotsix_config.load_config"),
             patch("robotsix_llmio.logging.setup_logging"),
         ):
@@ -60,6 +61,7 @@ class TestMain:
 
         with (
             patch("robotsix_calendar_agent.entrypoint._serve_blocking"),
+            patch("robotsix_calendar_agent.entrypoint._start_http_server"),
             patch("robotsix_config.load_config") as mock_load,
             patch("robotsix_llmio.logging.setup_logging") as mock_setup,
         ):
@@ -81,6 +83,7 @@ class TestMain:
 
         with (
             patch("robotsix_calendar_agent.entrypoint._serve_blocking"),
+            patch("robotsix_calendar_agent.entrypoint._start_http_server"),
             patch("robotsix_config.load_config") as mock_load,
             patch("robotsix_llmio.logging.setup_logging"),
             patch(
@@ -99,6 +102,7 @@ class TestMain:
 
         with (
             patch("robotsix_calendar_agent.entrypoint._serve_blocking"),
+            patch("robotsix_calendar_agent.entrypoint._start_http_server"),
             patch("robotsix_config.load_config") as mock_load,
             patch("robotsix_llmio.logging.setup_logging") as mock_setup,
         ):

@@ -80,17 +80,30 @@ modules:
       - docs/intent_parser/reference.md
     dependencies: []
 
+  - id: api
+    description: >-
+      FastAPI HTTP server exposing structured (non-LLM) CRUD endpoints
+      for events, tasks, contacts, and calendars.
+    paths:
+      - src/robotsix_calendar_agent/api/__init__.py
+      - tests/api/__init__.py
+      - tests/api/test_api.py
+    dependencies:
+      - caldav-client
+
   - id: entrypoint
     description: >-
       Service entrypoint — long-lived in-process main() that blocks until
-      SIGTERM/SIGINT, suitable for containerised deployments.
+      SIGTERM/SIGINT, suitable for containerised deployments.  Starts the
+      FastAPI HTTP API server in a daemon thread.
     paths:
       - src/robotsix_calendar_agent/entrypoint/__init__.py
       - src/robotsix_calendar_agent/entrypoint/__main__.py
       - tests/entrypoint/__init__.py
       - tests/entrypoint/test_entrypoint.py
       - docs/entrypoint/reference.md
-    dependencies: []
+    dependencies:
+      - api
 
   - id: healthcheck
     description: >-

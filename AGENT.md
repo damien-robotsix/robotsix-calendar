@@ -92,6 +92,8 @@ src/robotsix_calendar_agent/
 │   ├── __init__.py             # CalendarAgent class, re-exports
 │   ├── _dispatch.py            # dispatch table & handler functions
 │   └── _reply.py               # reply rendering & formatting
+├── api/                        # FastAPI HTTP server — structured CRUD endpoints
+│   └── __init__.py             # FastAPI app, Pydantic models, endpoint handlers
 ├── caldav_client/              # typed CalDAV/CardDAV wrapper with retry logic via robotsix-http
 │   ├── __init__.py
 │   ├── _shared.py              # shared helpers
@@ -124,6 +126,7 @@ src/robotsix_calendar_agent/
 - **`caldav`** — CalDAV/CardDAV client library
 - **`pydantic` / `robotsix-config`** — configuration & data models
 - **`robotsix-http`** — HTTP client with retry logic
+- **`fastapi` / `uvicorn`** — HTTP API server for structured CRUD endpoints
 ## Periodic workflows
 
 This repo is targeted by **17 periodic agent workflows**, plus one

@@ -59,6 +59,8 @@ ENV PATH="/app/.venv/bin:${PATH}" \
 
 USER 1001
 
+EXPOSE 8080
+
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
     CMD ["calendar-agent-healthcheck"]
 
