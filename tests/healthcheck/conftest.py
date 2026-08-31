@@ -18,12 +18,12 @@ def _make_mock_settings(
 ) -> MagicMock:
     """Return a MagicMock Settings with the given credential fields."""
     settings = MagicMock()
-    settings.RADICALE_URL = url
-    settings.RADICALE_USERNAME = username
-    settings.RADICALE_PASSWORD = SecretStr(password)
-    settings.RADICALE_DEFAULT_CALENDAR = default_calendar
-    settings.CALDAV_TIMEOUT = 30
-    settings.CALDAV_HEALTHCHECK_TIMEOUT = 5
+    settings.radicale_url = url
+    settings.radicale_username = username
+    settings.radicale_password = SecretStr(password)
+    settings.radicale_default_calendar = default_calendar
+    settings.caldav_timeout = 30
+    settings.caldav_healthcheck_timeout = 5
     return settings
 
 

@@ -46,11 +46,11 @@ def _start_http_server(settings: Settings) -> None:
     from ..caldav_client import CalDavClient
 
     client = CalDavClient(
-        url=settings.RADICALE_URL,
-        username=settings.RADICALE_USERNAME,
-        password=settings.RADICALE_PASSWORD.get_secret_value(),
-        default_calendar=settings.RADICALE_DEFAULT_CALENDAR,
-        timeout=settings.CALDAV_TIMEOUT,
+        url=settings.radicale_url,
+        username=settings.radicale_username,
+        password=settings.radicale_password.get_secret_value(),
+        default_calendar=settings.radicale_default_calendar,
+        timeout=settings.caldav_timeout,
     )
     app.state.caldav_client = client
 
@@ -78,8 +78,8 @@ def main() -> None:
     _setup_runtime_credentials(settings)
 
     setup_logging(
-        level=settings.LOG_LEVEL,
-        fmt="json" if settings.JSON_LOGS else "console",
+        level=settings.log_level,
+        fmt="json" if settings.json_logs else "console",
         loggers=("robotsix_calendar",),
     )
     _start_http_server(settings)

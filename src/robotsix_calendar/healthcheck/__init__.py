@@ -40,21 +40,21 @@ def main() -> None:
         0: CalDAV server is reachable and responsive.
         1: Health probe failed.
 
-    Uses ``CALDAV_HEALTHCHECK_TIMEOUT`` (default 5s) to stay inside
+    Uses ``caldav_healthcheck_timeout`` (default 5s) to stay inside
     Docker's ``--timeout=10s`` window. Does **not** retry internally —
     Docker's own ``--retries`` and ``--interval`` handle transient
     failures across invocations.
     """
     settings = load_config(Settings)
-    url = settings.RADICALE_URL
-    username = settings.RADICALE_USERNAME
-    password = settings.RADICALE_PASSWORD.get_secret_value()
-    default_calendar = settings.RADICALE_DEFAULT_CALENDAR
+    url = settings.radicale_url
+    username = settings.radicale_username
+    password = settings.radicale_password.get_secret_value()
+    default_calendar = settings.radicale_default_calendar
 
     if not url or not username or not password:
         print(
-            "healthcheck: RADICALE_URL, RADICALE_USERNAME, and "
-            "RADICALE_PASSWORD must be set in config/config.json",
+            "healthcheck: radicale_url, radicale_username, and "
+            "radicale_password must be set in config/config.json",
             file=sys.stderr,
         )
         sys.exit(1)
@@ -66,7 +66,7 @@ def main() -> None:
                 username=username,
                 password=password,
                 default_calendar=default_calendar,
-                timeout=settings.CALDAV_HEALTHCHECK_TIMEOUT,
+                timeout=settings.caldav_healthcheck_timeout,
             )
             result = client.health()
         except Exception as exc:

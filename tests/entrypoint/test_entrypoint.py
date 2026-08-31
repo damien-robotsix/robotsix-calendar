@@ -22,10 +22,10 @@ def test_log_level_validation_rejects_invalid() -> None:
 
     with pytest.raises(ValidationError):
         Settings(
-            RADICALE_URL="https://x.com",
-            RADICALE_USERNAME="u",
-            RADICALE_PASSWORD=SecretStr("p"),
-            LOG_LEVEL="GARBAGE",
+            radicale_url="https://x.com",
+            radicale_username="u",
+            radicale_password=SecretStr("p"),
+            log_level="GARBAGE",
         )
 
 
@@ -34,12 +34,12 @@ def test_log_level_validation_normalises_case() -> None:
     from robotsix_calendar.settings import Settings
 
     s = Settings(
-        RADICALE_URL="https://x.com",
-        RADICALE_USERNAME="u",
-        RADICALE_PASSWORD=SecretStr("p"),
-        LOG_LEVEL="debug",
+        radicale_url="https://x.com",
+        radicale_username="u",
+        radicale_password=SecretStr("p"),
+        log_level="debug",
     )
-    assert s.LOG_LEVEL == "DEBUG"
+    assert s.log_level == "DEBUG"
 
 
 class TestMain:
@@ -66,8 +66,8 @@ class TestMain:
             patch("robotsix_llmio.logging.setup_logging") as mock_setup,
         ):
             mock_settings = MagicMock()
-            mock_settings.LOG_LEVEL = "DEBUG"
-            mock_settings.JSON_LOGS = True
+            mock_settings.log_level = "DEBUG"
+            mock_settings.json_logs = True
             mock_load.return_value = mock_settings
 
             entrypoint.main()
@@ -107,8 +107,8 @@ class TestMain:
             patch("robotsix_llmio.logging.setup_logging") as mock_setup,
         ):
             mock_settings = MagicMock()
-            mock_settings.LOG_LEVEL = "INFO"
-            mock_settings.JSON_LOGS = False
+            mock_settings.log_level = "INFO"
+            mock_settings.json_logs = False
             mock_load.return_value = mock_settings
 
             entrypoint.main()

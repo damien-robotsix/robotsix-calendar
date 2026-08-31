@@ -27,9 +27,9 @@ Edit (or create) `config/config.json` with your Radicale server details:
 
 ```json
 {
-  "RADICALE_URL": "https://radicale.example.com",
-  "RADICALE_USERNAME": "your-username",
-  "RADICALE_PASSWORD": "your-password"
+  "radicale_url": "https://radicale.example.com",
+  "radicale_username": "your-username",
+  "radicale_password": "your-password"
 }
 ```
 
@@ -128,8 +128,8 @@ See [Configuration](configuration.md) for the canonical config-file
 reference.  All settings — including the three required Radicale
 credentials — live in `config/config.json`.
 
-Four additional optional keys (`RADICALE_DEFAULT_CALENDAR`, `CALDAV_TIMEOUT`,
-`LOG_LEVEL`, `JSON_LOGS`) provide sensible defaults.  Copy
+Four additional optional keys (`radicale_default_calendar`, `caldav_timeout`,
+`log_level`, `json_logs`) provide sensible defaults.  Copy
 `config/config.example.json` to `config/config.json` as a starting template.
 
 

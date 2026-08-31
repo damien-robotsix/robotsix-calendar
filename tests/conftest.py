@@ -52,13 +52,13 @@ def _write_temp_config(overrides: dict[str, Any] | None = None) -> str:
     constructed without hitting the real Radicale.
     """
     data: dict[str, Any] = {
-        "RADICALE_URL": "https://radicale.example.com",
-        "RADICALE_USERNAME": "user",
-        "RADICALE_PASSWORD": "pass",  # pragma: allowlist secret
-        "RADICALE_DEFAULT_CALENDAR": "Robotsix",
-        "CALDAV_TIMEOUT": 30,
-        "LOG_LEVEL": "INFO",
-        "JSON_LOGS": False,
+        "radicale_url": "https://radicale.example.com",
+        "radicale_username": "user",
+        "radicale_password": "pass",  # pragma: allowlist secret
+        "radicale_default_calendar": "Robotsix",
+        "caldav_timeout": 30,
+        "log_level": "INFO",
+        "json_logs": False,
     }
     if overrides:
         data.update(overrides)

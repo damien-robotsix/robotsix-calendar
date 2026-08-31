@@ -28,9 +28,9 @@ that file with your Radicale server details:
 
 ```json
 {
-  "RADICALE_URL": "https://radicale.example.com",
-  "RADICALE_USERNAME": "your-username",
-  "RADICALE_PASSWORD": "your-password"
+  "radicale_url": "https://radicale.example.com",
+  "radicale_username": "your-username",
+  "radicale_password": "your-password"
 }
 ```
 
