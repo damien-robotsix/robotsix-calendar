@@ -161,7 +161,6 @@ modules:
       - .robotsix-mill/periodic/agent_check.yaml
       - .robotsix-mill/periodic/audit.yaml
       - .robotsix-mill/periodic/bc_check.yaml
-      - .robotsix-mill/periodic/changelog_autofill.yaml
       - .robotsix-mill/periodic/completeness_check.yaml
       - .robotsix-mill/periodic/credit_balance.yaml
       - .robotsix-mill/periodic/copy_paste.yaml
@@ -178,7 +177,6 @@ modules:
       - .robotsix-mill/periodic/triage_boilerplate.yaml
       - AGENT.md
       - CHANGELOG.md
-      - changelog.d/*.md
       - CONTRIBUTING.md
       - Dockerfile
       - LICENSE
@@ -189,6 +187,7 @@ modules:
       - docker-compose.yml
       - mkdocs.yml
       - pyproject.toml
+      - release-please-config.json
       - uv.lock
       - vulture_whitelist.py
     dependencies: []
