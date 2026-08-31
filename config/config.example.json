@@ -8,7 +8,7 @@
   "langfuse": {
     "host": "https://langfuse.example.com",
     "projects": {
-      "robotsix-calendar-agent": {
+      "robotsix-calendar": {
         "public_key": "pk-...",
         "secret_key": "sk-...",
         "project_id": ""
@@ -17,7 +17,7 @@
   },
   "openrouter": {
     "keys": {
-      "robotsix-calendar-agent": "sk-or-..."
+      "robotsix-calendar": "sk-or-..."
     }
   },
   "LOG_LEVEL": "INFO",

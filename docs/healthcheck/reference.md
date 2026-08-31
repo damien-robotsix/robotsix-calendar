@@ -1,3 +1,3 @@
 # Healthcheck
 
-::: robotsix_calendar_agent.healthcheck
+::: robotsix_calendar.healthcheck

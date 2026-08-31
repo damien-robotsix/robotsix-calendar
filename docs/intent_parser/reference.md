@@ -1,3 +1,3 @@
 # Intent Parser
 
-::: robotsix_calendar_agent.intent_parser
+::: robotsix_calendar.intent_parser

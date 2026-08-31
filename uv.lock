@@ -1585,7 +1585,7 @@ wheels = [
 ]
 
 [[package]]
-name = "robotsix-calendar-agent"
+name = "robotsix-calendar"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [

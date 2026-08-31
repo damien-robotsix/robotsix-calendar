@@ -1,4 +1,4 @@
-package: robotsix_calendar_agent
+package: robotsix_calendar
 
 modules:
   - id: init
@@ -6,8 +6,8 @@ modules:
       Package initialisation and public API surface. Re-exports key types
       and wires module-level imports.
     paths:
-      - src/robotsix_calendar_agent/__init__.py
-      - src/robotsix_calendar_agent/py.typed
+      - src/robotsix_calendar/__init__.py
+      - src/robotsix_calendar/py.typed
       - tests/test_smoke.py
       - tests/__init__.py
       - tests/conftest.py
@@ -29,9 +29,9 @@ modules:
       CalDAV client, intent parser, and settings into a single
       in-process agent.
     paths:
-      - src/robotsix_calendar_agent/agent/__init__.py
-      - src/robotsix_calendar_agent/agent/_dispatch.py
-      - src/robotsix_calendar_agent/agent/_reply.py
+      - src/robotsix_calendar/agent/__init__.py
+      - src/robotsix_calendar/agent/_dispatch.py
+      - src/robotsix_calendar/agent/_reply.py
       - tests/agent/__init__.py
       - tests/agent/test__dispatch.py
       - tests/agent/test_agent.py
@@ -47,12 +47,12 @@ modules:
       Typed CalDAV/CardDAV client wrapper with retry logic via robotsix-http
       for calendar, contact, and task operations against a Radicale server.
     paths:
-      - src/robotsix_calendar_agent/caldav_client/__init__.py
-      - src/robotsix_calendar_agent/caldav_client/_shared.py
-      - src/robotsix_calendar_agent/caldav_client/calendar_ops.py
-      - src/robotsix_calendar_agent/caldav_client/contact_ops.py
-      - src/robotsix_calendar_agent/caldav_client/exceptions.py
-      - src/robotsix_calendar_agent/caldav_client/task_ops.py
+      - src/robotsix_calendar/caldav_client/__init__.py
+      - src/robotsix_calendar/caldav_client/_shared.py
+      - src/robotsix_calendar/caldav_client/calendar_ops.py
+      - src/robotsix_calendar/caldav_client/contact_ops.py
+      - src/robotsix_calendar/caldav_client/exceptions.py
+      - src/robotsix_calendar/caldav_client/task_ops.py
       - tests/caldav_client/__init__.py
       - tests/caldav_client/caldav_test_server.py
       - tests/caldav_client/conftest.py
@@ -73,7 +73,7 @@ modules:
       calendar/contact instructions into structured ParsedIntent objects
       via robotsix-llmio.
     paths:
-      - src/robotsix_calendar_agent/intent_parser/__init__.py
+      - src/robotsix_calendar/intent_parser/__init__.py
       - tests/intent_parser/__init__.py
       - tests/intent_parser/test_intent_parser.py
       - tests/intent_parser/test_intent_parser_contract.py
@@ -85,7 +85,7 @@ modules:
       FastAPI HTTP server exposing structured (non-LLM) CRUD endpoints
       for events, tasks, contacts, and calendars.
     paths:
-      - src/robotsix_calendar_agent/api/__init__.py
+      - src/robotsix_calendar/api/__init__.py
       - tests/api/__init__.py
       - tests/api/test_api.py
     dependencies:
@@ -97,8 +97,8 @@ modules:
       SIGTERM/SIGINT, suitable for containerised deployments.  Starts the
       FastAPI HTTP API server in a daemon thread.
     paths:
-      - src/robotsix_calendar_agent/entrypoint/__init__.py
-      - src/robotsix_calendar_agent/entrypoint/__main__.py
+      - src/robotsix_calendar/entrypoint/__init__.py
+      - src/robotsix_calendar/entrypoint/__main__.py
       - tests/entrypoint/__init__.py
       - tests/entrypoint/test_entrypoint.py
       - docs/entrypoint/reference.md
@@ -110,7 +110,7 @@ modules:
       Health check endpoint for container orchestration — verifies
       connectivity to the configured Radicale CalDAV/CardDAV server.
     paths:
-      - src/robotsix_calendar_agent/healthcheck/__init__.py
+      - src/robotsix_calendar/healthcheck/__init__.py
       - tests/healthcheck/__init__.py
       - tests/healthcheck/test_healthcheck.py
       - tests/healthcheck/conftest.py
@@ -125,7 +125,7 @@ modules:
       for all config-file-driven settings in the agent, loaded via
       robotsix_config.load_config.
     paths:
-      - src/robotsix_calendar_agent/settings/__init__.py
+      - src/robotsix_calendar/settings/__init__.py
       - tests/settings/__init__.py
       - tests/settings/test_settings.py
       - docs/settings/reference.md

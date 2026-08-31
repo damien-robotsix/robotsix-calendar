@@ -84,7 +84,7 @@ class _CalendarOpsMixin(_MixinBase):
         return (
             "BEGIN:VCALENDAR\n"
             "VERSION:2.0\n"
-            "PRODID:-//robotsix-calendar-agent//EN\n"
+            "PRODID:-//robotsix-calendar//EN\n"
             "BEGIN:VEVENT\n"
             f"UID:{event.uid or ''}\n"
             f"DTSTAMP:{dtstamp}\n"

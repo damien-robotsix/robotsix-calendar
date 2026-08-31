@@ -46,7 +46,7 @@ test: test-unit  ## Run unit tests (default test target)
 
 .PHONY: coverage
 coverage: .venv  ## Run tests with coverage report
-	uv run pytest --cov=robotsix_calendar_agent --cov-report=html --cov-report=term \
+	uv run pytest --cov=robotsix_calendar --cov-report=html --cov-report=term \
 		-m 'not integration' tests/
 
 .PHONY: coverage-view

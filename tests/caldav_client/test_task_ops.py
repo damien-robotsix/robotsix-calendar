@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Any
 from unittest.mock import MagicMock
 
-from robotsix_calendar_agent.caldav_client import CalDavClient, Task
+from robotsix_calendar.caldav_client import CalDavClient, Task
 from tests.caldav_client.conftest import _mock_vtodo
 
 # ---------------------------------------------------------------------------
@@ -214,7 +214,7 @@ class TestUpdateTask:
 
         import pytest
 
-        from robotsix_calendar_agent.caldav_client.exceptions import NotFoundError
+        from robotsix_calendar.caldav_client.exceptions import NotFoundError
 
         with pytest.raises(NotFoundError, match="not found"):
             client.update_task("nonexistent", Task(summary="X"))
@@ -308,7 +308,7 @@ class TestTaskToIcal:
 
         assert "BEGIN:VCALENDAR" in ical
         assert "VERSION:2.0" in ical
-        assert "PRODID:-//robotsix-calendar-agent//EN" in ical
+        assert "PRODID:-//robotsix-calendar//EN" in ical
         assert "BEGIN:VTODO" in ical
         assert "UID:task-1" in ical
         assert "DTSTAMP:" in ical

@@ -1,4 +1,4 @@
-# Contributing to robotsix-calendar-agent
+# Contributing to robotsix-calendar
 
 Thanks for your interest in contributing! This document covers the
 development setup and the conventions this repository follows.
@@ -9,8 +9,8 @@ This project uses [`uv`](https://docs.astral.sh/uv/) for dependency and
 environment management, and targets Python 3.14+.
 
 ```bash
-git clone https://github.com/damien-robotsix/robotsix-calendar-agent.git
-cd robotsix-calendar-agent
+git clone https://github.com/damien-robotsix/robotsix-calendar.git
+cd robotsix-calendar
 uv sync
 ```
 

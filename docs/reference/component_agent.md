@@ -6,4 +6,4 @@
     will be reimplemented via the central-deploy system in a future release.
 
     See the [agent reference](../agent/reference.md) for the remaining
-    :class:`~robotsix_calendar_agent.agent.CalendarAgent` class.
+    :class:`~robotsix_calendar.agent.CalendarAgent` class.

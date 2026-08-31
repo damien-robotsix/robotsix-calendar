@@ -1,3 +1,3 @@
 # Entrypoint
 
-::: robotsix_calendar_agent.entrypoint
+::: robotsix_calendar.entrypoint

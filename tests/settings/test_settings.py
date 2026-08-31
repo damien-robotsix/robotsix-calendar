@@ -10,7 +10,7 @@ import pytest
 from pydantic import SecretStr
 from robotsix_config import load_config
 
-from robotsix_calendar_agent.settings import (
+from robotsix_calendar.settings import (
     COMPONENT_ALIAS,
     LangfuseProjectSettings,
     LangfuseSettings,

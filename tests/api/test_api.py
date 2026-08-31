@@ -8,13 +8,13 @@ from unittest.mock import MagicMock
 import pytest
 from fastapi.testclient import TestClient
 
-from robotsix_calendar_agent.api import app
-from robotsix_calendar_agent.caldav_client._shared import (
+from robotsix_calendar.api import app
+from robotsix_calendar.caldav_client._shared import (
     CalendarEvent,
     Contact,
     Task,
 )
-from robotsix_calendar_agent.caldav_client.exceptions import (
+from robotsix_calendar.caldav_client.exceptions import (
     AuthError,
     CalDAVError,
     ConflictError,
@@ -344,7 +344,7 @@ class TestErrorMapping:
     def test_generic_calendar_error_returns_500(
         self, client: TestClient, mock_client: MagicMock
     ) -> None:
-        from robotsix_calendar_agent.caldav_client.exceptions import CalendarError
+        from robotsix_calendar.caldav_client.exceptions import CalendarError
 
         mock_client.list_calendars.side_effect = CalendarError("unexpected")
         response = client.get("/calendars")

@@ -2,6 +2,6 @@
 
 
 def test_import_package() -> None:
-    import robotsix_calendar_agent
+    import robotsix_calendar
 
-    assert isinstance(robotsix_calendar_agent.__version__, str)
+    assert isinstance(robotsix_calendar.__version__, str)

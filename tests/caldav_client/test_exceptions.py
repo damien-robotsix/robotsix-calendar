@@ -4,10 +4,10 @@ from __future__ import annotations
 
 import pytest
 
-from robotsix_calendar_agent.caldav_client import (
+from robotsix_calendar.caldav_client import (
     CalDavClient,
 )
-from robotsix_calendar_agent.caldav_client.exceptions import (
+from robotsix_calendar.caldav_client.exceptions import (
     AuthError,
     CalDAVError,
     ConflictError,

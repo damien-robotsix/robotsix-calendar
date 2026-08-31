@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "robotsix-calendar-agent"
+name = "robotsix-calendar"
 version = "0.1.0"
 description = "Calendar and contacts agent for Radicale"
 readme = "README.md"
@@ -37,13 +37,13 @@ classifiers = [
 ]
 
 [project.scripts]
-calendar-agent = "robotsix_calendar_agent.entrypoint:main"
-calendar-agent-healthcheck = "robotsix_calendar_agent.healthcheck:main"
+calendar-agent = "robotsix_calendar.entrypoint:main"
+calendar-agent-healthcheck = "robotsix_calendar.healthcheck:main"
 
 [project.urls]
-Homepage = "https://github.com/damien-robotsix/robotsix-calendar-agent"
-Repository = "https://github.com/damien-robotsix/robotsix-calendar-agent"
-Issues = "https://github.com/damien-robotsix/robotsix-calendar-agent/issues"
+Homepage = "https://github.com/damien-robotsix/robotsix-calendar"
+Repository = "https://github.com/damien-robotsix/robotsix-calendar"
+Issues = "https://github.com/damien-robotsix/robotsix-calendar/issues"
 
 [dependency-groups]
 dev = [
@@ -79,10 +79,10 @@ robotsix-http = { git = "https://github.com/damien-robotsix/robotsix-http.git", 
 robotsix-modules = { git = "https://github.com/damien-robotsix/robotsix-modules.git", rev = "b2e82231fa2f260589be9ba757c6be450f4e5d3e" }
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/robotsix_calendar_agent"]
+packages = ["src/robotsix_calendar"]
 
 [tool.deptry]
-known_first_party = ["robotsix_calendar_agent"]
+known_first_party = ["robotsix_calendar"]
 
 [tool.ruff]
 target-version = "py314"
@@ -96,10 +96,10 @@ ignore = ["S101", "PT006", "D105", "D107", "D205", "D415"]
 convention = "google"
 
 [tool.ruff.lint.per-file-ignores]
-"src/robotsix_calendar_agent/healthcheck/__init__.py" = ["T201"]
+"src/robotsix_calendar/healthcheck/__init__.py" = ["T201"]
 "vulture_whitelist.py" = ["B018", "F821", "D"]
 "tests/**/*.py" = ["S105", "S106", "S603", "D"]
-"src/robotsix_calendar_agent/api/**/*.py" = ["B008", "ARG001"]
+"src/robotsix_calendar/api/**/*.py" = ["B008", "ARG001"]
 
 [tool.mypy]
 python_version = "3.14"
@@ -116,7 +116,7 @@ markers = ["integration: Slower tests using an in-process Radicale server"]
 strict_markers = true
 
 [tool.coverage.run]
-source = ["robotsix_calendar_agent"]
+source = ["robotsix_calendar"]
 branch = true
 relative_files = true
 
@@ -129,7 +129,7 @@ name = "cz_conventional_commits"
 version = "0.1.0"
 version_files = [
     "pyproject.toml:version",
-    "src/robotsix_calendar_agent/__init__.py",
+    "src/robotsix_calendar/__init__.py",
 ]
 update_changelog_on_bump = true
 changelog_incremental = true

@@ -9,7 +9,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from robotsix_calendar_agent.caldav_client import (
+from robotsix_calendar.caldav_client import (
     CalDavClient,
     CalendarEvent,
     Task,

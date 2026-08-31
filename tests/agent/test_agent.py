@@ -9,7 +9,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from robotsix_calendar_agent.settings import COMPONENT_ALIAS, Settings
+from robotsix_calendar.settings import COMPONENT_ALIAS, Settings
 
 # Shared helpers live in conftest.
 
@@ -40,8 +40,8 @@ class TestCalendarAgentInit:
         os.environ["ROBOTSIX_CONFIG_FILE"] = config_path
 
         with (
-            patch("robotsix_calendar_agent.agent.CalDavClient"),
-            patch("robotsix_calendar_agent.agent.IntentParser"),
+            patch("robotsix_calendar.agent.CalDavClient"),
+            patch("robotsix_calendar.agent.IntentParser"),
             patch("robotsix_config.load_config") as mock_load,
         ):
             mock_load.return_value = Settings(
@@ -50,7 +50,7 @@ class TestCalendarAgentInit:
                 RADICALE_PASSWORD="p",  # type: ignore[arg-type]  # pragma: allowlist secret
             )
 
-            from robotsix_calendar_agent.agent import CalendarAgent
+            from robotsix_calendar.agent import CalendarAgent
 
             agent = CalendarAgent()
             assert agent._agent_id == "calendar"
@@ -66,8 +66,8 @@ class TestCalendarAgentInit:
         os.environ["ROBOTSIX_CONFIG_FILE"] = config_path
 
         with (
-            patch("robotsix_calendar_agent.agent.CalDavClient"),
-            patch("robotsix_calendar_agent.agent.IntentParser"),
+            patch("robotsix_calendar.agent.CalDavClient"),
+            patch("robotsix_calendar.agent.IntentParser"),
             patch("robotsix_config.load_config") as mock_load,
         ):
             mock_load.return_value = Settings(
@@ -76,7 +76,7 @@ class TestCalendarAgentInit:
                 RADICALE_PASSWORD="",  # type: ignore[arg-type]  # pragma: allowlist secret
             )
 
-            from robotsix_calendar_agent.agent import CalendarAgent
+            from robotsix_calendar.agent import CalendarAgent
 
             with pytest.raises(ValueError, match="credentials"):
                 CalendarAgent()
@@ -88,8 +88,8 @@ class TestRuntimeCredentials:
     ) -> None:
         from pydantic import SecretStr
 
-        from robotsix_calendar_agent.agent import _setup_runtime_credentials
-        from robotsix_calendar_agent.settings import OpenRouterSettings, Settings
+        from robotsix_calendar.agent import _setup_runtime_credentials
+        from robotsix_calendar.settings import OpenRouterSettings, Settings
 
         monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
         settings = Settings(
@@ -116,8 +116,8 @@ class TestRuntimeCredentials:
     ) -> None:
         from pydantic import SecretStr
 
-        from robotsix_calendar_agent.agent import _setup_tracing
-        from robotsix_calendar_agent.settings import (
+        from robotsix_calendar.agent import _setup_tracing
+        from robotsix_calendar.settings import (
             LangfuseProjectSettings,
             LangfuseSettings,
             Settings,
@@ -154,8 +154,8 @@ class TestRuntimeCredentials:
     ) -> None:
         from pydantic import SecretStr
 
-        from robotsix_calendar_agent.agent import _setup_tracing
-        from robotsix_calendar_agent.settings import (
+        from robotsix_calendar.agent import _setup_tracing
+        from robotsix_calendar.settings import (
             LangfuseProjectSettings,
             LangfuseSettings,
             Settings,
@@ -189,7 +189,7 @@ class TestRuntimeCredentials:
     def test_setup_tracing_noop_without_settings(
         self, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        from robotsix_calendar_agent.agent import _setup_tracing
+        from robotsix_calendar.agent import _setup_tracing
 
         for var in self._LANGFUSE_ENV_VARS:
             monkeypatch.delenv(var, raising=False)
@@ -222,8 +222,8 @@ class TestDispatchEnumSync:
     """Verify _DISPATCH keys stay in sync with all operation enums."""
 
     def test_dispatch_keys_match_enum_values(self) -> None:
-        from robotsix_calendar_agent.agent import _DISPATCH
-        from robotsix_calendar_agent.intent_parser import (
+        from robotsix_calendar.agent import _DISPATCH
+        from robotsix_calendar.intent_parser import (
             CalendarOperation,
             ContactOperation,
             TaskOperation,
@@ -247,7 +247,7 @@ class TestDispatchNounVerbSync:
     handled by the ``deleted``-is-True branch)."""
 
     def test_noun_verb_dicts_cover_dispatch_keys(self) -> None:
-        from robotsix_calendar_agent.agent import (
+        from robotsix_calendar.agent import (
             _DISPATCH,
             _OPERATION_NOUN,
             _OPERATION_VERB,
@@ -270,12 +270,12 @@ class TestDispatchNounVerbSync:
 
 class TestSummarizeItem:
     def test_bare_string_passthrough(self) -> None:
-        from robotsix_calendar_agent.agent import _summarize_item
+        from robotsix_calendar.agent import _summarize_item
 
         assert _summarize_item("hello") == "hello"  # type: ignore[arg-type]
 
     def test_task_with_due_and_status(self) -> None:
-        from robotsix_calendar_agent.agent import _summarize_item
+        from robotsix_calendar.agent import _summarize_item
 
         result = _summarize_item(
             {
@@ -288,20 +288,20 @@ class TestSummarizeItem:
         assert result == "Buy milk due 2026-06-21 [NEEDS-ACTION] [uid=t1]"
 
     def test_task_without_uid(self) -> None:
-        from robotsix_calendar_agent.agent import _summarize_item
+        from robotsix_calendar.agent import _summarize_item
 
         result = _summarize_item({"due": "2026-06-21"})
         assert result == "(untitled) due 2026-06-21"
 
     def test_task_untitled_no_fields(self) -> None:
-        from robotsix_calendar_agent.agent import _summarize_item
+        from robotsix_calendar.agent import _summarize_item
 
         result = _summarize_item({"due": "2026-06-21", "uid": "t2"})
         assert "(untitled)" in result
         assert "[uid=t2]" in result
 
     def test_event_with_summary_and_dtstart_and_location(self) -> None:
-        from robotsix_calendar_agent.agent import _summarize_item
+        from robotsix_calendar.agent import _summarize_item
 
         result = _summarize_item(
             {
@@ -314,37 +314,37 @@ class TestSummarizeItem:
         assert result == "Lunch at 2026-01-02T12:00:00 (Office) [uid=e1]"
 
     def test_event_without_uid(self) -> None:
-        from robotsix_calendar_agent.agent import _summarize_item
+        from robotsix_calendar.agent import _summarize_item
 
         result = _summarize_item({"summary": "Meeting", "dtstart": "2026-07-01"})
         assert result == "Meeting at 2026-07-01"
 
     def test_event_without_dtstart_summary_fallback(self) -> None:
-        from robotsix_calendar_agent.agent import _summarize_item
+        from robotsix_calendar.agent import _summarize_item
 
         result = _summarize_item({"summary": "No time event"})
         assert result == "No time event"
 
     def test_contact_with_name_and_email(self) -> None:
-        from robotsix_calendar_agent.agent import _summarize_item
+        from robotsix_calendar.agent import _summarize_item
 
         result = _summarize_item({"full_name": "Jane Doe", "email": "jane@example.com"})
         assert result == "Jane Doe <jane@example.com>"
 
     def test_contact_without_email(self) -> None:
-        from robotsix_calendar_agent.agent import _summarize_item
+        from robotsix_calendar.agent import _summarize_item
 
         result = _summarize_item({"full_name": "Jane Doe"})
         assert result == "Jane Doe"
 
     def test_contact_without_name(self) -> None:
-        from robotsix_calendar_agent.agent import _summarize_item
+        from robotsix_calendar.agent import _summarize_item
 
         result = _summarize_item({"email": "anon@example.com"})
         assert result == "(no name) <anon@example.com>"
 
     def test_unknown_dict_fallback(self) -> None:
-        from robotsix_calendar_agent.agent import _summarize_item
+        from robotsix_calendar.agent import _summarize_item
 
         result = _summarize_item({"color": "blue", "size": 3})
         # Should fall through to json.dumps
@@ -359,39 +359,39 @@ class TestSummarizeItem:
 
 class TestRenderReply:
     def test_deleted_confirmation(self) -> None:
-        from robotsix_calendar_agent.agent import _render_reply
+        from robotsix_calendar.agent import _render_reply
 
         assert _render_reply("delete_event", {"deleted": True}) == (
             "Done — the item was deleted."
         )
 
     def test_empty_list_events(self) -> None:
-        from robotsix_calendar_agent.agent import _render_reply
+        from robotsix_calendar.agent import _render_reply
 
         assert _render_reply("list_events", []) == "No events found."
 
     def test_empty_list_calendars(self) -> None:
-        from robotsix_calendar_agent.agent import _render_reply
+        from robotsix_calendar.agent import _render_reply
 
         assert _render_reply("list_calendars", []) == "No calendars found."
 
     def test_empty_list_tasks(self) -> None:
-        from robotsix_calendar_agent.agent import _render_reply
+        from robotsix_calendar.agent import _render_reply
 
         assert _render_reply("list_tasks", []) == "No tasks found."
 
     def test_empty_list_contacts(self) -> None:
-        from robotsix_calendar_agent.agent import _render_reply
+        from robotsix_calendar.agent import _render_reply
 
         assert _render_reply("list_contacts", []) == "No contacts found."
 
     def test_empty_list_unknown_operation(self) -> None:
-        from robotsix_calendar_agent.agent import _render_reply
+        from robotsix_calendar.agent import _render_reply
 
         assert _render_reply("frobnicate", []) == "No items found."
 
     def test_non_empty_list(self) -> None:
-        from robotsix_calendar_agent.agent import _render_reply
+        from robotsix_calendar.agent import _render_reply
 
         result = _render_reply(
             "list_events",
@@ -406,7 +406,7 @@ class TestRenderReply:
         assert "- " in result
 
     def test_dict_update_operation(self) -> None:
-        from robotsix_calendar_agent.agent import _render_reply
+        from robotsix_calendar.agent import _render_reply
 
         result = _render_reply(
             "update_event", {"summary": "Updated meeting", "uid": "e1"}
@@ -414,31 +414,31 @@ class TestRenderReply:
         assert result.startswith("Updated: ")
 
     def test_dict_create_operation(self) -> None:
-        from robotsix_calendar_agent.agent import _render_reply
+        from robotsix_calendar.agent import _render_reply
 
         result = _render_reply("create_event", {"summary": "New event", "uid": "e2"})
         assert result.startswith("Created: ")
 
     def test_dict_create_task_operation(self) -> None:
-        from robotsix_calendar_agent.agent import _render_reply
+        from robotsix_calendar.agent import _render_reply
 
         result = _render_reply("create_task", {"summary": "New task", "uid": "t2"})
         assert result.startswith("Created: ")
 
     def test_dict_other_operation(self) -> None:
-        from robotsix_calendar_agent.agent import _render_reply
+        from robotsix_calendar.agent import _render_reply
 
         result = _render_reply("delete_event", {"summary": "X"})
         assert result.startswith("Result: ")
 
     def test_fallback_non_dict_non_list(self) -> None:
-        from robotsix_calendar_agent.agent import _render_reply
+        from robotsix_calendar.agent import _render_reply
 
         assert _render_reply("list_events", 42) == "42"
         assert _render_reply("list_events", "plain") == "plain"
 
     def test_list_with_calendar_strings(self) -> None:
-        from robotsix_calendar_agent.agent import _render_reply
+        from robotsix_calendar.agent import _render_reply
 
         result = _render_reply("list_calendars", ["Robotsix", "Birthdays"])
         assert "Found 2" in result
@@ -446,7 +446,7 @@ class TestRenderReply:
         assert "Birthdays" in result
 
     def test_list_with_contact_dicts(self) -> None:
-        from robotsix_calendar_agent.agent import _render_reply
+        from robotsix_calendar.agent import _render_reply
 
         result = _render_reply(
             "list_contacts",
@@ -457,7 +457,7 @@ class TestRenderReply:
         assert "Jane" in result
 
     def test_list_with_task_dicts(self) -> None:
-        from robotsix_calendar_agent.agent import _render_reply
+        from robotsix_calendar.agent import _render_reply
 
         result = _render_reply(
             "list_tasks",
@@ -474,7 +474,7 @@ class TestRenderReply:
         assert "Buy milk" in result
 
     def test_deleted_not_true_is_not_deleted_branch(self) -> None:
-        from robotsix_calendar_agent.agent import _render_reply
+        from robotsix_calendar.agent import _render_reply
 
         # {"deleted": False} should NOT match the deleted branch — falls to dict branch
         result = _render_reply("delete_event", {"deleted": False, "uid": "e1"})
@@ -496,8 +496,8 @@ class TestDispatch:
     def test_unknown_operation_raises_agent_logic_error(
         self, calendar_agent: MagicMock
     ) -> None:
-        from robotsix_calendar_agent.agent import AgentLogicError
-        from robotsix_calendar_agent.intent_parser import ParsedIntent
+        from robotsix_calendar.agent import AgentLogicError
+        from robotsix_calendar.intent_parser import ParsedIntent
 
         parsed = ParsedIntent(operation="nonexistent_op", params={}, original_text="")
         with pytest.raises(AgentLogicError, match="Unknown operation"):
@@ -508,8 +508,8 @@ class TestDispatch:
     def test_list_events_passes_params_to_client(
         self, calendar_agent: MagicMock
     ) -> None:
-        from robotsix_calendar_agent.caldav_client import CalendarEvent
-        from robotsix_calendar_agent.intent_parser import ParsedIntent
+        from robotsix_calendar.caldav_client import CalendarEvent
+        from robotsix_calendar.intent_parser import ParsedIntent
 
         calendar_agent._caldav.list_events.return_value = [
             CalendarEvent(summary="Lunch", dtstart="2026-01-01", dtend="2026-01-01"),
@@ -531,8 +531,8 @@ class TestDispatch:
     def test_list_tasks_passes_params_to_client(
         self, calendar_agent: MagicMock
     ) -> None:
-        from robotsix_calendar_agent.caldav_client import Task
-        from robotsix_calendar_agent.intent_parser import ParsedIntent
+        from robotsix_calendar.caldav_client import Task
+        from robotsix_calendar.intent_parser import ParsedIntent
 
         calendar_agent._caldav.list_tasks.return_value = [
             Task(summary="Buy milk", calendar_id="cal1"),
@@ -552,7 +552,7 @@ class TestDispatch:
     def test_list_calendars_passes_params_to_client(
         self, calendar_agent: MagicMock
     ) -> None:
-        from robotsix_calendar_agent.intent_parser import ParsedIntent
+        from robotsix_calendar.intent_parser import ParsedIntent
 
         calendar_agent._caldav.list_calendars.return_value = ["Robotsix", "Birthdays"]
         parsed = ParsedIntent(operation="list_calendars", params={}, original_text="")
@@ -564,8 +564,8 @@ class TestDispatch:
     def test_list_contacts_passes_params_to_client(
         self, calendar_agent: MagicMock
     ) -> None:
-        from robotsix_calendar_agent.caldav_client import Contact
-        from robotsix_calendar_agent.intent_parser import ParsedIntent
+        from robotsix_calendar.caldav_client import Contact
+        from robotsix_calendar.intent_parser import ParsedIntent
 
         calendar_agent._caldav.list_contacts.return_value = [
             Contact(full_name="Jane Doe", addressbook_id="ab1"),
@@ -589,8 +589,8 @@ class TestDispatch:
     def test_create_event_calls_client_with_built_event(
         self, calendar_agent: MagicMock
     ) -> None:
-        from robotsix_calendar_agent.caldav_client import CalendarEvent
-        from robotsix_calendar_agent.intent_parser import ParsedIntent
+        from robotsix_calendar.caldav_client import CalendarEvent
+        from robotsix_calendar.intent_parser import ParsedIntent
 
         calendar_agent._caldav.create_event.return_value = CalendarEvent(
             summary="Team standup",
@@ -628,8 +628,8 @@ class TestDispatch:
     def test_update_event_calls_client_with_uid_and_built_event(
         self, calendar_agent: MagicMock
     ) -> None:
-        from robotsix_calendar_agent.caldav_client import CalendarEvent
-        from robotsix_calendar_agent.intent_parser import ParsedIntent
+        from robotsix_calendar.caldav_client import CalendarEvent
+        from robotsix_calendar.intent_parser import ParsedIntent
 
         calendar_agent._caldav.update_event.return_value = CalendarEvent(
             summary="Team standup updated",
@@ -664,8 +664,8 @@ class TestDispatch:
     def test_update_event_without_uid_raises_agent_logic_error(
         self, calendar_agent: MagicMock
     ) -> None:
-        from robotsix_calendar_agent.agent import AgentLogicError
-        from robotsix_calendar_agent.intent_parser import ParsedIntent
+        from robotsix_calendar.agent import AgentLogicError
+        from robotsix_calendar.intent_parser import ParsedIntent
 
         parsed = ParsedIntent(
             operation="update_event",
@@ -680,7 +680,7 @@ class TestDispatch:
     def test_delete_event_calls_client_with_uid(
         self, calendar_agent: MagicMock
     ) -> None:
-        from robotsix_calendar_agent.intent_parser import ParsedIntent
+        from robotsix_calendar.intent_parser import ParsedIntent
 
         parsed = ParsedIntent(
             operation="delete_event",
@@ -697,8 +697,8 @@ class TestDispatch:
     def test_delete_event_without_uid_raises_agent_logic_error(
         self, calendar_agent: MagicMock
     ) -> None:
-        from robotsix_calendar_agent.agent import AgentLogicError
-        from robotsix_calendar_agent.intent_parser import ParsedIntent
+        from robotsix_calendar.agent import AgentLogicError
+        from robotsix_calendar.intent_parser import ParsedIntent
 
         parsed = ParsedIntent(operation="delete_event", params={}, original_text="")
         with pytest.raises(AgentLogicError, match="UID is required to delete"):
@@ -709,8 +709,8 @@ class TestDispatch:
     def test_create_contact_calls_client_with_built_contact(
         self, calendar_agent: MagicMock
     ) -> None:
-        from robotsix_calendar_agent.caldav_client import Contact
-        from robotsix_calendar_agent.intent_parser import ParsedIntent
+        from robotsix_calendar.caldav_client import Contact
+        from robotsix_calendar.intent_parser import ParsedIntent
 
         calendar_agent._caldav.create_contact.return_value = Contact(
             full_name="Jane Doe",
@@ -746,8 +746,8 @@ class TestDispatch:
     def test_update_contact_calls_client_with_uid_and_built_contact(
         self, calendar_agent: MagicMock
     ) -> None:
-        from robotsix_calendar_agent.caldav_client import Contact
-        from robotsix_calendar_agent.intent_parser import ParsedIntent
+        from robotsix_calendar.caldav_client import Contact
+        from robotsix_calendar.intent_parser import ParsedIntent
 
         calendar_agent._caldav.update_contact.return_value = Contact(
             full_name="Jane Doe Updated", addressbook_id="ab1"
@@ -777,8 +777,8 @@ class TestDispatch:
     def test_update_contact_without_uid_raises_agent_logic_error(
         self, calendar_agent: MagicMock
     ) -> None:
-        from robotsix_calendar_agent.agent import AgentLogicError
-        from robotsix_calendar_agent.intent_parser import ParsedIntent
+        from robotsix_calendar.agent import AgentLogicError
+        from robotsix_calendar.intent_parser import ParsedIntent
 
         parsed = ParsedIntent(
             operation="update_contact",
@@ -793,7 +793,7 @@ class TestDispatch:
     def test_delete_contact_calls_client_with_uid(
         self, calendar_agent: MagicMock
     ) -> None:
-        from robotsix_calendar_agent.intent_parser import ParsedIntent
+        from robotsix_calendar.intent_parser import ParsedIntent
 
         parsed = ParsedIntent(
             operation="delete_contact",
@@ -810,8 +810,8 @@ class TestDispatch:
     def test_delete_contact_without_uid_raises_agent_logic_error(
         self, calendar_agent: MagicMock
     ) -> None:
-        from robotsix_calendar_agent.agent import AgentLogicError
-        from robotsix_calendar_agent.intent_parser import ParsedIntent
+        from robotsix_calendar.agent import AgentLogicError
+        from robotsix_calendar.intent_parser import ParsedIntent
 
         parsed = ParsedIntent(operation="delete_contact", params={}, original_text="")
         with pytest.raises(AgentLogicError, match="UID is required to delete"):
@@ -822,8 +822,8 @@ class TestDispatch:
     def test_create_task_calls_client_with_built_task(
         self, calendar_agent: MagicMock
     ) -> None:
-        from robotsix_calendar_agent.caldav_client import Task
-        from robotsix_calendar_agent.intent_parser import ParsedIntent
+        from robotsix_calendar.caldav_client import Task
+        from robotsix_calendar.intent_parser import ParsedIntent
 
         calendar_agent._caldav.create_task.return_value = Task(
             summary="Buy groceries",
@@ -858,8 +858,8 @@ class TestDispatch:
     def test_update_task_calls_client_with_uid_and_built_task(
         self, calendar_agent: MagicMock
     ) -> None:
-        from robotsix_calendar_agent.caldav_client import Task
-        from robotsix_calendar_agent.intent_parser import ParsedIntent
+        from robotsix_calendar.caldav_client import Task
+        from robotsix_calendar.intent_parser import ParsedIntent
 
         calendar_agent._caldav.update_task.return_value = Task(
             summary="Buy groceries updated",
@@ -892,8 +892,8 @@ class TestDispatch:
     def test_update_task_without_uid_raises_agent_logic_error(
         self, calendar_agent: MagicMock
     ) -> None:
-        from robotsix_calendar_agent.agent import AgentLogicError
-        from robotsix_calendar_agent.intent_parser import ParsedIntent
+        from robotsix_calendar.agent import AgentLogicError
+        from robotsix_calendar.intent_parser import ParsedIntent
 
         parsed = ParsedIntent(
             operation="update_task",
@@ -906,7 +906,7 @@ class TestDispatch:
     # -- delete task -------------------------------------------------------
 
     def test_delete_task_calls_client_with_uid(self, calendar_agent: MagicMock) -> None:
-        from robotsix_calendar_agent.intent_parser import ParsedIntent
+        from robotsix_calendar.intent_parser import ParsedIntent
 
         parsed = ParsedIntent(
             operation="delete_task",
@@ -923,8 +923,8 @@ class TestDispatch:
     def test_delete_task_without_uid_raises_agent_logic_error(
         self, calendar_agent: MagicMock
     ) -> None:
-        from robotsix_calendar_agent.agent import AgentLogicError
-        from robotsix_calendar_agent.intent_parser import ParsedIntent
+        from robotsix_calendar.agent import AgentLogicError
+        from robotsix_calendar.intent_parser import ParsedIntent
 
         parsed = ParsedIntent(operation="delete_task", params={}, original_text="")
         with pytest.raises(AgentLogicError, match="UID is required to delete"):
@@ -1024,12 +1024,12 @@ class TestDispatch:
         expected_call_kwargs: dict[str, object] | None,
     ) -> None:
         """Every known operation string reaches the correct CalDavClient method."""
-        from robotsix_calendar_agent.caldav_client import (
+        from robotsix_calendar.caldav_client import (
             CalendarEvent,
             Contact,
             Task,
         )
-        from robotsix_calendar_agent.intent_parser import ParsedIntent
+        from robotsix_calendar.intent_parser import ParsedIntent
 
         # Set up mock returns so handlers can serialize results.
         mock = calendar_agent._caldav

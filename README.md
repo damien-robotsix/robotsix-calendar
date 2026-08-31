@@ -1,4 +1,4 @@
-# robotsix-calendar-agent
+# robotsix-calendar
 
 In-process agent managing a Radicale CalDAV/CardDAV calendar and contacts.
 
@@ -10,7 +10,7 @@ This repo follows the [robotsix stack standards](https://github.com/damien-robot
 
 ## Status
 
-![coverage](https://raw.githubusercontent.com/damien-robotsix/robotsix-calendar-agent/python-coverage-comment-action-data/badge.svg)
+![coverage](https://raw.githubusercontent.com/damien-robotsix/robotsix-calendar/python-coverage-comment-action-data/badge.svg)
 
 Early scaffold — under active development.
 

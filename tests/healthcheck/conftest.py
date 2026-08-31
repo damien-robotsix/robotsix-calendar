@@ -45,7 +45,7 @@ def healthcheck_main(capsys: pytest.CaptureFixture[str]):
     *caldav_spec* — dict of kwargs forwarded to ``patch("...CalDavClient", ...)``.
     """
 
-    from robotsix_calendar_agent.healthcheck import main as _main
+    from robotsix_calendar.healthcheck import main as _main
 
     def _run(
         *,
@@ -58,7 +58,7 @@ def healthcheck_main(capsys: pytest.CaptureFixture[str]):
         with ExitStack() as stack:
             stack.enter_context(
                 patch(
-                    "robotsix_calendar_agent.healthcheck.load_config",
+                    "robotsix_calendar.healthcheck.load_config",
                     return_value=settings,
                 )
             )
@@ -66,7 +66,7 @@ def healthcheck_main(capsys: pytest.CaptureFixture[str]):
             if caldav_spec is not None:
                 stack.enter_context(
                     patch(
-                        "robotsix_calendar_agent.healthcheck.CalDavClient",
+                        "robotsix_calendar.healthcheck.CalDavClient",
                         **caldav_spec,
                     )
                 )

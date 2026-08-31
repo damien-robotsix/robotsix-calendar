@@ -211,7 +211,7 @@ class CalendarAgent:
 
 
 # Re-export private symbols from submodules so that tests and other
-# consumers can continue importing from ``robotsix_calendar_agent.agent``.
+# consumers can continue importing from ``robotsix_calendar.agent``.
 from ._dispatch import _DISPATCH  # noqa: E402
 from ._reply import (  # noqa: E402, F401
     _OPERATION_NOUN,
