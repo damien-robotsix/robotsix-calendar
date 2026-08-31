@@ -1,6 +1,14 @@
 ## 0.0.0 (unreleased)
 
 
+- Add public `CalendarAgent.run(text)` method that parses natural-language
+  calendar/contact instructions via the bundled `IntentParser` and dispatches
+  the resulting intent through `_dispatch()`. This restores the
+  end-to-end agent capability promised by the class docstring but previously
+  missing: `__init__` now actually instantiates `self._parser = IntentParser()`,
+  and `run()` ties parse → dispatch together so consumers don't have to wire
+  the parser and client manually.
+
 - Convert attribute docstrings to `Field(description=...)` in settings models so
   descriptions are emitted into `config/config.schema.json` and rendered in the
   deploy UI. Affects `LangfuseProjectSettings` (public_key, secret_key,

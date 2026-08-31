@@ -177,6 +177,28 @@ class CalendarAgent:
             timeout=settings.CALDAV_TIMEOUT,
         )
 
+        self._parser = IntentParser()
+
+    # ------------------------------------------------------------------
+    # public API
+    # ------------------------------------------------------------------
+
+    def run(self, text: str) -> Any:
+        """Parse a natural-language instruction and dispatch it.
+
+        Args:
+            text: Natural-language calendar/contact instruction.
+
+        Returns:
+            The result of the dispatched CalDAV operation.
+
+        Raises:
+            IntentParseError: If the LLM cannot parse the instruction.
+            AgentLogicError: If the parsed operation is unknown.
+        """
+        parsed = self._parser.parse(text)
+        return self._dispatch(parsed)
+
     # ------------------------------------------------------------------
     # dispatch
     # ------------------------------------------------------------------

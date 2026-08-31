@@ -82,12 +82,21 @@ print("Deleted.")
 
 ## Natural-language intent parsing
 
-The agent also bundles an LLM-based intent parser that converts
-free-form instructions into structured operations:
+The agent bundles an LLM-based intent parser that converts free-form
+instructions into structured operations.  Use the `run()` method to
+parse and dispatch in one step:
 
 ```python
-parser = IntentParser()
-parsed = parser.parse("add a dentist appointment next Tuesday at 3pm")
+result = agent.run("add a dentist appointment next Tuesday at 3pm")
+# internally: parses the text, then dispatches to create_event
+```
+
+`run()` returns the result of the dispatched CalDAV operation.  If you
+want just the parsed intent (without executing it), use the parser
+directly via `agent._parser`:
+
+```python
+parsed = agent._parser.parse("add a dentist appointment next Tuesday at 3pm")
 # parsed.operation → "create_event"
 # parsed.params → {"summary": "Dentist appointment", "dtstart": "...", ...}
 ```

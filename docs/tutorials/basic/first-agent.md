@@ -58,10 +58,10 @@ from robotsix_calendar import CalendarAgent
 # -- instantiate the calendar agent -------------------------------------
 agent = CalendarAgent()
 
-# -- list calendars -----------------------------------------------------
+# -- send a natural-language instruction --------------------------------
 with agent:
-    calendars = agent._caldav.list_calendars()
-    print("Your calendars:", calendars)
+    result = agent.run("list my calendars")
+    print("Result:", result)
 ```
 
 Run it:
@@ -74,16 +74,23 @@ uv run python hello_calendar.py
 
 ## 4. What just happened?
 
-1. **Direct API** — the calendar agent runs in-process with no broker
-   transport.  The CalDAV client and intent parser are accessed
-   directly through the agent instance.
+1. **End-to-end agent** — `agent.run(text)` parses a natural-language
+   instruction through the bundled `IntentParser` and dispatches the
+   resulting intent to the appropriate CalDAV operation.  No manual
+   wiring of the parser and client is required.
 
 2. **`with agent:`** — the context manager provides a clean
    entry/exit scope for the agent.  The CalDAV client and intent
    parser remain accessible as attributes outside the block as well.
 
-3. **CalDAV client** — `agent._caldav` provides typed methods for
-   calendar, contact, and task operations against your Radicale server.
+3. **Returns dispatch results** — `run()` returns whatever the
+   dispatched operation produces (a list of items, a dict of the
+   created/updated/deleted record, etc.).
+
+!!! tip "Direct CalDAV access"
+    If you need the typed methods directly (bypassing NL parsing), the
+    `CalDavClient` remains available as `agent._caldav` and the parser as
+    `agent._parser`.
 
 ---
 
