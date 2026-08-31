@@ -1,0 +1,21 @@
+# central-deploy-contract-version: 1
+services:
+  calendar-agent:
+    image: ghcr.io/damien-robotsix/robotsix-calendar-agent:main
+    ports:
+      - "8201:8080"
+    volumes:
+      - calendar-agent-config:/app/config
+    labels:
+      robotsix.deploy.config-target: /app/config/config.json
+    environment:
+      ROBOTSIX_CONFIG_FILE: /app/config/config.json
+    healthcheck:
+      test: ["CMD", "calendar-agent-healthcheck"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+volumes:
+  calendar-agent-config:
