@@ -54,7 +54,7 @@ def _start_http_server(settings: Settings) -> None:
     )
     app.state.caldav_client = client
 
-    config = uvicorn.Config(app, host="0.0.0.0", port=8080, log_level="info")  # noqa: S104
+    config = uvicorn.Config(app, host="0.0.0.0", port=8080, log_level="info")  # noqa: S104  # nosec B104
     server = uvicorn.Server(config)
     thread = threading.Thread(target=server.run, daemon=True)
     thread.start()
