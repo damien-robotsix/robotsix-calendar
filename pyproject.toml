@@ -20,6 +20,8 @@ dependencies = [
     "robotsix-http",
     "caldav",
     "pydantic",
+    "fastapi",
+    "uvicorn",
     # opentelemetry-api provides opentelemetry.trace used directly by
     # healthcheck; declared explicitly so the healthcheck entry point does not
     # rely on robotsix-llmio[tracing] pulling it in transitively.
@@ -97,6 +99,7 @@ convention = "google"
 "src/robotsix_calendar_agent/healthcheck/__init__.py" = ["T201"]
 "vulture_whitelist.py" = ["B018", "F821", "D"]
 "tests/**/*.py" = ["S105", "S106", "S603", "D"]
+"src/robotsix_calendar_agent/api/**/*.py" = ["B008", "ARG001"]
 
 [tool.mypy]
 python_version = "3.14"
