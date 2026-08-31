@@ -140,9 +140,7 @@ class TestServeBlocking:
                 "robotsix_calendar.entrypoint.signal.signal",
                 fake_signal,
             ),
-            patch(
-                "robotsix_calendar.entrypoint.threading.Event"
-            ) as mock_event_cls,
+            patch("robotsix_calendar.entrypoint.threading.Event") as mock_event_cls,
         ):
 
             def wait_side_effect(*_a: Any, **_k: Any) -> None:
