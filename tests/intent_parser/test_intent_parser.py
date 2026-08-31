@@ -213,6 +213,19 @@ class TestSystemPrompt:
         assert "update_task" in prompt
         assert "delete_task" in prompt
 
+    @pytest.mark.parametrize(
+        "op",
+        [*CalendarOperation, *ContactOperation, *TaskOperation],
+        ids=lambda op: op.value,
+    )
+    def test_system_prompt_mentions_every_operation(self, op: object) -> None:
+        """Every enum value must appear in the system prompt so the LLM can emit it."""
+        prompt = _build_system_prompt()
+        assert op.value in prompt, (  # type: ignore[union-attr]
+            f"Operation {op.value!r} is missing from the system prompt — "
+            "the LLM will never be told it exists."
+        )
+
     def test_calendar_operation_has_list_calendars(self) -> None:
         assert hasattr(CalendarOperation, "LIST_CALENDARS")
         assert CalendarOperation.LIST_CALENDARS == "list_calendars"  # type: ignore[comparison-overlap]
