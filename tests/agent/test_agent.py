@@ -82,6 +82,42 @@ class TestCalendarAgentInit:
                 CalendarAgent()
 
 
+class TestCalendarAgentParserWiring:
+    """Verify CalendarAgent creates an IntentParser and exposes run()."""
+
+    def test_init_creates_intent_parser(self, calendar_agent: MagicMock) -> None:
+        """CalendarAgent.__init__ should instantiate an IntentParser."""
+        assert hasattr(calendar_agent, "_parser")
+        assert calendar_agent._parser is not None
+
+    def test_run_parses_and_dispatches(self, calendar_agent: MagicMock) -> None:
+        """run() should call parser.parse then _dispatch and return the result."""
+        from robotsix_calendar.intent_parser import ParsedIntent
+
+        fake_intent = ParsedIntent(
+            operation="list_events",
+            params={"start": "2026-01-01", "end": "2026-01-31"},
+            original_text="list events in January",
+        )
+        calendar_agent._parser.parse.return_value = fake_intent
+        calendar_agent._caldav.list_events.return_value = []
+
+        result = calendar_agent.run("list events in January")
+
+        calendar_agent._parser.parse.assert_called_once_with("list events in January")
+        calendar_agent._caldav.list_events.assert_called_once()
+        assert result == []
+
+    def test_run_propagates_parse_error(self, calendar_agent: MagicMock) -> None:
+        """run() should let IntentParseError bubble up."""
+        from robotsix_calendar.intent_parser import IntentParseError
+
+        calendar_agent._parser.parse.side_effect = IntentParseError("bad input")
+
+        with pytest.raises(IntentParseError, match="bad input"):
+            calendar_agent.run("garbage")
+
+
 class TestRuntimeCredentials:
     def test_exports_openrouter_key_from_canonical_block(
         self, monkeypatch: pytest.MonkeyPatch
