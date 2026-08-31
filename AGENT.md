@@ -126,9 +126,9 @@ src/robotsix_calendar_agent/
 - **`robotsix-http`** — HTTP client with retry logic
 ## Periodic workflows
 
-This repo is targeted by **18 periodic agent workflows** (second-highest
-in the fleet), plus one framework-level workflow (`langfuse_cleanup`) that
-requires no per-repo stub. Key ones referenced above:
+This repo is targeted by **17 periodic agent workflows**, plus one
+framework-level workflow (`langfuse_cleanup`) that requires no per-repo
+stub. Key ones referenced above:
 
 - `trace_review` — surfaces anomalous traces
 
