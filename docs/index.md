@@ -56,26 +56,35 @@ with agent:
 
 ### 4. Use the agent directly
 
-The agent provides an :class:`IntentParser` for natural-language
-instruction parsing.  Construct one alongside the agent and dispatch
-parsed intents through :meth:`CalendarAgent._dispatch`:
+The agent wires together an :class:`IntentParser` and
+:class:`CalDavClient`.  Use the public :meth:`CalendarAgent.run` method
+to parse a natural-language instruction and dispatch it in one step:
 
 ```python
 from robotsix_calendar import CalendarAgent
-from robotsix_calendar.intent_parser import IntentParser
 
 agent = CalendarAgent()
-parser = IntentParser()
 
-# Parse a natural-language instruction
-parsed = parser.parse("create event Team Lunch tomorrow at noon")
-
-# Dispatch the parsed intent through the agent
+# Parse a natural-language instruction and dispatch it end-to-end
 with agent:
+    result = agent.run("create event Team Lunch tomorrow at noon")
+    print(result)
+```
+
+`run()` returns whatever the dispatched CalDAV operation produces.  If
+you need lower-level access, the bundled `IntentParser` and
+`CalDavClient` remain available as `agent._parser` and `agent._caldav`:
+
+```python
+from robotsix_calendar import CalendarAgent
+
+agent = CalendarAgent()
+
+with agent:
+    parsed = agent._parser.parse("create event Team Lunch tomorrow at noon")
     result = agent._dispatch(parsed)
     print(result)
 
-# List calendars through the CalDAV client
 with agent:
     calendars = agent._caldav.list_calendars()
     print(calendars)
@@ -129,4 +138,10 @@ Four additional optional keys (`RADICALE_DEFAULT_CALENDAR`, `CALDAV_TIMEOUT`,
 | Parameter | Type | Default | Description |
 |---|---|---|---|
 | `agent_id` | `str` | `"calendar"` | Agent identifier |
+
+### Public method (`CalendarAgent`)
+
+| Method | Signature | Description |
+|---|---|---|
+| `run` | `run(text: str) -> Any` | Parse a natural-language calendar/contact instruction and dispatch it to the appropriate CalDAV operation. Raises `IntentParseError` on parse failure or `AgentLogicError` for unknown operations. |
 
