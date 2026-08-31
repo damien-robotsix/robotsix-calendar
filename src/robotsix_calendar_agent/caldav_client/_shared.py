@@ -11,7 +11,7 @@ import functools
 import logging
 from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Any, TypeVar, cast
+from typing import Any, Protocol, TypeVar, cast
 
 from opentelemetry import trace
 from opentelemetry.trace import Span
@@ -31,6 +31,32 @@ _tracer = trace.get_tracer(__name__)
 _F = TypeVar("_F", bound=Callable[..., Any])
 
 logger = logging.getLogger(__name__)
+
+
+class _CalDavClientProtocol(Protocol):
+    """Structural contract the concrete ``CalDavClient`` provides to mixins.
+
+    Declared once here as the single source of truth for the host-class
+    members each domain mixin relies on. Domain mixins reference this
+    Protocol (under ``TYPE_CHECKING``) instead of re-declaring copy-pasted
+    stub blocks, so a signature change on ``CalDavClient`` that drifts from
+    the contract is caught by mypy as an incompatible override rather than
+    silently diverging across files.
+    """
+
+    _caldav: Any
+
+    @staticmethod
+    def _escape_text(value: str) -> str: ...
+
+    @staticmethod
+    def _ical_dt(name: str, value: str) -> str: ...
+
+    def _iter_calendars(self, calendar_id: str = "") -> list[Any]: ...
+
+    def _get_calendar(self, calendar_id: str = "") -> Any: ...
+
+    def _get_addressbook(self, addressbook_id: str = "") -> Any: ...
 
 
 @dataclass(kw_only=True)
