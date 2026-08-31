@@ -189,6 +189,7 @@ modules:
       - docker-compose.yml
       - mkdocs.yml
       - pyproject.toml
+      - release-please-config.json
       - uv.lock
       - vulture_whitelist.py
     dependencies: []
