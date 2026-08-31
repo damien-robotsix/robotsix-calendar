@@ -16,27 +16,23 @@ from .exceptions import NotFoundError
 
 logger = logging.getLogger(__name__)
 
+if TYPE_CHECKING:
+    from ._shared import _CalDavClientProtocol
 
-class _CalendarOpsMixin:
+    _MixinBase = _CalDavClientProtocol
+else:
+    _MixinBase = object
+
+
+class _CalendarOpsMixin(_MixinBase):
     """Mixin providing calendar event CRUD methods.
 
     Mixed into :class:`CalDavClient` alongside the other domain mixins.
+    The host-class contract (``_escape_text``, ``_ical_dt``,
+    ``_iter_calendars``, ``_get_calendar``, ...) is supplied under
+    ``TYPE_CHECKING`` by :class:`_CalDavClientProtocol` rather than
+    re-declared here.
     """
-
-    if TYPE_CHECKING:
-        # Provided by CalDavClient at runtime; declared here so mypy
-        # understands the mixin contract without circular imports.
-        def _escape_text(self, value: str) -> str:
-            raise NotImplementedError
-
-        def _ical_dt(self, name: str, value: str) -> str:
-            raise NotImplementedError
-
-        def _iter_calendars(self, calendar_id: str = "") -> list[Any]:
-            raise NotImplementedError
-
-        def _get_calendar(self, calendar_id: str = "") -> Any:
-            raise NotImplementedError
 
     # ------------------------------------------------------------------
     # helpers

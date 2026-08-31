@@ -11,21 +11,22 @@ from .exceptions import NotFoundError
 
 logger = logging.getLogger(__name__)
 
+if TYPE_CHECKING:
+    from ._shared import _CalDavClientProtocol
 
-class _ContactOpsMixin:
+    _MixinBase = _CalDavClientProtocol
+else:
+    _MixinBase = object
+
+
+class _ContactOpsMixin(_MixinBase):
     """Mixin providing contact (CardDAV) CRUD methods.
 
     Mixed into :class:`CalDavClient` alongside the other domain mixins.
+    The host-class contract (``_escape_text``, ``_get_addressbook``, ...)
+    is supplied under ``TYPE_CHECKING`` by :class:`_CalDavClientProtocol`
+    rather than re-declared here.
     """
-
-    if TYPE_CHECKING:
-        # Provided by CalDavClient at runtime; declared here so mypy
-        # understands the mixin contract without circular imports.
-        def _escape_text(self, value: str) -> str:
-            raise NotImplementedError
-
-        def _get_addressbook(self, addressbook_id: str = "") -> Any:
-            raise NotImplementedError
 
     # ------------------------------------------------------------------
     # helpers
