@@ -14,6 +14,9 @@ permissions:
 jobs:
   python-ci:
     name: Python CI (shared)
+    permissions:
+      contents: read
+      security-events: write  # the shared workflow uploads SARIF; job-level permissions REPLACE the top-level block
     uses: damien-robotsix/robotsix-github-workflows/.github/workflows/python-ci.yml@77e10e286717cfe0eeb6b8d9ce985f3794236d15  # main
     with:
       python-version: "3.14"
@@ -27,6 +30,9 @@ jobs:
       pytest-args: -m "not integration"
 
   security:
+    permissions:
+      contents: read
+      security-events: write  # upload SARIF from the scan
     uses: damien-robotsix/robotsix-github-workflows/.github/workflows/python-security.yml@f343f5ca84b1d54bb4c2fdcb83568724aa9f743c  # main
     with:
       uv-version: "0.12.5"
