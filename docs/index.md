@@ -1,4 +1,4 @@
-# robotsix-calendar-agent
+# robotsix-calendar
 
 An in-process agent that manages a Radicale server's calendars (CalDAV) and
 contacts (CardDAV) — full read-write including delete.
@@ -46,7 +46,7 @@ uv sync
 ### 3. Start the agent
 
 ```python
-from robotsix_calendar_agent import CalendarAgent
+from robotsix_calendar import CalendarAgent
 
 agent = CalendarAgent()
 with agent:
@@ -61,8 +61,8 @@ instruction parsing.  Construct one alongside the agent and dispatch
 parsed intents through :meth:`CalendarAgent._dispatch`:
 
 ```python
-from robotsix_calendar_agent import CalendarAgent
-from robotsix_calendar_agent.intent_parser import IntentParser
+from robotsix_calendar import CalendarAgent
+from robotsix_calendar.intent_parser import IntentParser
 
 agent = CalendarAgent()
 parser = IntentParser()
@@ -87,7 +87,7 @@ The agent runs in-process.  Start it and work with the CalDAV client
 and intent parser directly:
 
 ```python
-from robotsix_calendar_agent import CalendarAgent
+from robotsix_calendar import CalendarAgent
 
 agent = CalendarAgent()
 with agent:

@@ -4,11 +4,11 @@ All configuration is loaded from a single JSON config file
 (`config/config.json` by default, overridable via the
 `ROBOTSIX_CONFIG_FILE` environment variable) using
 :func:`robotsix_config.load_config`. The settings model lives at
-`src/robotsix_calendar_agent/settings/__init__.py`.
+`src/robotsix_calendar/settings/__init__.py`.
 
 ## Config file
 
-::: robotsix_calendar_agent.settings
+::: robotsix_calendar.settings
 
 ### Schema
 
@@ -19,7 +19,7 @@ When you change `Settings` fields, regenerate the schema:
 ```bash
 python -c "
 from robotsix_config import config_schema_json
-from robotsix_calendar_agent.settings import Settings
+from robotsix_calendar.settings import Settings
 print(config_schema_json(Settings), end='')
 " > config/config.schema.json
 ```
@@ -35,7 +35,7 @@ omitted (or set to ``null``), Langfuse tracing is not initialised.
   "langfuse": {
     "host": "https://langfuse.example.com",
     "projects": {
-      "robotsix-calendar-agent": {
+      "robotsix-calendar": {
         "public_key": "pk-...",
         "secret_key": "sk-...",
         "project_id": ""
@@ -46,7 +46,7 @@ omitted (or set to ``null``), Langfuse tracing is not initialised.
 ```
 
 The `projects` map uses the component alias as the key — currently
-``robotsix-calendar-agent``.  When set, the agent exports ``LANGFUSE_HOST``,
+``robotsix-calendar``.  When set, the agent exports ``LANGFUSE_HOST``,
 ``LANGFUSE_PUBLIC_KEY``, and ``LANGFUSE_SECRET_KEY`` to the process
 environment before calling ``setup_langfuse_tracing()``.
 
@@ -61,7 +61,7 @@ environment variable.
 {
   "openrouter": {
     "keys": {
-      "robotsix-calendar-agent": "sk-or-..."
+      "robotsix-calendar": "sk-or-..."
     }
   }
 }
@@ -69,7 +69,7 @@ environment variable.
 
 The `keys` map uses the same component alias as ``langfuse.projects``.
 Currently the key is declared for future wiring (the
-:class:`~robotsix_calendar_agent.intent_parser.IntentParser` accepts
+:class:`~robotsix_calendar.intent_parser.IntentParser` accepts
 an ``api_key`` parameter for this purpose).
 
 !!! note "Component agent removed"

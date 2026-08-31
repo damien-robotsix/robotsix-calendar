@@ -24,7 +24,7 @@ import pytest
 from hypothesis import given
 from hypothesis import strategies as st
 
-from robotsix_calendar_agent.caldav_client import (
+from robotsix_calendar.caldav_client import (
     CalDavClient,
     CalendarEvent,
     Contact,
@@ -56,7 +56,7 @@ def _build_event_ical(event: CalendarEvent) -> str:
     return (
         "BEGIN:VCALENDAR\n"
         "VERSION:2.0\n"
-        "PRODID:-//robotsix-calendar-agent//EN\n"
+        "PRODID:-//robotsix-calendar//EN\n"
         "BEGIN:VEVENT\n"
         f"UID:{event.uid}\n"
         f"DTSTAMP:{dtstamp}\n"
@@ -144,7 +144,7 @@ def _build_task_ical(task: Task) -> str:
     lines = [
         "BEGIN:VCALENDAR",
         "VERSION:2.0",
-        "PRODID:-//robotsix-calendar-agent//EN",
+        "PRODID:-//robotsix-calendar//EN",
         "BEGIN:VTODO",
         f"UID:{task.uid}",
         f"DTSTAMP:{dtstamp}",

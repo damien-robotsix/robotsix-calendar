@@ -1,3 +1,3 @@
 # CalDAV Client
 
-::: robotsix_calendar_agent.caldav_client
+::: robotsix_calendar.caldav_client

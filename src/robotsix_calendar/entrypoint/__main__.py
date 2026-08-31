@@ -1,4 +1,4 @@
-"""Enable ``python -m robotsix_calendar_agent.entrypoint``."""
+"""Enable ``python -m robotsix_calendar.entrypoint``."""
 
 from __future__ import annotations
 

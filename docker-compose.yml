@@ -1,7 +1,7 @@
 # central-deploy-contract-version: 1
 services:
   calendar-agent:
-    image: ghcr.io/damien-robotsix/robotsix-calendar-agent:main
+    image: ghcr.io/damien-robotsix/robotsix-calendar:main
     ports:
       - "8201:8080"
     volumes:

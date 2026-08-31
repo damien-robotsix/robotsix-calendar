@@ -6,11 +6,11 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from robotsix_calendar_agent.caldav_client import (
+from robotsix_calendar.caldav_client import (
     CalDavClient,
     CalendarEvent,
 )
-from robotsix_calendar_agent.caldav_client.exceptions import (
+from robotsix_calendar.caldav_client.exceptions import (
     NotFoundError,
 )
 from tests.caldav_client.conftest import _make_event, _mock_vevent

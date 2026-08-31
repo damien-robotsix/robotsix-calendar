@@ -13,7 +13,7 @@ longer supported.
 ## Reporting a Vulnerability
 
 To report a security vulnerability, please use the
-[GitHub Security Advisories](https://github.com/damien-robotsix/robotsix-calendar-agent/security/advisories/new)
+[GitHub Security Advisories](https://github.com/damien-robotsix/robotsix-calendar/security/advisories/new)
 feature.
 
 ## Disclosure Policy

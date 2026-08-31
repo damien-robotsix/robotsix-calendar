@@ -14,7 +14,7 @@ We assume you've completed [Your First Agent](first-agent.md) and have
 Save this as `manage_events.py`:
 
 ```python
-from robotsix_calendar_agent import CalendarAgent
+from robotsix_calendar import CalendarAgent
 
 agent = CalendarAgent()
 ```
@@ -27,7 +27,7 @@ the `with agent:` context manager handles cleanup automatically.
 ## 1. Create an event
 
 ```python
-from robotsix_calendar_agent.caldav_client import CalendarEvent
+from robotsix_calendar.caldav_client import CalendarEvent
 
 event = CalendarEvent(
     summary="Dentist appointment",

@@ -22,7 +22,7 @@ jobs:
       python-version: "3.14"
       uv-version: "0.12.5"
       install-extras: ""
-      cov-package: robotsix_calendar_agent
+      cov-package: robotsix_calendar
       coverage-threshold: "85"
       # The in-process Radicale integration suite runs in the dedicated
       # `integration` job below; the shared spine should cover only the

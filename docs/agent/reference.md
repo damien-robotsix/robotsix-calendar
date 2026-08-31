@@ -1,3 +1,3 @@
 # CalendarAgent
 
-::: robotsix_calendar_agent.agent
+::: robotsix_calendar.agent

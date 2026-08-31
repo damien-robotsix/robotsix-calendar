@@ -3,12 +3,12 @@ name: Config schema drift
 on:
   push:
     paths:
-      - "src/robotsix_calendar_agent/settings/__init__.py"
+      - "src/robotsix_calendar/settings/__init__.py"
       - "config/config.schema.json"
       - "config/config.json"
   pull_request:
     paths:
-      - "src/robotsix_calendar_agent/settings/__init__.py"
+      - "src/robotsix_calendar/settings/__init__.py"
       - "config/config.schema.json"
       - "config/config.json"
 
@@ -35,8 +35,8 @@ jobs:
 
       - name: Check config schema is up to date
         run: |
-          uv run --frozen robotsix-config schema --check robotsix_calendar_agent.settings.Settings
+          uv run --frozen robotsix-config schema --check robotsix_calendar.settings.Settings
 
       - name: Check config.json keys
         run: |
-          uv run --frozen robotsix-config config --check-keys robotsix_calendar_agent.settings.Settings --config config/config.json
+          uv run --frozen robotsix-config config --check-keys robotsix_calendar.settings.Settings --config config/config.json

@@ -11,7 +11,7 @@ import logging
 
 from pydantic import BaseModel, Field, SecretStr, field_validator, model_validator
 
-COMPONENT_ALIAS = "robotsix-calendar-agent"
+COMPONENT_ALIAS = "robotsix-calendar"
 """Canonical component alias.
 
 Single source of truth for the alias that keys both ``langfuse.projects``

@@ -47,7 +47,7 @@
 - Moved `docs/agent/tutorials/manage-events.md` to `docs/tutorials/basic/manage-events.md` for consistent directory structure. Updated cross-references in `first-agent.md`, `tutorials/index.md`, `mkdocs.yml`, and `docs/modules.yaml` accordingly.
 - Reorganize `settings` module from flat file (`settings.py`) to per-module package (`settings/__init__.py`) for symmetric module layout.
 - Adopt standard Makefile targets: add `lock-check`, `pre-commit`, `test-unit`, and `test-integration`; rename `test` → `test-unit` (with `test` alias); extend `clean` to remove `.mypy_cache`, `.hypothesis`, and `site/`; include `lock-check` in `all` target.
-- Reorganize `agent` module from flat file to sub-package (`src/robotsix_calendar_agent/agent/__init__.py`), aligning with the per-module layout pattern used by `caldav-client` and `intent-parser`.
+- Reorganize `agent` module from flat file to sub-package (`src/robotsix_calendar/agent/__init__.py`), aligning with the per-module layout pattern used by `caldav-client` and `intent-parser`.
 - Reorganize `entrypoint` module into per-module subdirectory layout (`entrypoint.py` → `entrypoint/__init__.py`, `__main__.py` → `entrypoint/__main__.py`).
 - Convert `intent_parser` from a flat module to a sub-package (`intent_parser/__init__.py`), aligning with the `caldav_client` layout pattern.
 - Fix unresolved merge conflict markers in `docs/agent/tutorials/manage-events.md`
@@ -93,7 +93,7 @@
 - Add hadolint Dockerfile linting to CI and pre-commit hooks
 - Remove dead `_settings` attribute from `CalendarAgent` (never read after `__init__` assignment).
 - Add `docs` and `docs-serve` phony targets to Makefile for building and live-previewing docs with mkdocs
-- Add `make coverage` and `make coverage-view` targets for local coverage feedback, matching CI's `--cov=robotsix_calendar_agent` flags. Document both targets in `CONTRIBUTING.md`.
+- Add `make coverage` and `make coverage-view` targets for local coverage feedback, matching CI's `--cov=robotsix_calendar` flags. Document both targets in `CONTRIBUTING.md`.
 - Replace hand-rolled `_event_to_dict` serializer with `dataclasses.asdict()` in the event dispatch handlers. Removes the private `_event_to_dict` function and its module-level import from `agent.py`, eliminating unnecessary coupling between the top-level agent and an internal caldav_client detail.
 - Modernize `.pre-commit-config.yaml`: replace deprecated `mirrors-mypy` with local `uv run mypy` hook (`language: unsupported`), fix `autofix_commit_msg` placeholder from `%s` to `{hook_id}`, and migrate vulture hook from `language: system` to `language: unsupported` with `uv run --frozen`.
 - CI: Fix SBOM generation to exclude dev-only dependencies by adding `--no-dev` to `uv sync` in the `sbom` job.
@@ -164,14 +164,14 @@
   - Fix missing `paths` entry for the `agent` module.
 - Move `agent` module docs to per-module layout: `docs/reference/agent.md` → `docs/agent/reference.md`, `docs/tutorials/basic/manage-events.md` → `docs/agent/tutorials/manage-events.md`; update `mkdocs.yml` nav and cross-references.
 - Classify `docs/reference/component_agent.md` and `docs/tutorials/intermediate/component-agent-management.md` under the `agent` module's `doc_paths` in `docs/modules.yaml`.
-- Move `healthcheck.py` from repo root into the installable package as `robotsix_calendar_agent.healthcheck`, registered as the `calendar-agent-healthcheck` console_scripts entrypoint. The Dockerfile HEALTHCHECK now uses the entrypoint directly instead of a standalone script copy.
+- Move `healthcheck.py` from repo root into the installable package as `robotsix_calendar.healthcheck`, registered as the `calendar-agent-healthcheck` console_scripts entrypoint. The Dockerfile HEALTHCHECK now uses the entrypoint directly instead of a standalone script copy.
 - Added docstrings to the three public error-code constants (`ERROR_MISSING_SUBJECT`, `ERROR_MISSING_DATES`, `ERROR_INVALID_DATES`) in `add_to_calendar_handler.py`.
 - Split `caldav_client.py` (864 lines) into a package with domain-specific
   modules: `calendar_ops.py`, `contact_ops.py`, `task_ops.py`, and shared
   infrastructure in `_shared.py`. The `CalDavClient` class in `__init__.py`
   inherits from mixin classes in each domain module. All public API symbols
   (`CalDavClient`, `CalendarEvent`, `Contact`, `OperationError`, `Task`)
-  remain importable from `robotsix_calendar_agent.caldav_client` unchanged.
+  remain importable from `robotsix_calendar.caldav_client` unchanged.
 - Clarify that `langfuse_cleanup` is a framework-level periodic workflow (does not require a per-repo presence file). Remove it from the repo-specific "Periodic workflows" key-list in AGENT.md.
 - Migrated secret scanning from detect-secrets to Betterleaks in pre-commit hooks.
 - Removed dead telemetry counters (`_request_count`, `_error_count`, `_last_request_ts`, `_in_flight`, `_started_at`) and `monitor_snapshot()` from `CalendarAgent`. These were left over from the removed broker transport and were never incremented.
@@ -193,8 +193,8 @@
   ``add_to_calendar_handler`` retains its business logic with a local
   ``Response`` stand-in.  Broker integration will be reimplemented via
   central-deploy in a future release.
-- Add ``__main__.py`` to support ``python -m robotsix_calendar_agent`` invocation, following the Uvicorn pattern.
-- Move entrypoint tests from `tests/brokered_entrypoint/` (deleted) to `tests/entrypoint/test_entrypoint.py`, dropping broker-specific test classes and updating imports to `robotsix_calendar_agent.entrypoint`.
+- Add ``__main__.py`` to support ``python -m robotsix_calendar`` invocation, following the Uvicorn pattern.
+- Move entrypoint tests from `tests/brokered_entrypoint/` (deleted) to `tests/entrypoint/test_entrypoint.py`, dropping broker-specific test classes and updating imports to `robotsix_calendar.entrypoint`.
 - Remove all broker-related documentation: BROKER_* env vars, brokered transport mode, brokered_entrypoint references,
   and the brokered-service tutorial — replaced with in-process-only docs and entrypoint module reference
 - Remove broker transport: delete `brokered_entrypoint.py`, replace with `entrypoint.py` (in-process only); remove `BROKER_*`/`CALENDAR_AGENT_TRANSPORT`/`CALENDAR_AGENT_ID` fields from `Settings`; remove `agent` parameter from `CalendarAgent.__init__`; drop broker env vars from `docker-compose.yml`.
@@ -280,7 +280,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Hypothesis property-based round-trip tests for calendar event, task, and contact serialization against the in-process Radicale fixture.
 - `actionlint` job in CI (`.github/workflows/ci.yml`) and pre-commit hook (`.pre-commit-config.yaml`) for workflow syntax validation and shellcheck on inline scripts.
 - Commitizen (`commitizen>=4,<5`) dev dependency for automated semantic version bumping, changelog generation, and conventional-commit enforcement.
-- `[tool.commitizen]` configuration in `pyproject.toml` targeting both version locations (`pyproject.toml:version` and `src/robotsix_calendar_agent/__init__.py`), with changelog generation and incremental mode enabled.
+- `[tool.commitizen]` configuration in `pyproject.toml` targeting both version locations (`pyproject.toml:version` and `src/robotsix_calendar/__init__.py`), with changelog generation and incremental mode enabled.
 - Commitizen pre-commit hook in `.pre-commit-config.yaml` to enforce Conventional Commits message format.
 - Commitizen PR title check in CI (`ci.yml`) to gate non-conventional PR titles.
 - Docker `HEALTHCHECK` via `healthcheck.py` that validates CalDAV reachability using the existing `CalDavClient.health()` probe.

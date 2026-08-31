@@ -14,8 +14,8 @@ package manager used throughout these docs).
 Clone the repository and install dependencies:
 
 ```bash
-git clone https://github.com/damien-robotsix/robotsix-calendar-agent.git
-cd robotsix-calendar-agent
+git clone https://github.com/damien-robotsix/robotsix-calendar.git
+cd robotsix-calendar
 uv sync
 ```
 
@@ -53,7 +53,7 @@ environment variable.  For a full reference of every supported setting, see
 Create `hello_calendar.py`:
 
 ```python
-from robotsix_calendar_agent import CalendarAgent
+from robotsix_calendar import CalendarAgent
 
 # -- instantiate the calendar agent -------------------------------------
 agent = CalendarAgent()

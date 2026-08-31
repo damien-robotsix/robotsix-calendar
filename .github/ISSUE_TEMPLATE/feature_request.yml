@@ -8,7 +8,7 @@ body:
       value: |
         Thanks for taking the time to suggest a feature!
 
-        Please make sure you have searched [existing feature requests](https://github.com/damien-robotsix/robotsix-calendar-agent/issues?q=is%3Aissue+label%3Aenhancement) before filing a new one.
+        Please make sure you have searched [existing feature requests](https://github.com/damien-robotsix/robotsix-calendar/issues?q=is%3Aissue+label%3Aenhancement) before filing a new one.
 
   - type: checkboxes
     id: existing-requests

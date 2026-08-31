@@ -80,7 +80,7 @@ def main() -> None:
     setup_logging(
         level=settings.LOG_LEVEL,
         fmt="json" if settings.JSON_LOGS else "console",
-        loggers=("robotsix_calendar_agent",),
+        loggers=("robotsix_calendar",),
     )
     _start_http_server(settings)
     _serve_blocking()

@@ -11,7 +11,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from robotsix_calendar_agent.agent._dispatch import (
+from robotsix_calendar.agent._dispatch import (
     _build_contact,
     _build_event,
     _build_task,
@@ -28,8 +28,8 @@ from robotsix_calendar_agent.agent._dispatch import (
     _handle_list_events,
     _handle_list_tasks,
 )
-from robotsix_calendar_agent.caldav_client import CalendarEvent, Contact, Task
-from robotsix_calendar_agent.caldav_client.exceptions import AgentLogicError
+from robotsix_calendar.caldav_client import CalendarEvent, Contact, Task
+from robotsix_calendar.caldav_client.exceptions import AgentLogicError
 
 # ---------------------------------------------------------------------------
 # _build_event

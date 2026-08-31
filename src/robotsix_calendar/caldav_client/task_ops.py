@@ -61,7 +61,7 @@ class _TaskOpsMixin(_MixinBase):
         ical = (
             "BEGIN:VCALENDAR\n"
             "VERSION:2.0\n"
-            "PRODID:-//robotsix-calendar-agent//EN\n"
+            "PRODID:-//robotsix-calendar//EN\n"
             "BEGIN:VTODO\n"
             f"UID:{task.uid or ''}\n"
             f"DTSTAMP:{dtstamp}\n"

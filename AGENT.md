@@ -1,4 +1,4 @@
-# robotsix-calendar-agent — agent guidance
+# robotsix-calendar — agent guidance
 
 This repo follows the [robotsix stack standards](https://github.com/damien-robotsix/robotsix-standards).
 
@@ -25,7 +25,7 @@ requires the `tracing` extra (see Tracing below).
 All configuration lives in a single JSON config file
 (`config/config.json`, overridable via `ROBOTSIX_CONFIG_FILE`) loaded
 via **`robotsix_config.load_config(Settings)`** from
-`src/robotsix_calendar_agent/settings/__init__.py`. Every field is documented
+`src/robotsix_calendar/settings/__init__.py`. Every field is documented
 in `docs/configuration.md` with its type, default, and description.
 
 **Rule:** When you add, remove, or change a `Settings` field in
@@ -67,7 +67,7 @@ server or docker-compose.
 ## Tracing
 
 Langfuse tracing is initialised inside `_setup_tracing()`
-(`src/robotsix_calendar_agent/agent/__init__.py`), which is called
+(`src/robotsix_calendar/agent/__init__.py`), which is called
 from `CalendarAgent.__init__()`. The `setup_langfuse_tracing()` call
 was moved from module level to this helper, so importing
 `CalendarAgent` (or any module that imports it) no longer activates
@@ -86,7 +86,7 @@ Both are active and must not be disabled without coordination.
 ## Module layout
 
 ```
-src/robotsix_calendar_agent/
+src/robotsix_calendar/
 ├── __init__.py
 ├── agent/                     # CalendarAgent — wires everything together
 │   ├── __init__.py             # CalendarAgent class, re-exports
@@ -113,7 +113,7 @@ src/robotsix_calendar_agent/
     └── __init__.py
 ```
 
-> **Rule:** When adding a module-level import from an internal module to any file under `src/robotsix_calendar_agent/`, ensure the imported module appears in that file's `dependencies` list in `docs/modules.yaml`. Module-level `from .<module> import (...)` statements always require a corresponding `dependencies` entry — this is enforced by the periodic `module_curator` agent and violations will be flagged as draft tickets.
+> **Rule:** When adding a module-level import from an internal module to any file under `src/robotsix_calendar/`, ensure the imported module appears in that file's `dependencies` list in `docs/modules.yaml`. Module-level `from .<module> import (...)` statements always require a corresponding `dependencies` entry — this is enforced by the periodic `module_curator` agent and violations will be flagged as draft tickets.
 
 **Rationale:** Tickets such as `20260710T195032Z-...` (added `caldav_client` to `init.dependencies` after `__init__.py` imported `caldav_client.exceptions` at module level) and prior corrections `#255` and `#275` demonstrate that this convention is not obvious and has caused repeated drift in `docs/modules.yaml`.
 

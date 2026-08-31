@@ -1,3 +1,3 @@
 # Settings
 
-::: robotsix_calendar_agent.settings
+::: robotsix_calendar.settings

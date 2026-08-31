@@ -88,11 +88,11 @@ def calendar_agent() -> Any:
     """
     with (
         patch(
-            "robotsix_calendar_agent.agent.CalDavClient",
+            "robotsix_calendar.agent.CalDavClient",
             autospec=True,
         ) as mock_caldav,
         patch(
-            "robotsix_calendar_agent.agent.IntentParser",
+            "robotsix_calendar.agent.IntentParser",
             autospec=True,
         ) as mock_parser_cls,
         patch(
@@ -105,7 +105,7 @@ def calendar_agent() -> Any:
         config_path = _write_temp_config()
         os.environ["ROBOTSIX_CONFIG_FILE"] = config_path
 
-        from robotsix_calendar_agent.agent import CalendarAgent
+        from robotsix_calendar.agent import CalendarAgent
 
         agent = CalendarAgent()
         agent._mock_parser = mock_parser  # type: ignore[attr-defined]
