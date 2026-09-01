@@ -440,6 +440,91 @@ _SETTINGS_HTML = """\
 </html>
 """
 
+_DASHBOARD_HTML = """\
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>robotsix-calendar</title>
+    <link rel="stylesheet" href="/static/robotsix-ui.css">
+  </head>
+  <body>
+    <div id="app"></div>
+    <main class="dashboard">
+      <h2>Calendars</h2>
+      <ul id="calendar-list" class="dashboard-list"></ul>
+      <h2>Contacts</h2>
+      <table id="contacts-table" class="dashboard-table">
+        <thead>
+          <tr><th>Name</th><th>Email</th><th>Phone</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </main>
+    <script type="module">
+      import { mountAppShell } from "/static/robotsix-ui-vanilla.js";
+
+      mountAppShell(document.getElementById("app"), {
+        brand: "robotsix-calendar",
+        navItems: [
+          { href: "/", label: "Overview", active: true },
+          { href: "/settings", label: "Settings" },
+        ],
+        settingsHref: "/settings",
+      });
+
+      function escapeHtml(value) {
+        const node = document.createElement("span");
+        node.textContent = String(value ?? "");
+        return node.innerHTML;
+      }
+
+      async function loadCalendars() {
+        const list = document.getElementById("calendar-list");
+        try {
+          const response = await fetch("/calendars");
+          const calendars = await response.json();
+          list.innerHTML = calendars.length
+            ? calendars.map(
+                (cal) =>
+                  `<li class="dashboard-item rsu-panel">${escapeHtml(cal.name)}</li>`,
+              ).join("")
+            : "<li>No calendars found.</li>";
+        } catch (error) {
+          list.innerHTML =
+            `<li>Failed to load calendars: ${escapeHtml(error.message)}</li>`;
+        }
+      }
+
+      async function loadContacts() {
+        const body = document.querySelector("#contacts-table tbody");
+        try {
+          const response = await fetch("/contacts");
+          const contacts = await response.json();
+          body.innerHTML = contacts.length
+            ? contacts.map(
+                (contact) =>
+                  `<tr>
+                    <td>${escapeHtml(contact.full_name)}</td>
+                    <td>${escapeHtml(contact.email)}</td>
+                    <td>${escapeHtml(contact.phone)}</td>
+                  </tr>`,
+              ).join("")
+            : '<tr><td colspan="3">No contacts found.</td></tr>';
+        } catch (error) {
+          const detail = escapeHtml(error.message);
+          body.innerHTML = `<tr><td colspan="3">Load failed: ${detail}</td></tr>`;
+        }
+      }
+
+      loadCalendars();
+      loadContacts();
+    </script>
+  </body>
+</html>
+"""
+
 
 def _read_stored_config() -> dict[str, Any]:
     """Return the raw config document from the standard config file.
@@ -481,6 +566,12 @@ class ConfigRollbackRequest(BaseModel):
 def settings_page() -> str:
     """Render the shared schema-driven settings panel."""
     return _SETTINGS_HTML
+
+
+@app.get("/", response_class=HTMLResponse)
+def dashboard_page() -> str:
+    """Render the robotsix-ui app shell with calendars/contacts visualisation."""
+    return _DASHBOARD_HTML
 
 
 @app.get("/config")

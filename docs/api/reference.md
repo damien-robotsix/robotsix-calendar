@@ -1,8 +1,20 @@
 # API
 
 The FastAPI HTTP server exposes structured non-LLM CRUD endpoints for
-calendar events, tasks, contacts, and calendar listing, plus the
-standard schema-driven settings page and its config HTTP surface.
+calendar events, tasks, contacts, and calendar listing, plus a
+robotsix-ui based UI access point (app shell + calendars/contacts
+visualisation) and the standard schema-driven settings page and its
+config HTTP surface.
+
+## UI access point
+
+`GET /` renders a robotsix-ui based page that mounts the shared
+`robotsix-ui` app shell (`mountAppShell`) and visualises the user's
+calendars and contacts by fetching the `GET /calendars` and
+`GET /contacts` endpoints from the browser. Navigation links through to
+the schema-driven settings page at `/settings`. Like every other
+component UI, the page sits behind the central gateway — the component
+itself adds no authentication.
 
 ## Chat skill surface
 
