@@ -84,8 +84,8 @@ modules:
     description: >-
       FastAPI HTTP server exposing structured (non-LLM) CRUD endpoints
       for events, tasks, contacts, and calendars, plus the robotsix-ui
-      UI access point (/ui, /ui/calendars, /ui/contacts), the standard
-      settings page, and config HTTP surface.
+      UI access point (/ui, /ui/calendars, /ui/events, /ui/contacts), the
+      standard settings page, and config HTTP surface.
     paths:
       - src/robotsix_calendar/api/__init__.py
       - src/robotsix_calendar/api/_chat_skill.py
