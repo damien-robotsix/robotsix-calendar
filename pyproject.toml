@@ -11,11 +11,13 @@ requires-python = ">=3.14"
 license = { text = "MIT" }
 authors = [{ name = "Damien Robotsix", email = "damien.robotsix@gmail.com" }]
 dependencies = [
-    # The intent parser uses llmio's default provider (openrouter); the
-    # provider extra must be installed or get_provider() raises ImportError. The
-    # tracing extra pulls the OpenTelemetry/OTLP deps setup_langfuse_tracing()
-    # needs to export intent-parse traces to Langfuse.
-    "robotsix-llmio[openrouter,tracing]",
+    # The intent parser runs on llmio's default provider slot (Anthropic via
+    # the Claude SDK — claude_sdk extra) with OpenRouter as the automatic
+    # failover slot (openrouter extra); both extras must be installed or the
+    # resolved backend raises ImportError. The tracing extra pulls the
+    # OpenTelemetry/OTLP deps setup_langfuse_tracing() needs to export
+    # intent-parse traces to Langfuse.
+    "robotsix-llmio[claude_sdk,openrouter,tracing]",
     "robotsix-config",
     "robotsix-http",
     "caldav",
@@ -74,7 +76,7 @@ exclude-newer-package = { ruff = false }
 
 [tool.uv.sources]
 robotsix-config = { git = "https://github.com/damien-robotsix/robotsix-config.git", rev = "48e736bad05ff514360f93092a5f486a6aee1fe1" }
-robotsix-llmio = { git = "https://github.com/damien-robotsix/robotsix-llmio.git", rev = "276b076ca3305bbd3e3f1b1b338ed689b226bef7" }  # pragma: allowlist secret
+robotsix-llmio = { git = "https://github.com/damien-robotsix/robotsix-llmio.git", rev = "3f9127ad9cc45d52da76c411d7d1dc2faa903046" }  # pragma: allowlist secret
 robotsix-http = { git = "https://github.com/damien-robotsix/robotsix-http.git", rev = "cdfd4d1c42679fef73081439562872792e202dc4" }
 robotsix-modules = { git = "https://github.com/damien-robotsix/robotsix-modules.git", rev = "b2e82231fa2f260589be9ba757c6be450f4e5d3e" }
 
