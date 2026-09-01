@@ -25,11 +25,14 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 
 # Second layer: copy source and install the project itself.
 COPY . .
-# Fetch the shared robotsix-ui ConfigPanel assets (vanilla.js + style.css)
-# into the package static directory so the /settings page can serve them.
+# Fetch the shared robotsix-ui assets (vanilla.js + style.css) into the
+# package static directory so the /settings page and the AppShell UI
+# (/ui, /ui/calendars, /ui/contacts) can serve them.  v0.1.34 predates
+# the AppShell; v0.1.48 is the first pin whose vanilla.js release asset
+# exports mountAppShell (verified against the release artifact).
 RUN python -c "\
 import pathlib, urllib.request; \
-base = 'https://github.com/damien-robotsix/robotsix-ui/releases/download/v0.1.34'; \
+base = 'https://github.com/damien-robotsix/robotsix-ui/releases/download/v0.1.48'; \
 out = pathlib.Path('src/robotsix_calendar/api/static'); \
 out.mkdir(parents=True, exist_ok=True); \
 urllib.request.urlretrieve(f'{base}/style.css', out / 'robotsix-ui.css'); \
