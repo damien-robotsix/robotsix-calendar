@@ -507,7 +507,7 @@ _CALENDARS_PAGE_CONTENT = """\
             ? calendars.map(
                 (cal) =>
                   `<li class="ui-item">` +
-                  `<a href="/ui/events?calendar=${escapeAttr(cal.name)}">` +
+                  `<a href="/ui/events?calendar=${encodeURIComponent(cal.name)}">` +
                   `${escapeHtml(cal.name)}</a></li>`,
               ).join("")
             : '<li class="ui-item">No calendars found.</li>';
@@ -585,11 +585,15 @@ _EVENTS_PAGE_CONTENT = """\
         return { start: fmtDay(first), end: fmtDay(last) };
       }
 
-      function applyMonth() {
+      // `doLoad` is false only for the initial render when a `calendar`
+      // query param is present: the first fetch must wait for the
+      // calendar dropdown to be populated so the preselect applies
+      // (see loadCalendars + the startup calls at the bottom).
+      function applyMonth(doLoad) {
         const range = monthRange(monthOffset);
         startInput.value = range.start;
         endInput.value = range.end;
-        loadEvents();
+        if (doLoad !== false) loadEvents();
       }
 
       function dayKey(iso) {
@@ -674,6 +678,9 @@ _EVENTS_PAGE_CONTENT = """\
       }
 
       async function loadCalendars() {
+        const wanted = new URLSearchParams(window.location.search).get(
+          "calendar",
+        );
         try {
           const response = await fetch("/calendars");
           const calendars = await response.json();
@@ -684,15 +691,21 @@ _EVENTS_PAGE_CONTENT = """\
               escapeHtml(cal.name) + "</option>";
           }
           calendarSelect.innerHTML = options;
-          const wanted = new URLSearchParams(window.location.search).get(
-            "calendar",
-          );
-          if (wanted) calendarSelect.value = wanted;
+          if (wanted) {
+            calendarSelect.value = wanted;
+            // The dropdown is populated now, so the preselect applies to
+            // the first fetch — load events with the selection in place.
+            loadEvents();
+          }
         } catch (error) {
           calendarSelect.insertAdjacentHTML(
             "beforeend",
             '<option value="">Calendars unavailable</option>',
           );
+          // A preselect cannot be applied without the dropdown, but keep the
+          // page functional when one was requested; otherwise applyMonth()
+          // already fired the initial load with the default selection.
+          if (wanted) loadEvents();
         }
       }
 
@@ -709,8 +722,15 @@ _EVENTS_PAGE_CONTENT = """\
         applyMonth();
       });
 
+      // With a `calendar` query param, the initial fetch must wait for the
+      // dropdown to be populated (loadCalendars fires loadEvents then); with
+      // no param the default all-calendars selection is already correct, so
+      // the events load immediately.
+      const calendarParam = new URLSearchParams(window.location.search).get(
+        "calendar",
+      );
       loadCalendars();
-      applyMonth();
+      applyMonth(calendarParam ? false : true);
     </script>
 """
 
