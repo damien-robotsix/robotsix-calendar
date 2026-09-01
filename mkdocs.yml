@@ -36,3 +36,4 @@ nav:
       - settings/reference.md
       - entrypoint/reference.md
       - healthcheck/reference.md
+      - api/reference.md

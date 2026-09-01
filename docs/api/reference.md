@@ -1,0 +1,32 @@
+# API
+
+The FastAPI HTTP server exposes structured non-LLM CRUD endpoints for
+calendar events, tasks, contacts, and calendar listing, plus the
+standard schema-driven settings page and its config HTTP surface.
+
+## Settings page and config surface
+
+The component serves a minimal settings page at `/settings` that embeds
+the shared `robotsix-ui` ConfigPanel (JSON-Schema driven, React-free).
+The panel is populated with the currently stored config read through the
+standard config contract and persists edits through it — there is no
+separate local config-file write path.
+
+The config HTTP surface:
+
+| Endpoint | Description |
+|---|---|
+| `GET /settings` | Renders the shared settings panel. |
+| `GET /config` | Returns the stored config (secrets masked), the generated JSON Schema, and the current config version. |
+| `PUT /config` | Applies a partial update via the standard versioned contract; returns the masked merged config. |
+| `GET /config/versions` | Lists recorded config versions, newest first. |
+| `POST /config/rollback` | Restores an earlier config version as a new version. |
+
+Secret fields (e.g. `radicale_password`) are masked in responses per the
+`Settings` schema annotations that the ConfigPanel honors, so secrets are
+never returned to the panel and unsubmitted values are preserved on update.
+
+Like every other component UI, the page sits behind the central gateway —
+the component itself adds no authentication.
+
+::: robotsix_calendar.api

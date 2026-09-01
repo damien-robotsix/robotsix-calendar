@@ -91,6 +91,7 @@ modules:
       - tests/api/__init__.py
       - tests/api/test_api.py
       - tests/api/test_config_panel.py
+      - docs/api/reference.md
     dependencies:
       - caldav-client
       - settings

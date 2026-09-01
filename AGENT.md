@@ -92,8 +92,9 @@ src/robotsix_calendar/
 │   ├── __init__.py             # CalendarAgent class, re-exports
 │   ├── _dispatch.py            # dispatch table & handler functions
 │   └── _reply.py               # reply rendering & formatting
-├── api/                        # FastAPI HTTP server — structured CRUD endpoints
-│   └── __init__.py             # FastAPI app, Pydantic models, endpoint handlers
+├── api/                        # FastAPI HTTP server — structured CRUD endpoints + settings page
+│   ├── __init__.py             # FastAPI app, Pydantic models, endpoint handlers, /settings + /config surface
+│   └── static/                 # shared robotsix-ui ConfigPanel assets served by /settings
 ├── caldav_client/              # typed CalDAV/CardDAV wrapper with retry logic via robotsix-http
 │   ├── __init__.py
 │   ├── _shared.py              # shared helpers
