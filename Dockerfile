@@ -40,8 +40,11 @@ RUN python -m pip install --no-cache-dir --upgrade 'setuptools>=78.1.1' \
         -exec rm -rf {} + \
     && rm -f /usr/local/bin/pip /usr/local/bin/pip3 /usr/local/bin/pip3.14
 
-# Create a dedicated non-root user.
-RUN groupadd -g 1001 app && useradd -u 1001 -g app -m -d /app -s /bin/false app
+# Create a dedicated non-root user. uid/gid 1000 is the fleet convention
+# (chat/auto-mail/mill): the shared claude-auth volume central-deploy mounts
+# for the claudeSDK transport is owned by uid 1000 with mode 700, so any
+# other uid cannot read the credentials.
+RUN groupadd -g 1000 app && useradd -u 1000 -g app -m -d /app -s /bin/false app
 
 WORKDIR /app
 
@@ -57,7 +60,7 @@ RUN mkdir -p /app/config && chown app:app /app/config
 ENV PATH="/app/.venv/bin:${PATH}" \
     ROBOTSIX_CONFIG_FILE=/app/config/config.json
 
-USER 1001
+USER 1000
 
 EXPOSE 8080
 
