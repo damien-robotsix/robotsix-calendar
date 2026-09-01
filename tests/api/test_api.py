@@ -52,6 +52,38 @@ class TestHealth:
 
 
 # ---------------------------------------------------------------------------
+# Chat skill
+# ---------------------------------------------------------------------------
+
+
+class TestChatSkill:
+    def test_chat_skill_returns_markdown(self, client: TestClient) -> None:
+        """GET /chat-skill returns a SKILL.md document with YAML frontmatter."""
+        response = client.get("/chat-skill")
+        assert response.status_code == 200
+        assert response.headers["content-type"].startswith("text/markdown")
+        body = response.text
+        assert body.startswith("---\nname: robotsix-calendar")
+        assert "## robotsix-calendar — Chat Agent Skill" in body
+
+    def test_chat_skill_documents_calendar_api(self, client: TestClient) -> None:
+        """The skill covers calendars, events, tasks, and contacts."""
+        body = client.get("/chat-skill").text
+        for route in (
+            "GET /calendars",
+            "GET /events",
+            "POST /events",
+            "DELETE /events/{uid}",
+            "GET /tasks",
+            "POST /tasks",
+            "GET /contacts",
+            "POST /contacts",
+            "PUT /contacts/{uid}",
+        ):
+            assert route in body, f"route '{route}' absent from /chat-skill"
+
+
+# ---------------------------------------------------------------------------
 # Events
 # ---------------------------------------------------------------------------
 

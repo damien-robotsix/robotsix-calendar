@@ -63,3 +63,6 @@ _ = get_config
 _ = update_config
 _ = get_config_versions
 _ = rollback_config
+
+# /chat-skill route handler — registered by FastAPI decorator, invisible to vulture.
+_ = chat_skill

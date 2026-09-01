@@ -87,6 +87,7 @@ modules:
       settings page and config HTTP surface.
     paths:
       - src/robotsix_calendar/api/__init__.py
+      - src/robotsix_calendar/api/_chat_skill.py
       - src/robotsix_calendar/api/static/.gitkeep
       - tests/api/__init__.py
       - tests/api/test_api.py
