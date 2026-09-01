@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Annotated, Any
 
 from fastapi import Body, Depends, FastAPI, HTTPException, Query, Request
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from robotsix_config import (
@@ -421,59 +421,72 @@ def list_calendars(
 # Settings page + standard config surface (shared ConfigPanel)
 # ---------------------------------------------------------------------------
 
-_SETTINGS_HTML = """\
+_UI_NAV: tuple[tuple[str, str], ...] = (
+    ("/ui/calendars", "Calendars"),
+    ("/ui/contacts", "Contacts"),
+    ("/settings", "Settings"),
+)
+
+
+def _ui_page(page_title: str, active_href: str, content: str) -> str:
+    """Render a robotsix-ui app-shell page with the shared primary nav.
+
+    Every UI page mounts the shared ``mountAppShell`` from
+    ``/static/robotsix-ui-vanilla.js`` with the standard three nav entries
+    (Calendars, Contacts, Settings); ``active_href`` marks the current page.
+    """
+    nav_entries = []
+    for href, label in _UI_NAV:
+        active = "true" if href == active_href else "false"
+        nav_entries.append(
+            f'          {{ href: "{href}", label: "{label}", active: {active} }}'
+        )
+    nav = ",\n".join(nav_entries)
+    return f"""\
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Settings</title>
+    <title>{page_title}</title>
     <link rel="stylesheet" href="/static/robotsix-ui.css">
   </head>
   <body>
-    <div id="settings"></div>
+    <div id="app"></div>
+{content}
     <script type="module">
-      import { mountConfigPanel } from "/static/robotsix-ui-vanilla.js";
-      mountConfigPanel(document.getElementById("settings"), { title: "Settings" });
+      import {{ mountAppShell }} from "/static/robotsix-ui-vanilla.js";
+      mountAppShell(document.getElementById("app"), {{
+        brand: "Calendar",
+        navItems: [
+{nav}
+        ],
+        settingsHref: "/settings",
+      }});
     </script>
   </body>
 </html>
 """
 
-_DASHBOARD_HTML = """\
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>robotsix-calendar</title>
-    <link rel="stylesheet" href="/static/robotsix-ui.css">
-  </head>
-  <body>
-    <div id="app"></div>
-    <main class="dashboard">
-      <h2>Calendars</h2>
-      <ul id="calendar-list" class="dashboard-list"></ul>
-      <h2>Contacts</h2>
-      <table id="contacts-table" class="dashboard-table">
-        <thead>
-          <tr><th>Name</th><th>Email</th><th>Phone</th></tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+
+_UI_LANDING_CONTENT = """\
+    <main class="ui-page">
+      <h1>robotsix-calendar</h1>
+      <p>Manage your calendars and contacts from the navigation above.</p>
+      <ul class="ui-links">
+        <li><a href="/ui/calendars">Calendars</a></li>
+        <li><a href="/ui/contacts">Contacts</a></li>
+        <li><a href="/settings">Settings</a></li>
+      </ul>
+    </main>
+"""
+
+_CALENDARS_PAGE_CONTENT = """\
+    <main class="ui-page">
+      <h1>Calendars</h1>
+      <ul id="calendar-list" class="ui-list"></ul>
     </main>
     <script type="module">
-      import { mountAppShell } from "/static/robotsix-ui-vanilla.js";
-
-      mountAppShell(document.getElementById("app"), {
-        brand: "robotsix-calendar",
-        navItems: [
-          { href: "/", label: "Overview", active: true },
-          { href: "/settings", label: "Settings" },
-        ],
-        settingsHref: "/settings",
-      });
-
       function escapeHtml(value) {
         const node = document.createElement("span");
         node.textContent = String(value ?? "");
@@ -487,14 +500,41 @@ _DASHBOARD_HTML = """\
           const calendars = await response.json();
           list.innerHTML = calendars.length
             ? calendars.map(
-                (cal) =>
-                  `<li class="dashboard-item rsu-panel">${escapeHtml(cal.name)}</li>`,
+                (cal) => `<li class="ui-item">${escapeHtml(cal.name)}</li>`,
               ).join("")
-            : "<li>No calendars found.</li>";
+            : '<li class="ui-item">No calendars found.</li>';
         } catch (error) {
+          const detail = escapeHtml(error.message);
           list.innerHTML =
-            `<li>Failed to load calendars: ${escapeHtml(error.message)}</li>`;
+            '<li class="ui-item">Failed to load calendars: ' + detail + '</li>';
         }
+      }
+
+      loadCalendars();
+    </script>
+"""
+
+_CONTACTS_PAGE_CONTENT = """\
+    <main class="ui-page">
+      <h1>Contacts</h1>
+      <table id="contacts-table" class="ui-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Address</th>
+            <th>Address Book</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </main>
+    <script type="module">
+      function escapeHtml(value) {
+        const node = document.createElement("span");
+        node.textContent = String(value ?? "");
+        return node.innerHTML;
       }
 
       async function loadContacts() {
@@ -509,20 +549,29 @@ _DASHBOARD_HTML = """\
                     <td>${escapeHtml(contact.full_name)}</td>
                     <td>${escapeHtml(contact.email)}</td>
                     <td>${escapeHtml(contact.phone)}</td>
+                    <td>${escapeHtml(contact.address)}</td>
+                    <td>${escapeHtml(contact.addressbook_id)}</td>
                   </tr>`,
               ).join("")
-            : '<tr><td colspan="3">No contacts found.</td></tr>';
+            : '<tr><td colspan="5">No contacts found.</td></tr>';
         } catch (error) {
           const detail = escapeHtml(error.message);
-          body.innerHTML = `<tr><td colspan="3">Load failed: ${detail}</td></tr>`;
+          body.innerHTML = `<tr><td colspan="5">Load failed: ${detail}</td></tr>`;
         }
       }
 
-      loadCalendars();
       loadContacts();
     </script>
-  </body>
-</html>
+"""
+
+_SETTINGS_PAGE_CONTENT = """\
+    <main class="ui-page">
+      <div id="settings"></div>
+    </main>
+    <script type="module">
+      import { mountConfigPanel } from "/static/robotsix-ui-vanilla.js";
+      mountConfigPanel(document.getElementById("settings"), { title: "Settings" });
+    </script>
 """
 
 
@@ -562,16 +611,34 @@ class ConfigRollbackRequest(BaseModel):
     version: int
 
 
+@app.get("/", response_class=RedirectResponse)
+def root_page() -> RedirectResponse:
+    """Redirect the root path to the /ui landing page."""
+    return RedirectResponse(url="/ui", status_code=307)
+
+
+@app.get("/ui", response_class=HTMLResponse)
+def ui_landing_page() -> str:
+    """Render the landing page with the shared app shell."""
+    return _ui_page("robotsix-calendar", "/", _UI_LANDING_CONTENT)
+
+
+@app.get("/ui/calendars", response_class=HTMLResponse)
+def ui_calendars_page() -> str:
+    """Render a read-only list of calendars fetched from GET /calendars."""
+    return _ui_page("Calendars", "/ui/calendars", _CALENDARS_PAGE_CONTENT)
+
+
+@app.get("/ui/contacts", response_class=HTMLResponse)
+def ui_contacts_page() -> str:
+    """Render a read-only list of contacts fetched from GET /contacts."""
+    return _ui_page("Contacts", "/ui/contacts", _CONTACTS_PAGE_CONTENT)
+
+
 @app.get("/settings", response_class=HTMLResponse)
 def settings_page() -> str:
-    """Render the shared schema-driven settings panel."""
-    return _SETTINGS_HTML
-
-
-@app.get("/", response_class=HTMLResponse)
-def dashboard_page() -> str:
-    """Render the robotsix-ui app shell with calendars/contacts visualisation."""
-    return _DASHBOARD_HTML
+    """Render the shared app shell plus the schema-driven settings panel."""
+    return _ui_page("Settings", "/settings", _SETTINGS_PAGE_CONTENT)
 
 
 @app.get("/config")
