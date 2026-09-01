@@ -51,7 +51,7 @@ repos:
       - id: actionlint
 
   - repo: https://github.com/damien-robotsix/robotsix-modules
-    rev: 019d12621376e227b9a914440849199ddd7bc21d  # main
+    rev: d916d1c14198dd00bb136605224177289c73352c  # main
     hooks:
       - id: validate-module-taxonomy
 
