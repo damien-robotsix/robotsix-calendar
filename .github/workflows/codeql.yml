@@ -20,4 +20,5 @@ jobs:
       languages: python
       queries: security-extended
     permissions:
+      contents: read          # the shared workflow's job checks out the repo
       security-events: write  # needed to upload SARIF results from CodeQL
