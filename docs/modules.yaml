@@ -83,13 +83,18 @@ modules:
   - id: api
     description: >-
       FastAPI HTTP server exposing structured (non-LLM) CRUD endpoints
-      for events, tasks, contacts, and calendars.
+      for events, tasks, contacts, and calendars, plus the standard
+      settings page and config HTTP surface.
     paths:
       - src/robotsix_calendar/api/__init__.py
+      - src/robotsix_calendar/api/static/.gitkeep
       - tests/api/__init__.py
       - tests/api/test_api.py
+      - tests/api/test_config_panel.py
+      - docs/api/reference.md
     dependencies:
       - caldav-client
+      - settings
 
   - id: entrypoint
     description: >-

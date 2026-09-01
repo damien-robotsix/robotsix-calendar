@@ -10,6 +10,14 @@ All configuration is loaded from a single JSON config file
 
 ::: robotsix_calendar.settings
 
+### Web settings page
+
+When the component's HTTP API is running, a schema-driven settings panel is
+served at `/settings` (embedded via the shared `robotsix-ui` ConfigPanel). It
+reads and persists the same `config/config.json` through the standard config
+contract (`GET`/`PUT /config`), with secret fields masked. It sits behind the
+central gateway like other component UIs — the component adds no auth.
+
 ### Schema
 
 A JSON Schema (`config/config.schema.json`) is committed alongside the

@@ -55,3 +55,11 @@ _ = code
 # panel, not by application code
 _ = project_id
 _ = openrouter
+
+# Settings-page / config-surface route handlers — registered by FastAPI
+# decorators, invisible to vulture.
+_ = settings_page
+_ = get_config
+_ = update_config
+_ = get_config_versions
+_ = rollback_config

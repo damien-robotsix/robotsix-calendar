@@ -1,7 +1,23 @@
 ## 0.0.0 (unreleased)
 
 
-- Add public `CalendarAgent.run(text)` method that parses natural-language
+- Add a settings page at `/settings` that embeds the shared `robotsix-ui`
+  ConfigPanel (JSON-Schema driven, React-free), driven by the component's
+  generated config schema and reading/persisting values through the standard
+  config contract — no hand-rolled Jinja2 form, no separate local config-file
+  write path, and no component-level auth (the page sits behind the central
+  gateway).  Backs it with the standard config HTTP surface: `GET`/`PUT /config`
+  (returning stored config with secrets masked, plus schema and version),
+  `GET /config/versions`, and `POST /config/rollback`.
+- Serve shared ConfigPanel assets (`robotsix-ui.css` / `robotsix-ui-vanilla.js`)
+  from the API package static directory, fetched at Docker build time from the
+  `robotsix-ui` v0.1.34 release.  Secret fields (e.g. `radicale_password`) are
+  masked in config responses per the `Settings` schema annotations.
+- Add `docs/api/reference.md`, register it in `mkdocs.yml` nav, and document the
+  settings/config surface in AGENT.md module layout and `docs/modules.yaml`.
+- Add `tests/api/test_config_panel.py` covering the settings page, stored-config
+  (not schema-default) GET, secret masking, PUT persistence/reload, invalid 422,
+  and versioning/rollback.
   calendar/contact instructions via the bundled `IntentParser` and dispatches
   the resulting intent through `_dispatch()`. This restores the
   end-to-end agent capability promised by the class docstring but previously
