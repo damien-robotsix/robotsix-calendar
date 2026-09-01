@@ -38,6 +38,7 @@ from ..caldav_client.exceptions import (
     RateLimitError,
 )
 from ..settings import Settings
+from ._chat_skill import router as _chat_skill_router
 
 logger = logging.getLogger(__name__)
 
@@ -129,6 +130,8 @@ app = FastAPI(title="Calendar Agent API")
 
 _STATIC_DIR = Path(__file__).parent / "static"
 app.mount("/static", StaticFiles(directory=str(_STATIC_DIR)), name="static")
+
+app.include_router(_chat_skill_router)
 
 
 # ---------------------------------------------------------------------------

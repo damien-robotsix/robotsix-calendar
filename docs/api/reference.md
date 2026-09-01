@@ -4,6 +4,15 @@ The FastAPI HTTP server exposes structured non-LLM CRUD endpoints for
 calendar events, tasks, contacts, and calendar listing, plus the
 standard schema-driven settings page and its config HTTP surface.
 
+## Chat skill surface
+
+`GET /chat-skill` serves the component's **SKILL.md** document
+(`text/markdown`, YAML frontmatter) that teaches the `robotsix-chat`
+agent how to drive this API — calendars, events, tasks, contacts, the
+error semantics, and the config surface. The central chat agent loads
+the document through the component roster so it can read and manage a
+user's calendar data directly.
+
 ## Settings page and config surface
 
 The component serves a minimal settings page at `/settings` that embeds
