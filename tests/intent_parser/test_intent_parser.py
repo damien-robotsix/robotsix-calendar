@@ -160,13 +160,15 @@ class TestParse:
 class TestBuildAgentContract:
     """Guard the build_agent call signature against regressions."""
 
-    def test_build_agent_called_with_level_2_and_raw_output_type(self) -> None:
-        """build_agent_for_level must receive level=2 and the raw _IntentOutput class.
+    def test_build_agent_called_with_level_1_and_raw_output_type(self) -> None:
+        """build_agent_for_level must receive level=1 and the raw _IntentOutput class.
 
-        The new robotsix-llmio wraps raw pydantic output_type in PromptedOutput
-        on reasoning tiers, avoiding the tool_choice/thinking conflict.  If
-        level regresses to 1 (Flash, no reasoning wrapping) or output_type is
-        pre-wrapped, this guard catches it.
+        Level 1 is the cheap/frequent tier of the provider-failover llmio
+        (Claude haiku on the default slot, DeepSeek flash on the failover
+        slot). output_type stays the raw class: the claudeSDK path wraps
+        structured output in PromptedOutput at every level, and the DeepSeek
+        level-1 path runs without reasoning so no wrapping is needed. If
+        output_type arrives pre-wrapped, this guard catches it.
         """
         _mock_llmio_core.reset_mock(return_value=True, side_effect=True)
         _setup_llmio_mock(_mock_run_agent("list_events", {}))
@@ -177,8 +179,8 @@ class TestBuildAgentContract:
         build_call = _mock_llmio_core.build_agent_for_level.call_args
         assert build_call is not None, "build_agent_for_level was never called"
         # First positional argument is the level
-        assert build_call.args[0] == 2, (
-            "IntentParser must call build_agent_for_level(2, ...); got "
+        assert build_call.args[0] == 1, (
+            "IntentParser must call build_agent_for_level(1, ...); got "
             f"{build_call.args[0]!r}"
         )
         assert build_call.kwargs.get("output_type") is _IntentOutput, (

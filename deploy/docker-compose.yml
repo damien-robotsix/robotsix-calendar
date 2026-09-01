@@ -8,6 +8,12 @@ services:
       - calendar-agent-config:/app/config
     labels:
       robotsix.deploy.config-target: /app/config/config.json
+      # Subscription auth for the claude-sdk transport (llmio's default
+      # provider slot): central-deploy mounts its managed `claude-auth`
+      # volume at this path at deploy time (not listed under volumes:).
+      # The app user's home is /app (useradd -d /app), so the Claude CLI
+      # looks for credentials in /app/.claude.
+      robotsix.deploy.claude-mount: /app/.claude
     environment:
       ROBOTSIX_CONFIG_FILE: /app/config/config.json
     healthcheck:

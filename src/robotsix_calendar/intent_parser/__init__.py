@@ -107,12 +107,13 @@ class IntentParser:
         try:
             from robotsix_llmio.core import build_agent_for_level, run_agent
 
-            # level=2 is llmio's cheap flat-rate tier (Claude haiku): intent
-            # parsing is frequent and simple, a good fit for the subscription.
-            # The implement agent already uses this tier successfully for
-            # tool calls and structured output via pydantic-ai.
+            # level=1 is llmio's cheap/frequent tier (Claude haiku on the
+            # default slot; DeepSeek flash under provider failover): intent
+            # parsing is frequent and simple, a good fit. The claudeSDK path
+            # wraps raw structured output in PromptedOutput at every level,
+            # so passing _IntentOutput directly is safe on both slots.
             handle = build_agent_for_level(
-                2,
+                1,
                 provider_kwargs=self._model_config or None,
                 system_prompt=_build_system_prompt(),
                 output_type=_IntentOutput,
