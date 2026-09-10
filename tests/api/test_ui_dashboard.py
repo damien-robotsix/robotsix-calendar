@@ -7,9 +7,9 @@ from fastapi.testclient import TestClient
 
 from robotsix_calendar.api import app
 
-# Every UI page must mount the shared AppShell with the three primary nav
-# entries (Calendars, Contacts, Settings).
-UI_PAGES = ("/ui", "/ui/calendars", "/ui/contacts", "/settings")
+# Every UI page must mount the shared AppShell with the primary nav
+# entries (Events, Calendars, Contacts, Settings).
+UI_PAGES = ("/ui", "/ui/calendars", "/ui/contacts", "/ui/events", "/settings")
 
 
 @pytest.fixture
@@ -51,6 +51,7 @@ class TestUiPages:
         body = client.get(path).text
 
         assert 'brand: "Calendar"' in body
+        assert 'href: "/ui/events"' in body
         assert 'href: "/ui/calendars"' in body
         assert 'href: "/ui/contacts"' in body
         assert 'href: "/settings"' in body
@@ -63,6 +64,23 @@ class TestSpecificPages:
 
         assert 'fetch("/calendars")' in body
         assert 'id="calendar-list"' in body
+        assert 'href="/ui/events?calendar=' in body
+
+    def test_events_page_fetches_events(self, client: TestClient) -> None:
+        body = client.get("/ui/events").text
+
+        assert 'fetch("/events?"' in body
+        assert "URLSearchParams({ start: start, end: end })" in body
+        assert 'id="event-list"' in body
+        assert 'id="event-calendar"' in body
+        assert "No events in this range" in body
+        assert "Failed to load events" in body
+        assert "ev.dtstart" in body
+        assert "ev.dtend" in body
+        assert "ev.summary" in body
+        assert "ev.location" in body
+        assert "ev.description" in body
+        assert "escapeHtml" in body
 
     def test_contacts_page_fetches_contacts(self, client: TestClient) -> None:
         body = client.get("/ui/contacts").text

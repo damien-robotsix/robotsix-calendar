@@ -7,23 +7,24 @@ the standard schema-driven settings page and its config HTTP surface.
 
 ## UI access point
 
-`GET /` redirects to the `/ui` landing page. The component serves four
+`GET /` redirects to the `/ui` landing page. The component serves five
 robotsix-ui pages, each of which mounts the shared AppShell
 (`mountAppShell` from `/static/robotsix-ui-vanilla.js`) with the primary
-navigation Calendars `/ui/calendars`, Contacts `/ui/contacts`, and
-Settings `/settings`:
+navigation Events `/ui/events`, Calendars `/ui/calendars`, Contacts
+`/ui/contacts`, and Settings `/settings`:
 
 | Endpoint | Description |
 |---|---|
 | `GET /` | Redirects to `/ui`. |
-| `GET /ui` | Landing page with the app shell and links to the two views. |
-| `GET /ui/calendars` | Server-rendered page that fetches `GET /calendars` and lists calendar names read-only. |
+| `GET /ui` | Landing page with the app shell and links to the views. |
+| `GET /ui/events` | Server-rendered page that fetches `GET /events` given a chosen calendar and date range, and renders the events grouped by day read-only (summary, start, end, location, description). |
+| `GET /ui/calendars` | Server-rendered page that fetches `GET /calendars` and lists calendar names read-only, each linking to the events view. |
 | `GET /ui/contacts` | Server-rendered page that fetches `GET /contacts` and renders contacts (name, email, phone, address, address book id). |
 | `GET /settings` | App shell plus the schema-driven ConfigPanel. |
 
-The `GET /calendars` and `GET /contacts` JSON API endpoints are
-deliberately left untouched — the UI pages read them via the distinct
-`/ui/*` paths, so the JSON API surface is unaffected.
+The `GET /events`, `GET /calendars`, and `GET /contacts` JSON API
+endpoints are deliberately left untouched — the UI pages read them via
+the distinct `/ui/*` paths, so the JSON API surface is unaffected.
 
 Like every other component UI, the pages sit behind the central gateway —
 the component itself adds no authentication.
