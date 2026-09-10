@@ -17,7 +17,7 @@ repos:
       - id: check-toml
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.16.4
+    rev: v0.16.5
     hooks:
       - id: ruff-check
         args: [--fix]
@@ -40,7 +40,7 @@ repos:
         require_serial: true
 
   - repo: https://github.com/betterleaks/betterleaks
-    rev: v1.7.3
+    rev: v1.8.1
     hooks:
       - id: betterleaks
         exclude: '^uv\.lock$|^package-lock\.json$|.*\.lock$'
@@ -51,7 +51,7 @@ repos:
       - id: actionlint
 
   - repo: https://github.com/damien-robotsix/robotsix-modules
-    rev: 019d12621376e227b9a914440849199ddd7bc21d  # main
+    rev: 16bcb9aebf36e6964eb5975b7106ff8f862df4ca  # main
     hooks:
       - id: validate-module-taxonomy
 
