@@ -30,6 +30,7 @@ from robotsix_config import (
 from ..caldav_client import CalDavClient
 from ..caldav_client._shared import CalendarEvent, Contact, Task
 from ..caldav_client.exceptions import (
+    AgentLogicError,
     AuthError,
     CalDAVError,
     CalendarError,
@@ -156,6 +157,7 @@ _STATUS_MAP: dict[type[CalendarError], int] = {
     ConflictError: 409,
     RateLimitError: 429,
     CalDAVError: 502,
+    AgentLogicError: 400,  # Missing required parameter for operation
 }
 
 
