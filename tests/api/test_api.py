@@ -41,6 +41,29 @@ def _normalize_path(path: str) -> str:
     return re.sub(r"[<{][^>}]*[>}]", "{id}", path).rstrip("/") or "/"
 
 
+def _walk_routes(routes: object) -> list[object]:
+    """Flatten every leaf route, recursing into included sub-routers.
+
+    FastAPI's ``include_router`` (>= 0.141) no longer copies a router's
+    routes onto ``app.routes``; instead it appends a single
+    ``_IncludedRouter`` wrapper whose nested routes are reachable only via
+    its ``original_router``. Iterating ``app.routes`` alone therefore
+    misses ``/settings``, ``/chat-skill`` and the ``/ui`` pages. Recurse
+    through ``original_router`` so route enumeration sees them.
+    """
+    leaves: list[object] = []
+    for route in routes:  # type: ignore[attr-defined]
+        original = getattr(route, "original_router", None)
+        if original is not None:
+            leaves.extend(_walk_routes(original.routes))
+            continue
+        path = getattr(route, "path", None)
+        methods = getattr(route, "methods", None)
+        if path and methods:
+            leaves.append(route)
+    return leaves
+
+
 def _public_crud_routes() -> set[tuple[str, str]]:
     """Enumerate the public CRUD ``(method, path)`` routes.
 
@@ -58,7 +81,7 @@ def _public_crud_routes() -> set[tuple[str, str]]:
     }
     excluded_prefixes = ("/ui", "/static", "/config", "/docs", "/redoc")
     routes: set[tuple[str, str]] = set()
-    for route in app.routes:
+    for route in _walk_routes(app.routes):
         path = getattr(route, "path", None)
         methods = getattr(route, "methods", None)
         if not path or not methods:
@@ -74,7 +97,7 @@ def _public_crud_routes() -> set[tuple[str, str]]:
 def _registered_routes() -> set[tuple[str, str]]:
     """All registered ``(method, normalized-path)`` pairs on the app."""
     routes: set[tuple[str, str]] = set()
-    for route in app.routes:
+    for route in _walk_routes(app.routes):
         path = getattr(route, "path", None)
         methods = getattr(route, "methods", None)
         if not path or not methods:
