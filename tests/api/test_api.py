@@ -293,7 +293,7 @@ class TestEvents:
         response = client.delete("/events/evt-1")
         assert response.status_code == 404
         body = response.json()
-        assert body["code"] == "not_found"
+        assert body["error"]["code"] == "not_found"
 
 
 # ---------------------------------------------------------------------------
@@ -457,7 +457,7 @@ class TestErrorMapping:
             "/events", params={"start": "2026-01-01", "end": "2026-01-02"}
         )
         assert response.status_code == 401
-        assert response.json()["code"] == "auth_failed"
+        assert response.json()["error"]["code"] == "auth_failed"
 
     def test_conflict_error_returns_409(
         self, client: TestClient, mock_client: MagicMock

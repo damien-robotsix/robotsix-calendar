@@ -13,7 +13,6 @@ from pathlib import Path
 from typing import Annotated, Any
 
 from fastapi import Body, Depends, FastAPI, HTTPException, Query, Request
-from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from robotsix_config import (
@@ -26,18 +25,10 @@ from robotsix_config import (
     resolve_config_path,
     rollback,
 )
+from robotsix_http.fastapi import create_health_router, register_exception_handlers
 
 from ..caldav_client import CalDavClient
 from ..caldav_client._shared import CalendarEvent, Contact, Task
-from ..caldav_client.exceptions import (
-    AgentLogicError,
-    AuthError,
-    CalDAVError,
-    CalendarError,
-    ConflictError,
-    NotFoundError,
-    RateLimitError,
-)
 from ..settings import Settings
 from ._chat_skill import router as _chat_skill_router
 from ._ui_pages import router as _ui_pages_router
@@ -133,6 +124,12 @@ app = FastAPI(title="Calendar Agent API")
 _STATIC_DIR = Path(__file__).parent / "static"
 app.mount("/static", StaticFiles(directory=str(_STATIC_DIR)), name="static")
 
+# Wire the shared robotsix_http.fastapi bootstrap: the canonical exception
+# handler suite (CalendarError subclasses DomainError → nested
+# ``{"error": {"code", "detail"}}`` envelope) and the standard ``/health``
+# route factory.
+register_exception_handlers(app)
+app.include_router(create_health_router())
 app.include_router(_chat_skill_router)
 app.include_router(_ui_pages_router)
 
@@ -145,29 +142,6 @@ app.include_router(_ui_pages_router)
 def _get_client(request: Request) -> CalDavClient:
     """Return the shared :class:`CalDavClient` stored on ``app.state``."""
     return request.app.state.caldav_client  # type: ignore[no-any-return]
-
-
-# ---------------------------------------------------------------------------
-# Exception handler — map CalendarError subclasses to HTTP status codes
-# ---------------------------------------------------------------------------
-
-_STATUS_MAP: dict[type[CalendarError], int] = {
-    NotFoundError: 404,
-    AuthError: 401,
-    ConflictError: 409,
-    RateLimitError: 429,
-    CalDAVError: 502,
-    AgentLogicError: 400,  # Missing required parameter for operation
-}
-
-
-@app.exception_handler(CalendarError)
-async def _calendar_error_handler(request: Request, exc: CalendarError) -> JSONResponse:
-    status = _STATUS_MAP.get(type(exc), 500)
-    return JSONResponse(
-        status_code=status,
-        content={"detail": exc.message, "code": exc.code},
-    )
 
 
 # ---------------------------------------------------------------------------
@@ -208,17 +182,6 @@ def _contact_to_response(contact: Contact) -> ContactResponse:
         address=contact.address,
         addressbook_id=contact.addressbook_id,
     )
-
-
-# ---------------------------------------------------------------------------
-# Health
-# ---------------------------------------------------------------------------
-
-
-@app.get("/health")
-def health() -> dict[str, str]:
-    """Liveness probe."""
-    return {"status": "ok"}
 
 
 # ---------------------------------------------------------------------------

@@ -18,6 +18,7 @@ ruff = false
 overrides = [
     { name = "httpcore2", specifier = ">=2.10.0" },
     { name = "httpx2", specifier = ">=2.12.0" },
+    { name = "robotsix-http", git = "https://github.com/damien-robotsix/robotsix-http.git?rev=c9886b58e3feef5bf3c7e7c56f69dd84c211ac7c" },
 ]
 
 [[package]]
@@ -1874,7 +1875,7 @@ requires-dist = [
     { name = "opentelemetry-api" },
     { name = "pydantic" },
     { name = "robotsix-config", git = "https://github.com/damien-robotsix/robotsix-config.git?rev=48e736bad05ff514360f93092a5f486a6aee1fe1" },
-    { name = "robotsix-http", git = "https://github.com/damien-robotsix/robotsix-http.git?rev=cdfd4d1c42679fef73081439562872792e202dc4" },
+    { name = "robotsix-http", extras = ["fastapi"], git = "https://github.com/damien-robotsix/robotsix-http.git?rev=c9886b58e3feef5bf3c7e7c56f69dd84c211ac7c" },
     { name = "robotsix-llmio", extras = ["claude-sdk", "openrouter", "tracing"], git = "https://github.com/damien-robotsix/robotsix-llmio.git?rev=3f9127ad9cc45d52da76c411d7d1dc2faa903046" },
     { name = "uvicorn" },
 ]
@@ -1910,8 +1911,8 @@ dependencies = [
 
 [[package]]
 name = "robotsix-http"
-version = "0.3.2"
-source = { git = "https://github.com/damien-robotsix/robotsix-http.git?rev=cdfd4d1c42679fef73081439562872792e202dc4#cdfd4d1c42679fef73081439562872792e202dc4" }
+version = "0.4.0"
+source = { git = "https://github.com/damien-robotsix/robotsix-http.git?rev=c9886b58e3feef5bf3c7e7c56f69dd84c211ac7c#c9886b58e3feef5bf3c7e7c56f69dd84c211ac7c" }
 dependencies = [
     { name = "httpx" },
 ]

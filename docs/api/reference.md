@@ -64,4 +64,29 @@ never returned to the panel and unsubmitted values are preserved on update.
 Like every other component UI, the page sits behind the central gateway —
 the component itself adds no authentication.
 
+## Error responses
+
+All error responses use a nested JSON envelope with the format:
+
+```json
+{
+  "error": {
+    "code": "error_code_string",
+    "detail": "Human-readable error message"
+  }
+}
+```
+
+Common HTTP status codes and their error codes:
+
+| Status | Code | Meaning |
+|---|---|---|
+| 400 | `validation_error` | Invalid request (bad parameters or body). |
+| 401 | `auth_failed` | Authentication/authorization failure (bad Radicale credentials). |
+| 404 | `not_found` | Requested resource not found. |
+| 409 | `conflict` | Etag mismatch or conflict (concurrent modification). |
+| 429 | `rate_limited` | Rate-limited by the Radicale server. |
+| 500 | `calendar_error` | Generic server error or unexpected CalendarError. |
+| 502 | `caldav_error` | CalDAV transport/protocol error (Radicale unavailable or network issue). |
+
 ::: robotsix_calendar.api

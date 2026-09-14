@@ -1,5 +1,10 @@
 ## 0.0.0 (unreleased)
 
+**Breaking changes:**
+
+- Error responses now use the canonical nested envelope `{"error": {"code": ..., "detail": ...}}` (previously flat `{"detail": ..., "code": ...}`). This converges the API onto the fleet-wide `robotsix_http.fastapi` standard. All error endpoints (404, 401, 409, 429, 502, etc.) now return the nested structure.
+
+**Changes:**
 
 - Add a settings page at `/settings` that embeds the shared `robotsix-ui`
   ConfigPanel (JSON-Schema driven, React-free), driven by the component's
