@@ -15,6 +15,7 @@ from robotsix_calendar.caldav_client._shared import (
     Task,
 )
 from robotsix_calendar.caldav_client.exceptions import (
+    AgentLogicError,
     AuthError,
     CalDAVError,
     ConflictError,
@@ -372,6 +373,13 @@ class TestErrorMapping:
         mock_client.list_contacts.side_effect = CalDAVError("server down")
         response = client.get("/contacts")
         assert response.status_code == 502
+
+    def test_agent_logic_error_returns_400(
+        self, client: TestClient, mock_client: MagicMock
+    ) -> None:
+        mock_client.list_tasks.side_effect = AgentLogicError("missing uid")
+        response = client.get("/tasks")
+        assert response.status_code == 400
 
     def test_generic_calendar_error_returns_500(
         self, client: TestClient, mock_client: MagicMock
