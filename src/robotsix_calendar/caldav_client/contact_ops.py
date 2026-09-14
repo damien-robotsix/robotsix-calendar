@@ -19,6 +19,56 @@ else:
     _MixinBase = object
 
 
+# Backslash-escape sequences recognised inside a structured vCard ADR value.
+# Maps the character *following* a backslash to its literal replacement:
+#   \\ → literal backslash (does NOT escape the following char)
+#   \; → escaped semicolon (literal ";", not a component separator)
+#   \, → literal comma
+#   \n → newline
+_ADR_ESCAPES = {
+    "\\": "\\",
+    ";": ";",
+    ",": ",",
+    "n": "\n",
+}
+
+
+def _parse_vcard_adr_field(adr: str) -> list[str]:
+    """Split a structured vCard ADR value into its components.
+
+    vCard ADR is a ``;``-separated structured value
+    (``PO;ext;street;city;region;postal;country``). Components may contain
+    backslash-escaped separators, so splitting must respect the escapes in
+    :data:`_ADR_ESCAPES` rather than naively splitting on ``;``.
+
+    Args:
+        adr: The raw ADR property value (text after the ``ADR:`` prefix).
+
+    Returns:
+        The decoded component strings, in order. Empty components are
+        preserved (callers decide whether to drop them).
+    """
+    components: list[str] = []
+    current: list[str] = []
+    i = 0
+    while i < len(adr):
+        ch = adr[i]
+        if ch == "\\" and i + 1 < len(adr):
+            nxt = adr[i + 1]
+            # Known escape → its literal; unknown escape → keep both chars.
+            current.append(_ADR_ESCAPES.get(nxt, ch + nxt))
+            i += 2
+        elif ch == ";":
+            components.append("".join(current))
+            current = []
+            i += 1
+        else:
+            current.append(ch)
+            i += 1
+    components.append("".join(current))
+    return components
+
+
 class _ContactOpsMixin(_MixinBase):
     """Mixin providing contact (CardDAV) CRUD methods.
 
@@ -52,49 +102,7 @@ class _ContactOpsMixin(_MixinBase):
         address = ""
         adr = fields.get("ADR", "")
         if adr:
-            # vCard ADR is structured (PO;ext;street;city;region;postal;country).
-            # Split on ";" separators while respecting backslash-escaping:
-            #   \\ → literal backslash (does NOT escape the following char)
-            #   \; → escaped semicolon (literal ";", not a separator)
-            #   \n → newline
-            #   \, → literal comma
-            components: list[str] = []
-            current: list[str] = []
-            i = 0
-            while i < len(adr):
-                ch = adr[i]
-                if ch == "\\" and i + 1 < len(adr):
-                    nxt = adr[i + 1]
-                    if nxt == "\\":
-                        current.append("\\")
-                        i += 2
-                        continue
-                    elif nxt == ";":
-                        current.append(";")
-                        i += 2
-                        continue
-                    elif nxt == ",":
-                        current.append(",")
-                        i += 2
-                        continue
-                    elif nxt == "n":
-                        current.append("\n")
-                        i += 2
-                        continue
-                    else:
-                        # Unknown escape — keep both chars.
-                        current.append(ch)
-                        current.append(nxt)
-                        i += 2
-                        continue
-                elif ch == ";":
-                    components.append("".join(current))
-                    current = []
-                    i += 1
-                else:
-                    current.append(ch)
-                    i += 1
-            components.append("".join(current))
+            components = _parse_vcard_adr_field(adr)
             address = ", ".join(c for c in components if c)
 
         return Contact(
