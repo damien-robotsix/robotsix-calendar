@@ -200,7 +200,15 @@ class CalendarAgent:
 
         Raises:
             IntentParseError: If the LLM cannot parse the instruction.
-            AgentLogicError: If the parsed operation is unknown.
+            NotFoundError: If a referenced calendar/event/contact/task
+                does not exist.
+            AuthError: If Radicale authentication or authorization fails.
+            RateLimitError: If the server rate-limits the request (HTTP 429).
+            ConflictError: If a concurrent modification causes an ETag
+                mismatch.
+            CalDAVError: For any other CalDAV protocol/transport error.
+            AgentLogicError: If the parsed operation is unknown or a
+                required parameter is missing.
         """
         parsed = self._parser.parse(text)
         return self._dispatch(parsed)

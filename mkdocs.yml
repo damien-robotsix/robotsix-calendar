@@ -28,6 +28,7 @@ nav:
           - Your First Agent: tutorials/basic/first-agent.md
           - Managing Calendar Events: tutorials/basic/manage-events.md
   - Configuration: configuration.md
+  - Error Handling: error-handling.md
   - Code Reference:
       - reference/index.md
       - agent/reference.md

@@ -80,6 +80,33 @@ print("Deleted.")
 
 ---
 
+## Handling errors
+
+CalDAV operations can fail — the event may have been deleted already,
+or another client may have modified it since you last read it. Wrap
+the calls in `try`/`except` and handle the specific error types you
+care about. All exception classes are importable from
+`robotsix_calendar.caldav_client`:
+
+```python
+from robotsix_calendar.caldav_client import NotFoundError, ConflictError
+
+try:
+    result = agent._caldav.update_event(uid, updated_event)
+    print(f"Updated: {result.uid}")
+except NotFoundError:
+    print("That event no longer exists — nothing to update.")
+except ConflictError:
+    # Someone else changed the event first (ETag mismatch).
+    # Re-read the current state, re-apply your change, then retry.
+    print("Conflict: the event was modified concurrently; re-read and retry.")
+```
+
+For the full exception hierarchy, error codes, retry semantics, and
+recovery strategies, see [Error Handling](../../error-handling.md).
+
+---
+
 ## Natural-language intent parsing
 
 The agent bundles an LLM-based intent parser that converts free-form
