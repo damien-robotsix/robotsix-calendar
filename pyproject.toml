@@ -72,7 +72,16 @@ docs = [
 exclude-newer = "2026-08-06T00:00:00Z"
 # Exempt ruff from the `exclude-newer` cutoff: dependabot bumps ruff frequently
 # and a fixed cutoff freezes it out of every release published after it.
-exclude-newer-package = { ruff = false }
+# httpx2/httpcore2 are transitive deps of genai-prices (pulled in by
+# robotsix-llmio). The 2.4.0 releases pinned by the graph trip code-scanning
+# CVEs (CVE-2026-84379..84382); the patched 2.13.0 releases were published
+# after the exclude-newer cutoff above, so exempt just these two packages from
+# the cutoff (same mechanism used for ruff) and floor them via
+# override-dependencies. This keeps genai-prices at its current version — a
+# plain override without the exemption would backtrack genai-prices/pydantic-ai
+# instead of upgrading httpx2.
+exclude-newer-package = { ruff = false, httpx2 = false, httpcore2 = false }
+override-dependencies = ["httpx2>=2.12.0", "httpcore2>=2.10.0"]
 
 [tool.uv.sources]
 robotsix-config = { git = "https://github.com/damien-robotsix/robotsix-config.git", rev = "48e736bad05ff514360f93092a5f486a6aee1fe1" }
