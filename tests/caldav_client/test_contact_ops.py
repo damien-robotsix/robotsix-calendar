@@ -10,6 +10,7 @@ from robotsix_calendar.caldav_client import (
     CalDavClient,
     Contact,
 )
+from robotsix_calendar.caldav_client.contact_ops import _parse_vcard_adr_field
 from robotsix_calendar.caldav_client.exceptions import (
     NotFoundError,
 )
@@ -275,3 +276,54 @@ class TestAdrParsing:
         obj = self._vcard_with_adr(";;;;;62701;USA")
         contact = CalDavClient._to_contact(obj)
         assert contact.address == "62701, USA"
+
+
+class TestParseVcardAdrField:
+    """Direct unit tests for the extracted ``_parse_vcard_adr_field`` parser.
+
+    Testing the parser in isolation (rather than only through ``_to_contact``)
+    pins the escape-handling contract independent of address joining/filtering.
+    """
+
+    def test_plain_split(self) -> None:
+        """A plain value splits on unescaped semicolons, preserving empties."""
+        assert _parse_vcard_adr_field("a;b;c") == ["a", "b", "c"]
+
+    def test_empty_string_yields_single_empty_component(self) -> None:
+        """An empty input yields a single empty component."""
+        assert _parse_vcard_adr_field("") == [""]
+
+    def test_empty_components_preserved(self) -> None:
+        """Empty components are preserved (dropping is the caller's job)."""
+        assert _parse_vcard_adr_field(";;street;;;") == [
+            "",
+            "",
+            "street",
+            "",
+            "",
+            "",
+        ]
+
+    def test_escaped_semicolon(self) -> None:
+        r"""``\;`` is a literal ``;`` inside a component, not a separator."""
+        assert _parse_vcard_adr_field(r"a\;b;c") == ["a;b", "c"]
+
+    def test_escaped_comma(self) -> None:
+        r"""``\,`` decodes to a literal comma."""
+        assert _parse_vcard_adr_field(r"a\,b") == ["a,b"]
+
+    def test_escaped_newline(self) -> None:
+        r"""``\n`` decodes to a literal newline."""
+        assert _parse_vcard_adr_field(r"line1\nline2") == ["line1\nline2"]
+
+    def test_escaped_backslash(self) -> None:
+        r"""``\\`` decodes to a single backslash and does not escape the next char."""
+        assert _parse_vcard_adr_field(r"a\\;b") == ["a\\", "b"]
+
+    def test_unknown_escape_keeps_both_chars(self) -> None:
+        r"""An unknown escape such as ``\x`` keeps both the backslash and char."""
+        assert _parse_vcard_adr_field(r"a\xb") == [r"a\xb"]
+
+    def test_trailing_backslash_kept_literally(self) -> None:
+        """A dangling backslash at end of input is kept as a literal backslash."""
+        assert _parse_vcard_adr_field("a\\") == ["a\\"]
