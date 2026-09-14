@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from collections.abc import Iterator
+
 import pytest
 from fastapi.testclient import TestClient
 
@@ -13,7 +15,7 @@ UI_PAGES = ("/ui", "/ui/calendars", "/ui/contacts", "/ui/events", "/settings")
 
 
 @pytest.fixture
-def client() -> TestClient:
+def client() -> Iterator[TestClient]:
     """Build a TestClient for the shared FastAPI app."""
     with TestClient(app) as test_client:
         yield test_client

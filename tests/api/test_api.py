@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import contextlib
 import re
+from collections.abc import Iterator
 from unittest.mock import MagicMock
 
 import pytest
@@ -125,7 +126,7 @@ def mock_client() -> MagicMock:
 
 
 @pytest.fixture
-def client(mock_client: MagicMock) -> TestClient:
+def client(mock_client: MagicMock) -> Iterator[TestClient]:
     """Create a TestClient with a mocked CalDavClient on app.state."""
     app.state.caldav_client = mock_client
     with TestClient(app) as c:

@@ -35,7 +35,7 @@ def _mock_run_agent(
     operation: str, params: dict[str, Any] | None = None
 ) -> _IntentOutput:
     """Return a mock intent output."""
-    return _IntentOutput(operation=operation, params=params or {})  # type: ignore[arg-type]
+    return _IntentOutput(operation=operation, params=params or {})
 
 
 def _setup_llmio_mock(output: _IntentOutput | Exception) -> MagicMock:
@@ -220,10 +220,12 @@ class TestSystemPrompt:
         [*CalendarOperation, *ContactOperation, *TaskOperation],
         ids=lambda op: op.value,
     )
-    def test_system_prompt_mentions_every_operation(self, op: object) -> None:
+    def test_system_prompt_mentions_every_operation(
+        self, op: CalendarOperation | ContactOperation | TaskOperation
+    ) -> None:
         """Every enum value must appear in the system prompt so the LLM can emit it."""
         prompt = _build_system_prompt()
-        assert op.value in prompt, (  # type: ignore[union-attr]
+        assert op.value in prompt, (
             f"Operation {op.value!r} is missing from the system prompt — "
             "the LLM will never be told it exists."
         )

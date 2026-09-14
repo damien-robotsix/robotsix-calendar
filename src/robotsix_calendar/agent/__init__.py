@@ -107,6 +107,10 @@ logger = logging.getLogger(__name__)
 _tracer = trace.get_tracer(__name__)
 
 __all__ = [
+    "_DISPATCH",
+    "_OPERATION_NOUN",
+    "_OPERATION_VERB",
+    "AgentLogicError",
     "CalDavClient",
     "CalendarAgent",
     "CalendarEvent",
@@ -118,6 +122,8 @@ __all__ = [
     "ParsedIntent",
     "Task",
     "TaskOperation",
+    "_render_reply",
+    "_summarize_item",
 ]
 
 
@@ -235,7 +241,7 @@ class CalendarAgent:
 # Re-export private symbols from submodules so that tests and other
 # consumers can continue importing from ``robotsix_calendar.agent``.
 from ._dispatch import _DISPATCH  # noqa: E402
-from ._reply import (  # noqa: E402, F401
+from ._reply import (  # noqa: E402
     _OPERATION_NOUN,
     _OPERATION_VERB,
     _render_reply,
