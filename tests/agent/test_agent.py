@@ -9,14 +9,19 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+from robotsix_calendar.intent_parser import (
+    CalendarOperation,
+    ContactOperation,
+    TaskOperation,
+)
 from robotsix_calendar.settings import COMPONENT_ALIAS, Settings
 
 # Shared helpers live in conftest.
 
 
-def _write_temp_config(overrides: dict | None = None) -> str:
+def _write_temp_config(overrides: dict[str, object] | None = None) -> str:
     """Write a temporary config.json and return its path."""
-    data: dict = {
+    data: dict[str, object] = {
         "radicale_url": "https://radicale.example.com",
         "radicale_username": "user",
         "radicale_password": "pass",  # pragma: allowlist secret
@@ -95,7 +100,7 @@ class TestCalendarAgentParserWiring:
         from robotsix_calendar.intent_parser import ParsedIntent
 
         fake_intent = ParsedIntent(
-            operation="list_events",
+            operation=CalendarOperation.LIST_EVENTS,
             params={"start": "2026-01-01", "end": "2026-01-31"},
             original_text="list events in January",
         )
@@ -535,7 +540,11 @@ class TestDispatch:
         from robotsix_calendar.agent import AgentLogicError
         from robotsix_calendar.intent_parser import ParsedIntent
 
-        parsed = ParsedIntent(operation="nonexistent_op", params={}, original_text="")
+        parsed = ParsedIntent(
+            operation="nonexistent_op",  # type: ignore[arg-type]
+            params={},
+            original_text="",
+        )
         with pytest.raises(AgentLogicError, match="Unknown operation"):
             calendar_agent._dispatch(parsed)
 
@@ -551,7 +560,7 @@ class TestDispatch:
             CalendarEvent(summary="Lunch", dtstart="2026-01-01", dtend="2026-01-01"),
         ]
         parsed = ParsedIntent(
-            operation="list_events",
+            operation=CalendarOperation.LIST_EVENTS,
             params={"start": "2026-01-01", "end": "2026-01-31", "calendar_id": "cal1"},
             original_text="",
         )
@@ -574,7 +583,7 @@ class TestDispatch:
             Task(summary="Buy milk", calendar_id="cal1"),
         ]
         parsed = ParsedIntent(
-            operation="list_tasks",
+            operation=TaskOperation.LIST_TASKS,
             params={"calendar_id": "cal1"},
             original_text="",
         )
@@ -591,7 +600,9 @@ class TestDispatch:
         from robotsix_calendar.intent_parser import ParsedIntent
 
         calendar_agent._caldav.list_calendars.return_value = ["Robotsix", "Birthdays"]
-        parsed = ParsedIntent(operation="list_calendars", params={}, original_text="")
+        parsed = ParsedIntent(
+            operation=CalendarOperation.LIST_CALENDARS, params={}, original_text=""
+        )
         result = calendar_agent._dispatch(parsed)
 
         calendar_agent._caldav.list_calendars.assert_called_once_with()
@@ -607,7 +618,7 @@ class TestDispatch:
             Contact(full_name="Jane Doe", addressbook_id="ab1"),
         ]
         parsed = ParsedIntent(
-            operation="list_contacts",
+            operation=ContactOperation.LIST_CONTACTS,
             params={"addressbook_id": "ab1"},
             original_text="",
         )
@@ -637,7 +648,7 @@ class TestDispatch:
             calendar_id="cal1",
         )
         parsed = ParsedIntent(
-            operation="create_event",
+            operation=CalendarOperation.CREATE_EVENT,
             params={
                 "summary": "Team standup",
                 "description": "Daily",
@@ -674,7 +685,7 @@ class TestDispatch:
             calendar_id="cal1",
         )
         parsed = ParsedIntent(
-            operation="update_event",
+            operation=CalendarOperation.UPDATE_EVENT,
             params={
                 "uid": "evt-123",
                 "summary": "Team standup updated",
@@ -704,7 +715,7 @@ class TestDispatch:
         from robotsix_calendar.intent_parser import ParsedIntent
 
         parsed = ParsedIntent(
-            operation="update_event",
+            operation=CalendarOperation.UPDATE_EVENT,
             params={"summary": "No UID event"},
             original_text="",
         )
@@ -719,7 +730,7 @@ class TestDispatch:
         from robotsix_calendar.intent_parser import ParsedIntent
 
         parsed = ParsedIntent(
-            operation="delete_event",
+            operation=CalendarOperation.DELETE_EVENT,
             params={"uid": "evt-123", "calendar_id": "cal1"},
             original_text="",
         )
@@ -736,7 +747,9 @@ class TestDispatch:
         from robotsix_calendar.agent import AgentLogicError
         from robotsix_calendar.intent_parser import ParsedIntent
 
-        parsed = ParsedIntent(operation="delete_event", params={}, original_text="")
+        parsed = ParsedIntent(
+            operation=CalendarOperation.DELETE_EVENT, params={}, original_text=""
+        )
         with pytest.raises(AgentLogicError, match="UID is required to delete"):
             calendar_agent._dispatch(parsed)
 
@@ -756,7 +769,7 @@ class TestDispatch:
             addressbook_id="ab1",
         )
         parsed = ParsedIntent(
-            operation="create_contact",
+            operation=ContactOperation.CREATE_CONTACT,
             params={
                 "full_name": "Jane Doe",
                 "email": "jane@example.com",
@@ -789,7 +802,7 @@ class TestDispatch:
             full_name="Jane Doe Updated", addressbook_id="ab1"
         )
         parsed = ParsedIntent(
-            operation="update_contact",
+            operation=ContactOperation.UPDATE_CONTACT,
             params={
                 "uid": "cnt-456",
                 "full_name": "Jane Doe Updated",
@@ -817,7 +830,7 @@ class TestDispatch:
         from robotsix_calendar.intent_parser import ParsedIntent
 
         parsed = ParsedIntent(
-            operation="update_contact",
+            operation=ContactOperation.UPDATE_CONTACT,
             params={"full_name": "No UID contact"},
             original_text="",
         )
@@ -832,7 +845,7 @@ class TestDispatch:
         from robotsix_calendar.intent_parser import ParsedIntent
 
         parsed = ParsedIntent(
-            operation="delete_contact",
+            operation=ContactOperation.DELETE_CONTACT,
             params={"uid": "cnt-456", "addressbook_id": "ab1"},
             original_text="",
         )
@@ -849,7 +862,9 @@ class TestDispatch:
         from robotsix_calendar.agent import AgentLogicError
         from robotsix_calendar.intent_parser import ParsedIntent
 
-        parsed = ParsedIntent(operation="delete_contact", params={}, original_text="")
+        parsed = ParsedIntent(
+            operation=ContactOperation.DELETE_CONTACT, params={}, original_text=""
+        )
         with pytest.raises(AgentLogicError, match="UID is required to delete"):
             calendar_agent._dispatch(parsed)
 
@@ -868,7 +883,7 @@ class TestDispatch:
             calendar_id="cal1",
         )
         parsed = ParsedIntent(
-            operation="create_task",
+            operation=TaskOperation.CREATE_TASK,
             params={
                 "summary": "Buy groceries",
                 "description": "Get milk and eggs",
@@ -903,7 +918,7 @@ class TestDispatch:
             calendar_id="cal1",
         )
         parsed = ParsedIntent(
-            operation="update_task",
+            operation=TaskOperation.UPDATE_TASK,
             params={
                 "uid": "task-123",
                 "summary": "Buy groceries updated",
@@ -932,7 +947,7 @@ class TestDispatch:
         from robotsix_calendar.intent_parser import ParsedIntent
 
         parsed = ParsedIntent(
-            operation="update_task",
+            operation=TaskOperation.UPDATE_TASK,
             params={"summary": "No UID task"},
             original_text="",
         )
@@ -945,7 +960,7 @@ class TestDispatch:
         from robotsix_calendar.intent_parser import ParsedIntent
 
         parsed = ParsedIntent(
-            operation="delete_task",
+            operation=TaskOperation.DELETE_TASK,
             params={"uid": "task-123", "calendar_id": "cal1"},
             original_text="",
         )
@@ -962,7 +977,9 @@ class TestDispatch:
         from robotsix_calendar.agent import AgentLogicError
         from robotsix_calendar.intent_parser import ParsedIntent
 
-        parsed = ParsedIntent(operation="delete_task", params={}, original_text="")
+        parsed = ParsedIntent(
+            operation=TaskOperation.DELETE_TASK, params={}, original_text=""
+        )
         with pytest.raises(AgentLogicError, match="UID is required to delete"):
             calendar_agent._dispatch(parsed)
 
@@ -1089,7 +1106,11 @@ class TestDispatch:
             mock.create_task.return_value = Task(summary="x")
             mock.update_task.return_value = Task(summary="x")
 
-        parsed = ParsedIntent(operation=operation, params=params, original_text="")
+        parsed = ParsedIntent(
+            operation=operation,  # type: ignore[arg-type]
+            params=params,
+            original_text="",
+        )
         calendar_agent._dispatch(parsed)
 
         client_method = getattr(calendar_agent._caldav, expected_client_method)

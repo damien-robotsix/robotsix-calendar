@@ -170,7 +170,9 @@ class TestEntityOp:
     """Tests for the generic _entity_op helper covering create/update
     branching, id_key handling, and UID validation."""
 
-    def _make_mocks(self):
+    def _make_mocks(
+        self,
+    ) -> tuple[MagicMock, MagicMock, MagicMock, MagicMock]:
         builder = MagicMock(return_value=MagicMock())
         serializer = MagicMock(return_value={"serialized": True})
         create_fn = MagicMock(return_value=MagicMock())

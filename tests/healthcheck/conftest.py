@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from contextlib import ExitStack
 from typing import Any
 from unittest.mock import MagicMock, patch
@@ -35,7 +36,9 @@ def _make_mock_client(health_result: dict[str, Any]) -> MagicMock:
 
 
 @pytest.fixture
-def healthcheck_main(capsys: pytest.CaptureFixture[str]):
+def healthcheck_main(
+    capsys: pytest.CaptureFixture[str],
+) -> Callable[..., tuple[Any, Any]]:
     """Factory fixture to run ``healthcheck.main()`` with patched dependencies.
 
     Returns a callable that accepts ``settings=`` and ``caldav_spec=``

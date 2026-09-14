@@ -48,7 +48,7 @@ class TestNormalizeLogLevel:
 # ---------------------------------------------------------------------------
 
 
-def _write_config(data: dict) -> str:
+def _write_config(data: dict[str, object]) -> str:
     """Write a temporary config file and return its path."""
     fd, path = tempfile.mkstemp(suffix=".json", prefix="test_settings_")
     with os.fdopen(fd, "w") as f:
@@ -193,6 +193,7 @@ class TestCredentialAliasMatching:
         settings = self._settings({COMPONENT_ALIAS}, {COMPONENT_ALIAS})
         assert settings.langfuse is not None
         assert COMPONENT_ALIAS in settings.langfuse.projects
+        assert settings.openrouter is not None
         assert COMPONENT_ALIAS in settings.openrouter.keys
 
     def test_drifted_aliases_raise(self) -> None:
@@ -207,4 +208,5 @@ class TestCredentialAliasMatching:
             openrouter=OpenRouterSettings(keys={COMPONENT_ALIAS: SecretStr("sk-or")}),
         )
         assert settings.langfuse is None
+        assert settings.openrouter is not None
         assert COMPONENT_ALIAS in settings.openrouter.keys
