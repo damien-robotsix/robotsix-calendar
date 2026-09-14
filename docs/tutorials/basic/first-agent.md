@@ -94,7 +94,19 @@ uv run python hello_calendar.py
 
 ---
 
-## 5. Next steps
+## 5. When things go wrong
+
+Calls to `run()` (and the underlying CalDAV client) can raise
+exceptions — for example when a resource is missing, credentials are
+rejected, or the server is unreachable. `IntentParseError` is raised
+when the instruction can't be parsed, while CalDAV failures raise a
+`CalendarError` subclass such as `NotFoundError` or `AuthError`. See
+[Error Handling](../../error-handling.md) for the full hierarchy,
+error codes, and recovery strategies.
+
+---
+
+## 6. Next steps
 
 - [Managing Calendar Events](manage-events.md) — create, update, and delete
   events.

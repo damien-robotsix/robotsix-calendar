@@ -143,5 +143,5 @@ Four additional optional keys (`radicale_default_calendar`, `caldav_timeout`,
 
 | Method | Signature | Description |
 |---|---|---|
-| `run` | `run(text: str) -> Any` | Parse a natural-language calendar/contact instruction and dispatch it to the appropriate CalDAV operation. Raises `IntentParseError` on parse failure or `AgentLogicError` for unknown operations. |
+| `run` | `run(text: str) -> Any` | Parse a natural-language calendar/contact instruction and dispatch it to the appropriate CalDAV operation. Raises `IntentParseError` on parse failure, `AgentLogicError` for unknown operations or missing required parameters, and any `CalendarError` subclass (`NotFoundError`, `AuthError`, `RateLimitError`, `ConflictError`, `CalDAVError`) from the dispatched CalDAV operation. See [Error Handling](error-handling.md). |
 
