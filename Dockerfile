@@ -44,9 +44,18 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 FROM python:3.14-slim-bookworm AS runtime
 
 # Upgrade vulnerable system packages, then remove pip (not needed at
-# runtime).  Removing pip also removes its vendored msgpack 1.1.2 which
-# triggers GHSA-6v7p-g79w-8964.  setuptools<78.1.1 has CVE-2025-47273.
-RUN python -m pip install --no-cache-dir --upgrade 'setuptools>=78.1.1' \
+# runtime).  libpcre2-8-0 in the slim-bookworm base trips container CVEs
+# (CVE-2026-89156..89161, CVE-2026-86145); --only-upgrade pulls the
+# Debian-security-patched build at image-build time without adding the
+# package if it is absent.  Removing pip also removes its vendored msgpack
+# 1.1.2 which triggers GHSA-6v7p-g79w-8964.  setuptools<78.1.1 has
+# CVE-2025-47273.
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    apt-get update \
+    && apt-get install -y --no-install-recommends --only-upgrade libpcre2-8-0 \
+    && rm -rf /var/lib/apt/lists/* \
+    && python -m pip install --no-cache-dir --upgrade 'setuptools>=78.1.1' \
     && find /usr/local/lib/python3.14/site-packages \
         -maxdepth 1 \( -name 'pip' -o -name 'pip-*.dist-info' \) \
         -exec rm -rf {} + \
