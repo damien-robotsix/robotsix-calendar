@@ -60,5 +60,5 @@ class CalDAVError(CalendarError):
 class AgentLogicError(CalendarError):
     """Agent orchestration logic error (not a server error)."""
 
-    status_code = 500
+    status_code = 400
     code = "agent_logic_error"
