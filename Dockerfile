@@ -50,12 +50,13 @@ FROM python:3.14-slim-bookworm AS runtime
 # package if it is absent.  Removing pip also removes its vendored msgpack
 # 1.1.2 which triggers GHSA-6v7p-g79w-8964.  setuptools<78.1.1 has
 # CVE-2025-47273.
-# hadolint ignore=DL3008
 # DL3008 (pin apt versions) is intentionally suppressed here: this is an
 # `--only-upgrade` of libpcre2-8-0 to whatever Debian-security-patched
 # build is current at image-build time.  Pinning an exact version would
 # defeat the security-upgrade intent and break builds when a new patch
-# supersedes the pinned version.
+# supersedes the pinned version.  The `hadolint ignore` directive must sit
+# on the line immediately preceding the RUN instruction to take effect.
+# hadolint ignore=DL3008
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     apt-get update \
