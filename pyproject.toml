@@ -19,7 +19,7 @@ dependencies = [
     # intent-parse traces to Langfuse.
     "robotsix-llmio[claude_sdk,openrouter,tracing]",
     "robotsix-config",
-    "robotsix-http",
+    "robotsix-http[fastapi]",
     "caldav",
     "pydantic",
     "fastapi",
@@ -81,12 +81,22 @@ exclude-newer = "2026-08-06T00:00:00Z"
 # plain override without the exemption would backtrack genai-prices/pydantic-ai
 # instead of upgrading httpx2.
 exclude-newer-package = { ruff = false, httpx2 = false, httpcore2 = false }
-override-dependencies = ["httpx2>=2.12.0", "httpcore2>=2.10.0"]
+# robotsix-llmio still pins robotsix-http to an older rev via its own
+# `tool.uv.sources`, which uv propagates transitively.  Override it so the
+# whole dependency graph unifies on the rev that ships the
+# `robotsix_http.fastapi` service-bootstrap adopted by the API layer.  The
+# pinned rev (v0.4.0) is a descendant of llmio's pin, so it is
+# forward-compatible for llmio's `robotsix_http.retry` usage.
+override-dependencies = [
+    "httpx2>=2.12.0",
+    "httpcore2>=2.10.0",
+    "robotsix-http @ git+https://github.com/damien-robotsix/robotsix-http.git@c9886b58e3feef5bf3c7e7c56f69dd84c211ac7c",
+]
 
 [tool.uv.sources]
 robotsix-config = { git = "https://github.com/damien-robotsix/robotsix-config.git", rev = "48e736bad05ff514360f93092a5f486a6aee1fe1" }
 robotsix-llmio = { git = "https://github.com/damien-robotsix/robotsix-llmio.git", rev = "3f9127ad9cc45d52da76c411d7d1dc2faa903046" }  # pragma: allowlist secret
-robotsix-http = { git = "https://github.com/damien-robotsix/robotsix-http.git", rev = "cdfd4d1c42679fef73081439562872792e202dc4" }
+robotsix-http = { git = "https://github.com/damien-robotsix/robotsix-http.git", rev = "c9886b58e3feef5bf3c7e7c56f69dd84c211ac7c" }
 robotsix-modules = { git = "https://github.com/damien-robotsix/robotsix-modules.git", rev = "b2e82231fa2f260589be9ba757c6be450f4e5d3e" }
 
 [tool.hatch.build.targets.wheel]

@@ -118,7 +118,7 @@ class TestPutConfig:
         response = client.put("/config", json={"log_level": "NOT_A_LEVEL"})
 
         assert response.status_code == 422
-        assert "log_level" in response.json()["detail"]
+        assert "log_level" in response.json()["error"]["detail"]
 
 
 class TestConfigHistory:
