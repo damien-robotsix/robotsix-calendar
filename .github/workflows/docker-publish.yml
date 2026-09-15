@@ -23,5 +23,5 @@ jobs:
       id-token: write  # needed for OIDC token for attestations
       attestations: write  # needed to write image attestations
       security-events: write  # upload the Trivy SARIF to Code Scanning
-    uses: damien-robotsix/robotsix-github-workflows/.github/workflows/docker-release.yml@77e10e286717cfe0eeb6b8d9ce985f3794236d15  # pragma: allowlist secret  # zizmor: ignore[secrets-inherit]
+    uses: damien-robotsix/robotsix-github-workflows/.github/workflows/docker-release.yml@d2a2353830cf211a9f18f3585085016766294dff  # pragma: allowlist secret  # zizmor: ignore[secrets-inherit]
     secrets: inherit  # pragma: allowlist secret  # zizmor: ignore[secrets-inherit]

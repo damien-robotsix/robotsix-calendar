@@ -26,7 +26,7 @@ jobs:
       contents: read
       pages: write  # deploy the built site to GitHub Pages
       id-token: write  # OIDC token the Pages deployment authenticates with
-    uses: damien-robotsix/robotsix-github-workflows/.github/workflows/python-docs.yml@77e10e286717cfe0eeb6b8d9ce985f3794236d15  # main  # pragma: allowlist secret  # zizmor: ignore[secrets-inherit]
+    uses: damien-robotsix/robotsix-github-workflows/.github/workflows/python-docs.yml@d2a2353830cf211a9f18f3585085016766294dff  # main  # pragma: allowlist secret  # zizmor: ignore[secrets-inherit]
     with:
       docs-install-args: "--group docs"
       # The reusable workflow defaults to uv 0.8.15, which cannot parse

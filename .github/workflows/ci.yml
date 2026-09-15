@@ -17,7 +17,7 @@ jobs:
     permissions:
       contents: read
       security-events: write  # the shared workflow uploads SARIF; job-level permissions REPLACE the top-level block
-    uses: damien-robotsix/robotsix-github-workflows/.github/workflows/python-ci.yml@77e10e286717cfe0eeb6b8d9ce985f3794236d15  # main
+    uses: damien-robotsix/robotsix-github-workflows/.github/workflows/python-ci.yml@d2a2353830cf211a9f18f3585085016766294dff  # main
     with:
       python-version: "3.14"
       uv-version: "0.12.5"
@@ -33,7 +33,7 @@ jobs:
     permissions:
       contents: read
       security-events: write  # upload SARIF from the scan
-    uses: damien-robotsix/robotsix-github-workflows/.github/workflows/python-security.yml@f343f5ca84b1d54bb4c2fdcb83568724aa9f743c  # main
+    uses: damien-robotsix/robotsix-github-workflows/.github/workflows/python-security.yml@d2a2353830cf211a9f18f3585085016766294dff  # main
     with:
       uv-version: "0.12.5"
       install-extras: ""
@@ -43,7 +43,7 @@ jobs:
   baseline:
     permissions:
       contents: read
-    uses: damien-robotsix/robotsix-github-workflows/.github/workflows/baseline-check.yml@f343f5ca84b1d54bb4c2fdcb83568724aa9f743c  # main
+    uses: damien-robotsix/robotsix-github-workflows/.github/workflows/baseline-check.yml@d2a2353830cf211a9f18f3585085016766294dff  # main
     with:
       has-docker: true
       # has-board enables the shared modules-drift job (validate +
@@ -56,7 +56,7 @@ jobs:
     permissions:
       contents: read
       security-events: write  # needed to upload SARIF results to code scanning
-    uses: damien-robotsix/robotsix-github-workflows/.github/workflows/docker-pr-scan.yml@77e10e286717cfe0eeb6b8d9ce985f3794236d15  # main
+    uses: damien-robotsix/robotsix-github-workflows/.github/workflows/docker-pr-scan.yml@d2a2353830cf211a9f18f3585085016766294dff  # main
 
   # hand-rolled: no shared workflow equivalent in robotsix-github-workflows
   hadolint:
