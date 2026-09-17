@@ -11,14 +11,14 @@ exclude-newer = "2026-08-06T00:00:00Z"
 
 [options.exclude-newer-package]
 httpcore2 = false
-ruff = false
 httpx2 = false
+ruff = false
 
 [manifest]
 overrides = [
     { name = "httpcore2", specifier = ">=2.10.0" },
     { name = "httpx2", specifier = ">=2.12.0" },
-    { name = "robotsix-http", git = "https://github.com/damien-robotsix/robotsix-http.git?rev=c9886b58e3feef5bf3c7e7c56f69dd84c211ac7c" },
+    { name = "robotsix-http", git = "https://github.com/damien-robotsix/robotsix-http.git?rev=7557325f0cd08e47124b588710da011951feb421" },
 ]
 
 [[package]]
@@ -1875,7 +1875,7 @@ requires-dist = [
     { name = "opentelemetry-api" },
     { name = "pydantic" },
     { name = "robotsix-config", git = "https://github.com/damien-robotsix/robotsix-config.git?rev=48e736bad05ff514360f93092a5f486a6aee1fe1" },
-    { name = "robotsix-http", extras = ["fastapi"], git = "https://github.com/damien-robotsix/robotsix-http.git?rev=c9886b58e3feef5bf3c7e7c56f69dd84c211ac7c" },
+    { name = "robotsix-http", extras = ["fastapi"], git = "https://github.com/damien-robotsix/robotsix-http.git?rev=7557325f0cd08e47124b588710da011951feb421" },
     { name = "robotsix-llmio", extras = ["claude-sdk", "openrouter", "tracing"], git = "https://github.com/damien-robotsix/robotsix-llmio.git?rev=3f9127ad9cc45d52da76c411d7d1dc2faa903046" },
     { name = "uvicorn" },
 ]
@@ -1912,8 +1912,9 @@ dependencies = [
 [[package]]
 name = "robotsix-http"
 version = "0.4.0"
-source = { git = "https://github.com/damien-robotsix/robotsix-http.git?rev=c9886b58e3feef5bf3c7e7c56f69dd84c211ac7c#c9886b58e3feef5bf3c7e7c56f69dd84c211ac7c" }
+source = { git = "https://github.com/damien-robotsix/robotsix-http.git?rev=7557325f0cd08e47124b588710da011951feb421#7557325f0cd08e47124b588710da011951feb421" }
 dependencies = [
+    { name = "httpcore" },
     { name = "httpx" },
 ]
 

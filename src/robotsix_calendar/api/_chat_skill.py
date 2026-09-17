@@ -5,16 +5,20 @@ calendar, task, contact, and calendar-listing API that this component
 exposes.  The text is versioned with the app (no detached doc) so it
 stays in sync with the actual route definitions in
 :mod:`robotsix_calendar.api`.
+
+The route itself is built by the shared
+:func:`robotsix_http.fastapi.create_chat_skill_router` factory, which
+validates the descriptor frontmatter eagerly and serves it as
+``text/markdown`` — mirroring ``create_health_router``.  Route parity
+with the real app is asserted in the API tests via
+:func:`robotsix_http.fastapi.assert_chat_skill_route_parity`.
 """
 
 from __future__ import annotations
 
-from fastapi import APIRouter
-from fastapi.responses import PlainTextResponse
+from robotsix_http.fastapi import create_chat_skill_router
 
-router = APIRouter(tags=["ChatSkill"])
-
-_CHAT_SKILL_TEXT = """\
+CHAT_SKILL_MARKDOWN = """\
 ---
 name: robotsix-calendar
 description: Manage calendar events, tasks, and contacts on a Radicale CalDAV server.
@@ -73,7 +77,7 @@ the configured account can see.  Use these `name` values as
 ### Get events in a range
 
 ```
-GET /events?start=<ISO8601>&end=<ISO8601>&calendar_id=<optional>
+GET /events
 ```
 
 Query parameters:
@@ -118,7 +122,7 @@ default to `""` when omitted.
 ### PUT /events/{uid} — update an event
 
 ```
-PUT /events/<uid>
+PUT /events/{uid}
 Content-Type: application/json
 
 {
@@ -137,10 +141,11 @@ returns the updated event object.
 ### DELETE /events/{uid} — delete an event
 
 ```
-DELETE /events/<uid>?calendar_id=<optional>
+DELETE /events/{uid}
 ```
 
-Deletes the event (idempotent).  Returns `204` with no body.
+Deletes the event (idempotent), with an optional `calendar_id` query
+parameter to restrict the lookup.  Returns `204` with no body.
 
 ---
 
@@ -149,10 +154,11 @@ Deletes the event (idempotent).  Returns `204` with no body.
 ### GET /tasks — list tasks
 
 ```
-GET /tasks?calendar_id=<optional>
+GET /tasks
 ```
 
-Returns a JSON array of task objects:
+Accepts an optional `calendar_id` query parameter to restrict to one
+calendar.  Returns a JSON array of task objects:
 
 ```json
 {
@@ -188,7 +194,7 @@ optional.
 ### PUT /tasks/{uid} — update a task
 
 ```
-PUT /tasks/<uid>
+PUT /tasks/{uid}
 Content-Type: application/json
 
 {
@@ -205,10 +211,11 @@ Replaces the task identified by `uid` and returns the updated task.
 ### DELETE /tasks/{uid} — delete a task
 
 ```
-DELETE /tasks/<uid>?calendar_id=<optional>
+DELETE /tasks/{uid}
 ```
 
-Deletes the task (idempotent).  Returns `204` with no body.
+Deletes the task (idempotent), with an optional `calendar_id` query
+parameter to restrict the lookup.  Returns `204` with no body.
 
 ---
 
@@ -217,10 +224,11 @@ Deletes the task (idempotent).  Returns `204` with no body.
 ### GET /contacts — list contacts
 
 ```
-GET /contacts?addressbook_id=<optional>
+GET /contacts
 ```
 
-Returns a JSON array of contact objects:
+Accepts an optional `addressbook_id` query parameter to restrict to one
+address book.  Returns a JSON array of contact objects:
 
 ```json
 {
@@ -254,7 +262,7 @@ Returns `201` with the created contact.  `full_name` is required;
 ### PUT /contacts/{uid} — update a contact
 
 ```
-PUT /contacts/<uid>
+PUT /contacts/{uid}
 Content-Type: application/json
 
 {
@@ -271,10 +279,11 @@ Replaces the contact identified by `uid` and returns the updated contact.
 ### DELETE /contacts/{uid} — delete a contact
 
 ```
-DELETE /contacts/<uid>?addressbook_id=<optional>
+DELETE /contacts/{uid}
 ```
 
-Deletes the contact (idempotent).  Returns `204` with no body.
+Deletes the contact (idempotent), with an optional `addressbook_id`
+query parameter to restrict the lookup.  Returns `204` with no body.
 
 ---
 
@@ -308,12 +317,4 @@ The component also serves its standard schema-driven settings surface:
    object(s) will be removed and obtain explicit user confirmation.
 """
 
-
-@router.get("/chat-skill", response_class=PlainTextResponse)
-def chat_skill() -> PlainTextResponse:
-    """Return the chat-agent component skill as a SKILL.md document.
-
-    The response is ``text/markdown`` with YAML frontmatter so the
-    chat agent can consume it as a standard skill file.
-    """
-    return PlainTextResponse(_CHAT_SKILL_TEXT, media_type="text/markdown")
+router = create_chat_skill_router(CHAT_SKILL_MARKDOWN, name="robotsix-calendar")

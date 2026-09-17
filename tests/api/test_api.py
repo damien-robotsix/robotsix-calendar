@@ -3,14 +3,15 @@
 from __future__ import annotations
 
 import contextlib
-import re
 from collections.abc import Iterator
 from unittest.mock import MagicMock
 
 import pytest
 from fastapi.testclient import TestClient
+from robotsix_http.fastapi import assert_chat_skill_route_parity
 
 from robotsix_calendar.api import app
+from robotsix_calendar.api._chat_skill import CHAT_SKILL_MARKDOWN
 from robotsix_calendar.caldav_client._shared import (
     CalendarEvent,
     Contact,
@@ -24,99 +25,6 @@ from robotsix_calendar.caldav_client.exceptions import (
     NotFoundError,
     RateLimitError,
 )
-
-# ---------------------------------------------------------------------------
-# Route-sync helpers — keep the /chat-skill doc and the real routes in lockstep
-# ---------------------------------------------------------------------------
-
-_ROUTE_METHODS = {"GET", "POST", "PUT", "DELETE", "PATCH"}
-
-
-def _normalize_path(path: str) -> str:
-    """Collapse ``{name}``/``<name>`` path params to a common marker.
-
-    The skill doc writes uid params as ``<uid>`` in code blocks and
-    ``{uid}`` in headers, while FastAPI registers ``{uid}``; normalizing
-    both lets the two representations compare equal.
-    """
-    return re.sub(r"[<{][^>}]*[>}]", "{id}", path).rstrip("/") or "/"
-
-
-def _walk_routes(routes: object) -> list[object]:
-    """Flatten every leaf route, recursing into included sub-routers.
-
-    FastAPI's ``include_router`` (>= 0.141) no longer copies a router's
-    routes onto ``app.routes``; instead it appends a single
-    ``_IncludedRouter`` wrapper whose nested routes are reachable only via
-    its ``original_router``. Iterating ``app.routes`` alone therefore
-    misses ``/settings``, ``/chat-skill`` and the ``/ui`` pages. Recurse
-    through ``original_router`` so route enumeration sees them.
-    """
-    leaves: list[object] = []
-    for route in routes:  # type: ignore[attr-defined]
-        original = getattr(route, "original_router", None)
-        if original is not None:
-            leaves.extend(_walk_routes(original.routes))
-            continue
-        path = getattr(route, "path", None)
-        methods = getattr(route, "methods", None)
-        if path and methods:
-            leaves.append(route)
-    return leaves
-
-
-def _public_crud_routes() -> set[tuple[str, str]]:
-    """Enumerate the public CRUD ``(method, path)`` routes.
-
-    Excludes the UI (``/ui``), static assets (``/static``), the settings
-    page (``/settings``), the config surface (``/config*``), and the infra
-    endpoints (``/``, ``/health``, ``/chat-skill``) — none of which the
-    chat skill documents as CRUD endpoints.
-    """
-    excluded_exact = {
-        "/",
-        "/health",
-        "/chat-skill",
-        "/settings",
-        "/openapi.json",
-    }
-    excluded_prefixes = ("/ui", "/static", "/config", "/docs", "/redoc")
-    routes: set[tuple[str, str]] = set()
-    for route in _walk_routes(app.routes):
-        path = getattr(route, "path", None)
-        methods = getattr(route, "methods", None)
-        if not path or not methods:
-            continue
-        if path in excluded_exact or path.startswith(excluded_prefixes):
-            continue
-        for method in methods:
-            if method in _ROUTE_METHODS:
-                routes.add((method, path))
-    return routes
-
-
-def _registered_routes() -> set[tuple[str, str]]:
-    """All registered ``(method, normalized-path)`` pairs on the app."""
-    routes: set[tuple[str, str]] = set()
-    for route in _walk_routes(app.routes):
-        path = getattr(route, "path", None)
-        methods = getattr(route, "methods", None)
-        if not path or not methods:
-            continue
-        for method in methods:
-            if method in _ROUTE_METHODS:
-                routes.add((method, _normalize_path(path)))
-    return routes
-
-
-def _documented_routes(body: str) -> set[tuple[str, str]]:
-    """Extract ``(method, normalized-path)`` pairs documented in the skill."""
-    found: set[tuple[str, str]] = set()
-    for method, path in re.findall(
-        r"\b(GET|POST|PUT|DELETE|PATCH)\s+(/[A-Za-z0-9_/{}<>-]*)", body
-    ):
-        found.add((method, _normalize_path(path)))
-    return found
 
 
 @pytest.fixture
@@ -162,39 +70,21 @@ class TestChatSkill:
         assert body.startswith("---\nname: robotsix-calendar")
         assert "## robotsix-calendar — Chat Agent Skill" in body
 
-    def test_chat_skill_documents_every_crud_route(self, client: TestClient) -> None:
-        """Every registered public CRUD route appears verbatim in the skill.
+    def test_chat_skill_route_parity(self) -> None:
+        """The descriptor and the app describe the same routes, both ways.
 
-        Enumerates ``app.routes`` (rather than a hand-picked subset) so
-        adding or renaming an endpoint without updating the skill doc
-        fails CI instead of silently drifting.
+        Delegates to the shared
+        :func:`robotsix_http.fastapi.assert_chat_skill_route_parity`, which
+        fails if any registered route is undocumented or any documented
+        route does not resolve.  ``/health`` and ``/chat-skill`` are ignored
+        by default; the human-facing UI pages (``/``, ``/ui*``) are
+        infrastructure the CRUD descriptor deliberately does not document.
         """
-        body = client.get("/chat-skill").text
-        crud = _public_crud_routes()
-        assert crud, "no public CRUD routes discovered — enumeration is broken"
-        missing = sorted(
-            f"{method} {path}"
-            for method, path in crud
-            if f"{method} {path}" not in body
+        assert_chat_skill_route_parity(
+            app,
+            CHAT_SKILL_MARKDOWN,
+            ignore=("/", "/ui", "/ui/calendars", "/ui/events", "/ui/contacts"),
         )
-        assert not missing, f"routes absent from /chat-skill: {missing}"
-
-    def test_chat_skill_routes_all_resolve(self, client: TestClient) -> None:
-        """Every route documented in the skill resolves to a registered route.
-
-        Guards the reverse direction: removing or renaming an endpoint
-        must not leave stale documentation behind in the skill body.
-        """
-        body = client.get("/chat-skill").text
-        registered = _registered_routes()
-        documented = _documented_routes(body)
-        assert documented, "no routes parsed from /chat-skill — parser is broken"
-        stale = sorted(
-            f"{method} {path}"
-            for method, path in documented
-            if (method, path) not in registered
-        )
-        assert not stale, f"skill documents routes with no registered handler: {stale}"
 
 
 # ---------------------------------------------------------------------------
