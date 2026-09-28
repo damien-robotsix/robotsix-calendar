@@ -30,13 +30,30 @@ COPY . .
 # (/ui, /ui/calendars, /ui/contacts) can serve them.  v0.1.34 predates
 # the AppShell; v0.1.48 is the first pin whose vanilla.js release asset
 # exports mountAppShell (verified against the release artifact).
+#
+# Each download is verified against a pinned SHA-256 committed next to the
+# version tag: a GitHub release asset can be re-uploaded/replaced under the
+# same tag, so pinning the tag alone does not prevent a tampered/swapped
+# asset from being baked into the image and served as active content to
+# every UI/settings user.  Bump the version tag and BOTH hashes together.
 RUN python -c "\
-import pathlib, urllib.request; \
+import hashlib, pathlib, urllib.request; \
 base = 'https://github.com/damien-robotsix/robotsix-ui/releases/download/v0.1.48'; \
+assets = { \
+    'robotsix-ui.css': ('style.css', '30e005e43e65e9445f5c0b8783cf741c508ada66a5a1c515e03c713f2318dce3'), \
+    'robotsix-ui-vanilla.js': ('vanilla.js', 'e7f210d4089171c4741720a58978ab7952a51e343771698ede34d1073f9a6ae7'), \
+}; \
 out = pathlib.Path('src/robotsix_calendar/api/static'); \
 out.mkdir(parents=True, exist_ok=True); \
-urllib.request.urlretrieve(f'{base}/style.css', out / 'robotsix-ui.css'); \
-urllib.request.urlretrieve(f'{base}/vanilla.js', out / 'robotsix-ui-vanilla.js')"
+[ \
+    ( \
+        data := urllib.request.urlopen(f'{base}/{asset}').read(), \
+        digest := hashlib.sha256(data).hexdigest(), \
+        (_ for _ in ()).throw(SystemExit(f'checksum mismatch for {asset}: expected {expected}, got {digest}')) if digest != expected else None, \
+        (out / dest).write_bytes(data), \
+    ) \
+    for dest, (asset, expected) in assets.items() \
+]"
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-dev
 
