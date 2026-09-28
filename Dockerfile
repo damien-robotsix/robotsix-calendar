@@ -62,22 +62,26 @@ FROM python:3.14-slim-bookworm AS runtime
 
 # Upgrade vulnerable system packages, then remove pip (not needed at
 # runtime).  libpcre2-8-0 in the slim-bookworm base trips container CVEs
-# (CVE-2026-89156..89161, CVE-2026-86145); --only-upgrade pulls the
-# Debian-security-patched build at image-build time without adding the
-# package if it is absent.  Removing pip also removes its vendored msgpack
-# 1.1.2 which triggers GHSA-6v7p-g79w-8964.  setuptools<78.1.1 has
-# CVE-2025-47273.
+# (CVE-2026-89156..89161, CVE-2026-86145).  openssl/libssl3 in the base
+# trips CVE-2026-63072/63074/63076/54874/42767/75803 (fixed in
+# 3.0.22-1~deb12u1) and tzdata trips DLA-4792-1 (fixed in
+# 2026c-0+deb12u1); --only-upgrade pulls the Debian-security-patched
+# build at image-build time without adding the package if it is absent.
+# Removing pip also removes its vendored msgpack 1.1.2 which triggers
+# GHSA-6v7p-g79w-8964.  setuptools<78.1.1 has CVE-2025-47273.
 # DL3008 (pin apt versions) is intentionally suppressed here: this is an
-# `--only-upgrade` of libpcre2-8-0 to whatever Debian-security-patched
-# build is current at image-build time.  Pinning an exact version would
-# defeat the security-upgrade intent and break builds when a new patch
-# supersedes the pinned version.  The `hadolint ignore` directive must sit
-# on the line immediately preceding the RUN instruction to take effect.
+# `--only-upgrade` of the listed packages to whatever Debian-security-
+# patched build is current at image-build time.  Pinning an exact version
+# would defeat the security-upgrade intent and break builds when a new
+# patch supersedes the pinned version.  The `hadolint ignore` directive
+# must sit on the line immediately preceding the RUN instruction to take
+# effect.
 # hadolint ignore=DL3008
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     apt-get update \
-    && apt-get install -y --no-install-recommends --only-upgrade libpcre2-8-0 \
+    && apt-get install -y --no-install-recommends --only-upgrade \
+        libpcre2-8-0 openssl libssl3 tzdata \
     && rm -rf /var/lib/apt/lists/* \
     && python -m pip install --no-cache-dir --upgrade 'setuptools>=78.1.1' \
     && find /usr/local/lib/python3.14/site-packages \
