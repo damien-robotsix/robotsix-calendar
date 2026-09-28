@@ -63,7 +63,7 @@ FROM python:3.14-slim-bookworm AS runtime
 # Upgrade vulnerable system packages, then remove pip (not needed at
 # runtime).  libpcre2-8-0 in the slim-bookworm base trips container CVEs
 # (CVE-2026-89156..89161, CVE-2026-86145).  openssl/libssl3 in the base
-# trip CVE-2026-63072/63074/63076/54874/42767/75803 (fixed in
+# trips CVE-2026-63072/63074/63076/54874/42767/75803 (fixed in
 # 3.0.22-1~deb12u1) and tzdata trips DLA-4792-1 (fixed in
 # 2026c-0+deb12u1); --only-upgrade pulls the Debian-security-patched
 # build at image-build time without adding the package if it is absent.
