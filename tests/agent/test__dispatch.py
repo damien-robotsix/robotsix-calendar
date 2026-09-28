@@ -23,6 +23,7 @@ from robotsix_calendar.agent._dispatch import (
     _handle_delete_contact,
     _handle_delete_event,
     _handle_delete_task,
+    _handle_list_addressbooks,
     _handle_list_calendars,
     _handle_list_contacts,
     _handle_list_events,
@@ -485,6 +486,15 @@ class TestHandleListCalendars:
         result = _handle_list_calendars(client, {})
         client.list_calendars.assert_called_once_with()
         assert result == ["Robotsix", "Birthdays"]
+
+
+class TestHandleListAddressbooks:
+    def test_calls_client_and_returns_string_list(self) -> None:
+        client = MagicMock()
+        client.list_addressbooks.return_value = ["personal", "team"]
+        result = _handle_list_addressbooks(client, {})
+        client.list_addressbooks.assert_called_once_with()
+        assert result == ["personal", "team"]
 
 
 class TestHandleListContacts:

@@ -221,6 +221,11 @@ class CalDavClient(_CalendarOpsMixin, _ContactOpsMixin, _TaskOpsMixin):
         """
         return [cal.name for cal in self._principal.calendars()]
 
+    @_wrap_caldav_op("list addressbooks")
+    def list_addressbooks(self) -> list[str]:
+        """Return the names of all available addressbook collections."""
+        return [ab.name for ab in self._principal.addressbooks()]
+
     # ------------------------------------------------------------------
     # Health probe
     # ------------------------------------------------------------------

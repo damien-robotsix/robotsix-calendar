@@ -34,6 +34,17 @@ class TestListContacts:
         assert result[1].uid == "cnt-2"
 
 
+class TestListAddressbooks:
+    def test_returns_addressbook_names(self, client: CalDavClient) -> None:
+        ab_a = MagicMock()
+        ab_a.name = "personal"
+        ab_b = MagicMock()
+        ab_b.name = "team"
+        client._principal.addressbooks.return_value = [ab_a, ab_b]
+
+        assert client.list_addressbooks() == ["personal", "team"]
+
+
 class TestCreateContact:
     def test_returns_contact_with_uid(self, client: CalDavClient) -> None:
         ab = client._principal.addressbooks.return_value[0]
@@ -65,6 +76,23 @@ class TestUpdateContact:
         with pytest.raises(NotFoundError, match="not found"):
             client.update_contact("unknown", Contact(full_name="X"))
 
+    def test_finds_uid_in_non_default_addressbook(self, client: CalDavClient) -> None:
+        ab_a = MagicMock()
+        ab_a.name = "personal"
+        ab_a.search.return_value = []
+        ab_b = MagicMock()
+        ab_b.name = "team"
+        existing = _mock_vcard(uid="cnt-9")
+        ab_b.search.return_value = [existing]
+        ab_b.save_object.return_value = _mock_vcard(uid="cnt-9", full_name="Renamed")
+        client._principal.addressbooks.return_value = [ab_a, ab_b]
+
+        result = client.update_contact("cnt-9", Contact(full_name="Renamed"))
+
+        assert result.full_name == "Renamed"
+        existing.delete.assert_called_once()
+        ab_b.save_object.assert_called_once()
+
 
 class TestDeleteContact:
     def test_succeeds(self, client: CalDavClient) -> None:
@@ -83,6 +111,20 @@ class TestDeleteContact:
         result = client.delete_contact("unknown")
 
         assert result is None
+
+    def test_finds_uid_in_non_default_addressbook(self, client: CalDavClient) -> None:
+        ab_a = MagicMock()
+        ab_a.name = "personal"
+        ab_a.search.return_value = []
+        ab_b = MagicMock()
+        ab_b.name = "team"
+        target = MagicMock()
+        ab_b.search.return_value = [target]
+        client._principal.addressbooks.return_value = [ab_a, ab_b]
+
+        client.delete_contact("cnt-9")
+
+        target.delete.assert_called_once()
 
 
 # ---------------------------------------------------------------------------

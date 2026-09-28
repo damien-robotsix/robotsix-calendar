@@ -123,6 +123,7 @@ operation-specific errors verified against the client source:
 | `update_event()` | `NotFoundError` (missing UID), `ConflictError`, `AuthError`, `RateLimitError`, `CalDAVError` |
 | `delete_event()` | `AuthError`, `RateLimitError`, `CalDAVError` — **idempotent**: a missing UID returns `None`, it does *not* raise `NotFoundError` |
 | `list_contacts()` | `AuthError`, `RateLimitError`, `CalDAVError` |
+| `list_addressbooks()` | `AuthError`, `RateLimitError`, `CalDAVError` |
 | `create_contact()` | `ConflictError`, `AuthError`, `RateLimitError`, `CalDAVError` |
 | `update_contact()` | `NotFoundError` (missing UID), `ConflictError`, `AuthError`, `RateLimitError`, `CalDAVError` |
 | `delete_contact()` | `AuthError`, `RateLimitError`, `CalDAVError` — **idempotent**: a missing UID returns `None` |

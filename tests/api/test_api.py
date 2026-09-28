@@ -333,6 +333,19 @@ class TestCalendars:
         assert data[1]["name"] == "Work"
 
 
+class TestAddressbooks:
+    def test_list_addressbooks(
+        self, client: TestClient, mock_client: MagicMock
+    ) -> None:
+        mock_client.list_addressbooks.return_value = ["personal", "team"]
+        response = client.get("/addressbooks")
+        assert response.status_code == 200
+        data = response.json()
+        assert len(data) == 2
+        assert data[0]["name"] == "personal"
+        assert data[1]["name"] == "team"
+
+
 # ---------------------------------------------------------------------------
 # Error mapping
 # ---------------------------------------------------------------------------
