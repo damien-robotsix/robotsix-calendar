@@ -82,5 +82,5 @@ an ``api_key`` parameter for this purpose).
 
 !!! note "Component agent removed"
     The component-agent management package has been removed.  See
-    [`reference/component_agent.md`](reference/component_agent.md) for details
+    [`agent/component_agent.md`](agent/component_agent.md) for details
     on the removed component-agent responder and its replacement plan.
