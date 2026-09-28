@@ -37,7 +37,7 @@ modules:
       - tests/agent/test__dispatch.py
       - tests/agent/test_agent.py
       - docs/agent/reference.md
-      - docs/reference/component_agent.md
+      - docs/agent/component_agent.md
     dependencies:
       - caldav-client
       - intent-parser

@@ -32,6 +32,7 @@ nav:
   - Code Reference:
       - reference/index.md
       - agent/reference.md
+      - agent/component_agent.md
       - intent_parser/reference.md
       - caldav_client/reference.md
       - settings/reference.md
