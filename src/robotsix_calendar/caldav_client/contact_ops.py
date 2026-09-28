@@ -132,6 +132,17 @@ class _ContactOpsMixin(_MixinBase):
         lines.append("END:VCARD")
         return "\n".join(lines) + "\n"
 
+    def _find_contact_by_uid(self, uid: str) -> tuple[Any, Any] | None:
+        """Locate a contact by UID across all addressbooks.
+
+        Returns ``(addressbook, contact_obj)`` or ``None`` if not found.
+        """
+        for ab in self._principal.addressbooks():
+            results = ab.search(f"UID:{uid}")
+            if results:
+                return ab, results[0]
+        return None
+
     # ------------------------------------------------------------------
     # Contact CRUD
     # ------------------------------------------------------------------
@@ -176,6 +187,10 @@ class _ContactOpsMixin(_MixinBase):
     ) -> Contact:
         """Update the contact identified by *uid*; return the updated contact.
 
+        When *addressbook_id* is empty, the contact is located by UID across
+        **all** address books (mirroring event/task update behavior); when
+        set, only the named address book is searched.
+
         Raises:
             NotFoundError: If the UID doesn't exist.
         """
@@ -185,15 +200,24 @@ class _ContactOpsMixin(_MixinBase):
             addressbook_id,
             contact.full_name,
         )
-        ab = self._get_addressbook(addressbook_id)
-        # Fetch to confirm existence — caldav addressbook search by UID
-        existing = ab.search(f"UID:{uid}")
-        if not existing:
-            raise NotFoundError(
-                f"Contact with UID {uid!r} not found.",
-            )
+        if addressbook_id:
+            ab = self._get_addressbook(addressbook_id)
+            # Fetch to confirm existence — caldav addressbook search by UID
+            existing = ab.search(f"UID:{uid}")
+            if not existing:
+                raise NotFoundError(
+                    f"Contact with UID {uid!r} not found.",
+                )
+            existing_obj = existing[0]
+        else:
+            found = self._find_contact_by_uid(uid)
+            if found is None:
+                raise NotFoundError(
+                    f"Contact with UID {uid!r} not found.",
+                )
+            ab, existing_obj = found
         # Delete the old vcard and create a new one
-        existing[0].delete()
+        existing_obj.delete()
         updated = Contact(
             uid=uid,
             full_name=contact.full_name,
@@ -210,11 +234,22 @@ class _ContactOpsMixin(_MixinBase):
     def delete_contact(self, uid: str, addressbook_id: str = "") -> None:
         """Delete the contact identified by *uid*. Idempotent.
 
+        When *addressbook_id* is empty, the contact is located by UID across
+        **all** address books (mirroring event/task delete behavior); when
+        set, only the named address book is searched.
+
         Returns ``None`` when the UID does not exist (already deleted).
         """
         logger.debug("delete_contact uid=%r addressbook_id=%r", uid, addressbook_id)
-        ab = self._get_addressbook(addressbook_id)
-        existing = ab.search(f"UID:{uid}")
-        if not existing:
-            return None
-        existing[0].delete()
+        if addressbook_id:
+            ab = self._get_addressbook(addressbook_id)
+            existing = ab.search(f"UID:{uid}")
+            if not existing:
+                return None
+            existing[0].delete()
+        else:
+            found = self._find_contact_by_uid(uid)
+            if found is None:
+                return None
+            _, existing_obj = found
+            existing_obj.delete()

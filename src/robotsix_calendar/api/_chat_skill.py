@@ -275,6 +275,8 @@ Content-Type: application/json
 ```
 
 Replaces the contact identified by `uid` and returns the updated contact.
+When `addressbook_id` is omitted, the contact is located by UID across
+every address book.
 
 ### DELETE /contacts/{uid} — delete a contact
 
@@ -283,7 +285,18 @@ DELETE /contacts/{uid}
 ```
 
 Deletes the contact (idempotent), with an optional `addressbook_id`
-query parameter to restrict the lookup.  Returns `204` with no body.
+query parameter to restrict the lookup.  When omitted, the contact is
+located by UID across every address book.  Returns `204` with no body.
+
+### GET /addressbooks — list address books
+
+```
+GET /addressbooks
+```
+
+Returns a JSON array of `{"name": "<addressbook-name>"}` for every
+address book the configured account can see.  Use these `name` values as
+`addressbook_id` in the contact endpoints above.
 
 ---
 

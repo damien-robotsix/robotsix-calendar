@@ -115,6 +115,12 @@ class CalendarInfo(BaseModel):
     name: str
 
 
+class AddressbookInfo(BaseModel):
+    """Serialized addressbook entry."""
+
+    name: str
+
+
 # ---------------------------------------------------------------------------
 # FastAPI application
 # ---------------------------------------------------------------------------
@@ -368,6 +374,15 @@ def delete_contact(
 ) -> None:
     """Delete a contact (idempotent)."""
     client.delete_contact(uid, addressbook_id)
+
+
+@app.get("/addressbooks", response_model=list[AddressbookInfo])
+def list_addressbooks(
+    client: CalDavClient = Depends(_get_client),
+) -> list[AddressbookInfo]:
+    """List all addressbook names."""
+    names = client.list_addressbooks()
+    return [AddressbookInfo(name=n) for n in names]
 
 
 # ---------------------------------------------------------------------------

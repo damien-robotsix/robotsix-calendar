@@ -118,6 +118,7 @@ with agent:
 | `update_task` | "mark buy groceries as done" | `uid`, updated fields |
 | `delete_task` | "remove buy groceries from tasks" | `uid` |
 | `list_contacts` | "show all contacts" | (none) |
+| `list_addressbooks` | "what address books do I have" | (none) |
 | `create_contact` | "add John Doe, john@example.com" | `full_name`, `email`, `phone` |
 | `update_contact` | "change John's email to john.doe@example.com" | `uid`, updated fields |
 | `delete_contact` | "remove John Doe from contacts" | `uid` |

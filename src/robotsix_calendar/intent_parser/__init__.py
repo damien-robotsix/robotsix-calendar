@@ -40,6 +40,7 @@ class ContactOperation(StrEnum):
     """Contacts (CardDAV) operation types."""
 
     LIST_CONTACTS = "list_contacts"
+    LIST_ADDRESSBOOKS = "list_addressbooks"
     CREATE_CONTACT = "create_contact"
     UPDATE_CONTACT = "update_contact"
     DELETE_CONTACT = "delete_contact"
@@ -210,6 +211,8 @@ Tasks operations:
 
 Contacts operations:
 - list_contacts: params = {addressbook_id?}
+- list_addressbooks: params = {}
+  List the names of the user's available address books.
 - create_contact: params = {full_name, email?, phone?, address?, addressbook_id?}
 - update_contact: params = {uid, ...fields to update, addressbook_id?}
 - delete_contact: params = {uid, addressbook_id?}

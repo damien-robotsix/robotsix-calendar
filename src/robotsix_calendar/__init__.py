@@ -8,6 +8,9 @@ CalDAV/CardDAV operations against a Radicale server.
 from __future__ import annotations
 
 from .agent import (  # noqa: F401 — re-exports for package namespace
+    _DISPATCH,
+    _OPERATION_NOUN,
+    _OPERATION_VERB,
     CalDavClient,
     CalendarAgent,
     CalendarEvent,
@@ -19,6 +22,8 @@ from .agent import (  # noqa: F401 — re-exports for package namespace
     ParsedIntent,
     Task,
     TaskOperation,
+    _render_reply,
+    _summarize_item,
 )
 from .agent import __all__ as _agent_all
 from .caldav_client.exceptions import (

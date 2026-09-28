@@ -41,6 +41,7 @@ _OPERATION_NOUN: dict[str, str] = {
     "list_calendars": "calendars",
     "list_tasks": "tasks",
     "list_contacts": "contacts",
+    "list_addressbooks": "address books",
 }
 
 # Maps each operation to the human-readable verb used in "<Verb>: …" replies.

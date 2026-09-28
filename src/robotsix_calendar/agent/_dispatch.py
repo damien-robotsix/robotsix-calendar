@@ -174,6 +174,14 @@ def _handle_list_contacts(
     ]
 
 
+def _handle_list_addressbooks(
+    client: CalDavClient,
+    _params: dict[str, Any],
+) -> list[str]:
+    """Return the names of the user's available address books."""
+    return client.list_addressbooks()
+
+
 def _handle_create_or_update_contact(
     client: CalDavClient,
     params: dict[str, Any],
@@ -230,6 +238,7 @@ _DISPATCH: dict[str, Callable[..., Any]] = {
     "delete_event": _handle_delete_event,
     "list_tasks": _handle_list_tasks,
     "list_contacts": _handle_list_contacts,
+    "list_addressbooks": _handle_list_addressbooks,
     "create_contact": lambda c, p: _handle_create_or_update_contact(c, p, "create"),
     "update_contact": lambda c, p: _handle_create_or_update_contact(c, p, "update"),
     "delete_contact": _handle_delete_contact,

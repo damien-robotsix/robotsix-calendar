@@ -45,6 +45,7 @@ class _CalDavClientProtocol(Protocol):
     """
 
     _caldav: Any
+    _principal: Any
 
     @staticmethod
     def _escape_text(value: str) -> str: ...
