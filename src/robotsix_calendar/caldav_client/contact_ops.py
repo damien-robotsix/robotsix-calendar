@@ -148,15 +148,34 @@ class _ContactOpsMixin(_MixinBase):
     # ------------------------------------------------------------------
 
     @_wrap_caldav_op("list contacts")
-    def list_contacts(self, addressbook_id: str = "") -> list[Contact]:
-        """Return all contacts.
+    def list_contacts(
+        self,
+        addressbook_id: str = "",
+        *,
+        offset: int = 0,
+        limit: int | None = None,
+    ) -> list[Contact]:
+        """Return contacts.
 
         If *addressbook_id* is empty, use the default address book.
+
+        *offset* skips that many leading contacts and *limit* caps the
+        number returned; ``limit=None`` (the default) returns every contact
+        from *offset* onward, preserving the historical unbounded behaviour
+        for callers that do not paginate.
         """
-        logger.debug("list_contacts addressbook_id=%r", addressbook_id)
+        logger.debug(
+            "list_contacts addressbook_id=%r offset=%r limit=%r",
+            addressbook_id,
+            offset,
+            limit,
+        )
         ab = self._get_addressbook(addressbook_id)
         results = ab.search()
-        return [self._to_contact(r, addressbook_id=ab.name) for r in results]
+        contacts = [self._to_contact(r, addressbook_id=ab.name) for r in results]
+        if limit is None:
+            return contacts[offset:]
+        return contacts[offset : offset + limit]
 
     @_wrap_caldav_op("create contact")
     def create_contact(self, contact: Contact, addressbook_id: str = "") -> Contact:

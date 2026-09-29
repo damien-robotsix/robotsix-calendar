@@ -64,6 +64,25 @@ never returned to the panel and unsubmitted values are preserved on update.
 Like every other component UI, the page sits behind the central gateway —
 the component itself adds no authentication.
 
+## Pagination
+
+The `GET /tasks` and `GET /contacts` list endpoints are paginated with
+two optional query parameters so large collections are never returned
+unbounded:
+
+| Parameter | Type | Default | Constraints | Description |
+|---|---|---|---|---|
+| `offset` | integer | `0` | `>= 0` | Number of leading items to skip. |
+| `limit` | integer | `50` | `1 <= limit <= 1000` | Maximum number of items to return. |
+
+When neither parameter is supplied the endpoints return the first `50`
+items (not the full collection). Request the next page by advancing
+`offset` in `limit`-sized steps (e.g. `?offset=50&limit=50`). Values
+outside the accepted range are rejected with a `422` validation response.
+
+`GET /events` is bounded by its required `start`/`end` date range rather
+than by `offset`/`limit`.
+
 ## Error responses
 
 All error responses use a nested JSON envelope with the format:

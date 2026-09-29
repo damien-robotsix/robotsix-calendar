@@ -210,6 +210,22 @@ class TestTasks:
         assert len(data) == 1
         assert data[0]["uid"] == "task-1"
         assert data[0]["status"] == "NEEDS-ACTION"
+        mock_client.list_tasks.assert_called_once_with("", offset=0, limit=50)
+
+    def test_list_tasks_pagination(
+        self, client: TestClient, mock_client: MagicMock
+    ) -> None:
+        mock_client.list_tasks.return_value = []
+        response = client.get("/tasks", params={"offset": 10, "limit": 5})
+        assert response.status_code == 200
+        mock_client.list_tasks.assert_called_once_with("", offset=10, limit=5)
+
+    def test_list_tasks_invalid_limit(
+        self, client: TestClient, mock_client: MagicMock
+    ) -> None:
+        response = client.get("/tasks", params={"limit": 5000})
+        assert response.status_code == 422
+        mock_client.list_tasks.assert_not_called()
 
     def test_create_task(self, client: TestClient, mock_client: MagicMock) -> None:
         mock_client.create_task.return_value = Task(
@@ -276,6 +292,22 @@ class TestContacts:
         assert len(data) == 1
         assert data[0]["uid"] == "contact-1"
         assert data[0]["full_name"] == "John Doe"
+        mock_client.list_contacts.assert_called_once_with("", offset=0, limit=50)
+
+    def test_list_contacts_pagination(
+        self, client: TestClient, mock_client: MagicMock
+    ) -> None:
+        mock_client.list_contacts.return_value = []
+        response = client.get("/contacts", params={"offset": 3, "limit": 2})
+        assert response.status_code == 200
+        mock_client.list_contacts.assert_called_once_with("", offset=3, limit=2)
+
+    def test_list_contacts_invalid_offset(
+        self, client: TestClient, mock_client: MagicMock
+    ) -> None:
+        response = client.get("/contacts", params={"offset": -1})
+        assert response.status_code == 422
+        mock_client.list_contacts.assert_not_called()
 
     def test_create_contact(self, client: TestClient, mock_client: MagicMock) -> None:
         mock_client.create_contact.return_value = Contact(

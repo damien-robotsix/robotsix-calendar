@@ -262,10 +262,12 @@ def delete_event(
 @app.get("/tasks", response_model=list[TaskResponse])
 def list_tasks(
     calendar_id: Annotated[str, Query()] = "",
+    offset: Annotated[int, Query(ge=0)] = 0,
+    limit: Annotated[int, Query(ge=1, le=1000)] = 50,
     client: CalDavClient = Depends(_get_client),
 ) -> list[TaskResponse]:
-    """List all tasks."""
-    tasks = client.list_tasks(calendar_id)
+    """List tasks, paginated via ``offset``/``limit`` (default 50, max 1000)."""
+    tasks = client.list_tasks(calendar_id, offset=offset, limit=limit)
     return [_task_to_response(t) for t in tasks]
 
 
@@ -324,10 +326,12 @@ def delete_task(
 @app.get("/contacts", response_model=list[ContactResponse])
 def list_contacts(
     addressbook_id: Annotated[str, Query()] = "",
+    offset: Annotated[int, Query(ge=0)] = 0,
+    limit: Annotated[int, Query(ge=1, le=1000)] = 50,
     client: CalDavClient = Depends(_get_client),
 ) -> list[ContactResponse]:
-    """List all contacts."""
-    contacts = client.list_contacts(addressbook_id)
+    """List contacts, paginated via ``offset``/``limit`` (default 50, max 1000)."""
+    contacts = client.list_contacts(addressbook_id, offset=offset, limit=limit)
     return [_contact_to_response(c) for c in contacts]
 
 
