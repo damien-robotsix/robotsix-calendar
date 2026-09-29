@@ -95,18 +95,36 @@ class _TaskOpsMixin(_MixinBase):
     # ------------------------------------------------------------------
 
     @_wrap_caldav_op("list tasks")
-    def list_tasks(self, calendar_id: str = "") -> list[Task]:
-        """Return all VTODO tasks from CalDAV calendar collections.
+    def list_tasks(
+        self,
+        calendar_id: str = "",
+        *,
+        offset: int = 0,
+        limit: int | None = None,
+    ) -> list[Task]:
+        """Return VTODO tasks from CalDAV calendar collections.
 
         When *calendar_id* is empty, tasks are aggregated from **all**
         calendars.  Each task is tagged with its source ``calendar_id``.
+
+        *offset* skips that many leading tasks and *limit* caps the number
+        returned; ``limit=None`` (the default) returns every task from
+        *offset* onward, preserving the historical unbounded behaviour for
+        callers that do not paginate.
         """
-        logger.debug("list_tasks calendar_id=%r", calendar_id)
+        logger.debug(
+            "list_tasks calendar_id=%r offset=%r limit=%r",
+            calendar_id,
+            offset,
+            limit,
+        )
         aggregated: list[Task] = []
         for cal in self._iter_calendars(calendar_id):
             results = cal.search(todo=True)
             aggregated.extend(self._to_task(r, calendar_id=cal.name) for r in results)
-        return aggregated
+        if limit is None:
+            return aggregated[offset:]
+        return aggregated[offset : offset + limit]
 
     @_wrap_caldav_op("create task")
     def create_task(self, task: Task, calendar_id: str = "") -> Task:

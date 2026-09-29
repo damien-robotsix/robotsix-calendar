@@ -29,6 +29,24 @@ class TestListTasks:
         assert result[1].uid == "task-2"
 
 
+class TestListTasksPagination:
+    def test_offset_and_limit_slice_results(self, client: CalDavClient) -> None:
+        cal = client._principal.calendars.return_value[0]
+        cal.search.return_value = [_mock_vtodo(uid=f"task-{i}") for i in range(5)]
+
+        result = client.list_tasks(offset=1, limit=2)
+
+        assert [t.uid for t in result] == ["task-1", "task-2"]
+
+    def test_limit_none_returns_all_from_offset(self, client: CalDavClient) -> None:
+        cal = client._principal.calendars.return_value[0]
+        cal.search.return_value = [_mock_vtodo(uid=f"task-{i}") for i in range(3)]
+
+        result = client.list_tasks(offset=1)
+
+        assert [t.uid for t in result] == ["task-1", "task-2"]
+
+
 class TestListTasksAggregation:
     def test_aggregates_across_all_calendars_when_calendar_id_empty(
         self, client: CalDavClient

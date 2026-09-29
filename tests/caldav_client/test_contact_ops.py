@@ -34,6 +34,24 @@ class TestListContacts:
         assert result[1].uid == "cnt-2"
 
 
+class TestListContactsPagination:
+    def test_offset_and_limit_slice_results(self, client: CalDavClient) -> None:
+        ab = client._principal.addressbooks.return_value[0]
+        ab.search.return_value = [_mock_vcard(uid=f"cnt-{i}") for i in range(5)]
+
+        result = client.list_contacts(offset=2, limit=2)
+
+        assert [c.uid for c in result] == ["cnt-2", "cnt-3"]
+
+    def test_limit_none_returns_all_from_offset(self, client: CalDavClient) -> None:
+        ab = client._principal.addressbooks.return_value[0]
+        ab.search.return_value = [_mock_vcard(uid=f"cnt-{i}") for i in range(3)]
+
+        result = client.list_contacts(offset=1)
+
+        assert [c.uid for c in result] == ["cnt-1", "cnt-2"]
+
+
 class TestListAddressbooks:
     def test_returns_addressbook_names(self, client: CalDavClient) -> None:
         ab_a = MagicMock()
