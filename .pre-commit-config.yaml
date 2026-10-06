@@ -40,7 +40,7 @@ repos:
         require_serial: true
 
   - repo: https://github.com/betterleaks/betterleaks
-    rev: v1.8.1
+    rev: v1.9.0
     hooks:
       - id: betterleaks
         exclude: '^uv\.lock$|^package-lock\.json$|.*\.lock$'
