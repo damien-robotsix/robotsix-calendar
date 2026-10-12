@@ -80,7 +80,13 @@ exclude-newer = "2026-08-06T00:00:00Z"
 # override-dependencies. This keeps genai-prices at its current version — a
 # plain override without the exemption would backtrack genai-prices/pydantic-ai
 # instead of upgrading httpx2.
-exclude-newer-package = { ruff = false, httpx2 = false, httpcore2 = false }
+# pydantic-ai-slim, pyjwt and urllib3 ship their CVE fixes (see
+# override-dependencies below) in releases published after the exclude-newer
+# cutoff, so exempt just those packages from the cutoff (same mechanism as
+# ruff/httpx2) to let the patched versions resolve. pydantic-graph is the
+# lockstep companion of pydantic-ai-slim (pinned ==1.107.7 by it), so it must
+# be exempted alongside.
+exclude-newer-package = { ruff = false, httpx2 = false, httpcore2 = false, pydantic-ai-slim = false, pydantic-graph = false, pyjwt = false, urllib3 = false }
 # robotsix-llmio still pins robotsix-http to an older rev via its own
 # `tool.uv.sources`, which uv propagates transitively.  Override it so the
 # whole dependency graph unifies on the rev that ships the
@@ -91,6 +97,13 @@ exclude-newer-package = { ruff = false, httpx2 = false, httpcore2 = false }
 override-dependencies = [
     "httpx2>=2.12.0",
     "httpcore2>=2.10.0",
+    # CodeQL/Trivy CVE-scan floors for transitive deps flagged by the security
+    # job. pydantic-ai-slim is capped below 2 so the fix stays on the 1.107.x
+    # patch line adopted by robotsix-llmio (a plain >= would backtrack the
+    # whole pydantic-ai/openai/genai-prices graph to 2.x).
+    "pydantic-ai-slim>=1.107.7,<2",
+    "pyjwt>=2.15.0",
+    "urllib3>=2.8.0",
     "robotsix-http @ git+https://github.com/damien-robotsix/robotsix-http.git@7557325f0cd08e47124b588710da011951feb421",
 ]
 
