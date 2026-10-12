@@ -158,7 +158,14 @@ GET /tasks
 ```
 
 Accepts an optional `calendar_id` query parameter to restrict to one
-calendar.  Returns a JSON array of task objects:
+calendar.  Paginated with two optional query parameters: `offset`
+(integer, default `0`, must be `>= 0`) skips leading items and `limit`
+(integer, default `50`, must satisfy `1 <= limit <= 1000`) caps the
+number returned.  When neither is supplied the endpoint returns the
+first `50` tasks (not the full collection); advance `offset` in
+`limit`-sized steps to page.  Values outside the accepted range are
+rejected with a `422` validation response.  Returns a JSON array of
+task objects:
 
 ```json
 {
@@ -228,7 +235,14 @@ GET /contacts
 ```
 
 Accepts an optional `addressbook_id` query parameter to restrict to one
-address book.  Returns a JSON array of contact objects:
+address book.  Paginated with two optional query parameters: `offset`
+(integer, default `0`, must be `>= 0`) skips leading items and `limit`
+(integer, default `50`, must satisfy `1 <= limit <= 1000`) caps the
+number returned.  When neither is supplied the endpoint returns the
+first `50` contacts (not the full collection); advance `offset` in
+`limit`-sized steps to page.  Values outside the accepted range are
+rejected with a `422` validation response.  Returns a JSON array of
+contact objects:
 
 ```json
 {
