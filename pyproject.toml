@@ -102,7 +102,7 @@ override-dependencies = [
     # patch line adopted by robotsix-llmio (a plain >= would backtrack the
     # whole pydantic-ai/openai/genai-prices graph to 2.x).
     "pydantic-ai-slim>=1.107.7,<2",
-    "pyjwt>=2.15.0",
+    "pyjwt[crypto]>=2.15.0",
     "urllib3>=2.8.0",
     "robotsix-http @ git+https://github.com/damien-robotsix/robotsix-http.git@7557325f0cd08e47124b588710da011951feb421",
 ]
