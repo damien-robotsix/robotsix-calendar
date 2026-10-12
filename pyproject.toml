@@ -85,8 +85,10 @@ exclude-newer = "2026-08-06T00:00:00Z"
 # cutoff, so exempt just those packages from the cutoff (same mechanism as
 # ruff/httpx2) to let the patched versions resolve. pydantic-graph is the
 # lockstep companion of pydantic-ai-slim (pinned ==1.107.7 by it), so it must
-# be exempted alongside.
-exclude-newer-package = { ruff = false, httpx2 = false, httpcore2 = false, pydantic-ai-slim = false, pydantic-graph = false, pyjwt = false, urllib3 = false }
+# be exempted alongside. virtualenv (dev/tooling transitive) ships its CVE
+# fixes (PYSEC-2026-4011..4014 / GHSA-*) in 21.7.x releases published after the
+# cutoff, so exempt it too so the patched version can resolve.
+exclude-newer-package = { ruff = false, httpx2 = false, httpcore2 = false, pydantic-ai-slim = false, pydantic-graph = false, pyjwt = false, urllib3 = false, virtualenv = false, python-discovery = false }
 # robotsix-llmio still pins robotsix-http to an older rev via its own
 # `tool.uv.sources`, which uv propagates transitively.  Override it so the
 # whole dependency graph unifies on the rev that ships the
@@ -104,6 +106,10 @@ override-dependencies = [
     "pydantic-ai-slim>=1.107.7,<2",
     "pyjwt[crypto]>=2.15.0",
     "urllib3>=2.8.0",
+    # virtualenv 21.5.0 is flagged for 8 advisories (PYSEC-2026-4011..4014 and
+    # GHSA-94p9-xgh2-xp45 / 9h9j-4vrj-gf7g / p58f-9548-mpm2 / x78j-v8h9-3j2q);
+    # all are fixed by 21.7.13, the highest fix version across the set.
+    "virtualenv>=21.7.13",
     "robotsix-http @ git+https://github.com/damien-robotsix/robotsix-http.git@7557325f0cd08e47124b588710da011951feb421",
 ]
 
