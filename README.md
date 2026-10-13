@@ -14,6 +14,56 @@ This repo follows the [robotsix stack standards](https://github.com/damien-robot
 
 Early scaffold — under active development.
 
+## Getting Started
+
+### Prerequisites
+
+- Python 3.14+
+- [`uv`](https://docs.astral.sh/uv/)
+- A Radicale CalDAV/CardDAV server running locally or otherwise accessible
+
+### Installation & Setup
+
+```bash
+git clone https://github.com/damien-robotsix/robotsix-calendar.git
+cd robotsix-calendar
+uv sync
+```
+
+### Quick Configuration
+
+Copy the template at `config/config.example.json` to `config/config.json`
+(or point `ROBOTSIX_CONFIG_FILE` at your own path) and fill in your
+Radicale and OpenRouter credentials:
+
+```json
+{
+  "radicale_url": "http://localhost:5232/",
+  "radicale_username": "user",
+  "radicale_password": "pass",
+  "openrouter": { "keys": { "robotsix-calendar": "sk-or-..." } },
+  "log_level": "INFO"
+}
+```
+
+See [Configuration](docs/configuration.md) for every available setting.
+
+### First Agent Call
+
+```python
+from robotsix_calendar.agent import CalendarAgent
+
+with CalendarAgent() as agent:
+    result = agent.run("Create an event tomorrow at 2pm called 'Team Meeting'")
+    print(result)
+```
+
+### Next Steps
+
+- See the [tutorials](docs/tutorials/basic/) for full CRUD examples.
+- See [Configuration](docs/configuration.md) for all settings.
+- See [Error Handling](docs/error-handling.md) for exception handling.
+
 ## Development
 
 This project uses [`uv`](https://docs.astral.sh/uv/) for dependency
