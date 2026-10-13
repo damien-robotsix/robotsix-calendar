@@ -95,3 +95,56 @@ class TestSpecificPages:
         body = client.get("/settings").text
 
         assert "mountConfigPanel" in body
+
+
+class TestSharedStyling:
+    """Content pages must use the shared robotsix-ui ``.rsu-*`` utilities.
+
+    The dashboard styling is sourced from ``/static/robotsix-ui.css`` rather
+    than the retired, locally hand-rolled ``.ui-*`` class family.
+    """
+
+    @pytest.mark.parametrize("path", UI_PAGES)
+    def test_pages_use_rsu_page_container(self, client: TestClient, path: str) -> None:
+        body = client.get(path).text
+
+        assert 'class="rsu-page"' in body
+
+    @pytest.mark.parametrize("path", UI_PAGES)
+    def test_pages_drop_legacy_ui_classes(self, client: TestClient, path: str) -> None:
+        body = client.get(path).text
+
+        for legacy in (
+            "ui-page",
+            "ui-list",
+            "ui-item",
+            "ui-card",
+            "ui-form",
+            "ui-table",
+            "ui-note",
+            "ui-meta",
+            "ui-error",
+            "ui-day",
+            "ui-link",
+        ):
+            assert f'"{legacy}"' not in body
+            assert f'"{legacy} ' not in body
+
+    def test_calendars_page_uses_rsu_list(self, client: TestClient) -> None:
+        body = client.get("/ui/calendars").text
+
+        assert 'class="rsu-list"' in body
+        assert 'class="rsu-btn"' in body
+
+    def test_events_page_uses_rsu_utilities(self, client: TestClient) -> None:
+        body = client.get("/ui/events").text
+
+        assert 'class="rsu-form"' in body
+        assert 'class="rsu-form-actions"' in body
+        assert 'class="rsu-card"' in body
+        assert "rsu-badge--error" in body
+
+    def test_contacts_page_uses_rsu_table(self, client: TestClient) -> None:
+        body = client.get("/ui/contacts").text
+
+        assert 'class="rsu-table"' in body

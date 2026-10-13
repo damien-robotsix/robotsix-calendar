@@ -69,10 +69,10 @@ def _ui_page(page_title: str, active_href: str, content: str) -> str:
 
 
 _UI_LANDING_CONTENT = """\
-    <main class="ui-page">
+    <main class="rsu-page">
       <h1>robotsix-calendar</h1>
       <p>Manage your calendars and contacts from the navigation above.</p>
-      <ul class="ui-links">
+      <ul class="rsu-list">
         <li><a href="/ui/calendars">Calendars</a></li>
         <li><a href="/ui/contacts">Contacts</a></li>
         <li><a href="/settings">Settings</a></li>
@@ -81,10 +81,10 @@ _UI_LANDING_CONTENT = """\
 """
 
 _CALENDARS_PAGE_CONTENT = """\
-    <main class="ui-page">
+    <main class="rsu-page">
       <h1>Calendars</h1>
-      <p><a class="ui-link" href="/ui/events">View events</a></p>
-      <ul id="calendar-list" class="ui-list"></ul>
+      <p><a class="rsu-btn" href="/ui/events">View events</a></p>
+      <ul id="calendar-list" class="rsu-list"></ul>
     </main>
     <script type="module">
       function escapeHtml(value) {
@@ -104,15 +104,15 @@ _CALENDARS_PAGE_CONTENT = """\
           list.innerHTML = calendars.length
             ? calendars.map(
                 (cal) =>
-                  `<li class="ui-item">` +
+                  `<li>` +
                   `<a href="/ui/events?calendar=${encodeURIComponent(cal.name)}">` +
                   `${escapeHtml(cal.name)}</a></li>`,
               ).join("")
-            : '<li class="ui-item">No calendars found.</li>';
+            : '<li>No calendars found.</li>';
         } catch (error) {
           const detail = escapeHtml(error.message);
           list.innerHTML =
-            '<li class="ui-item">Failed to load calendars: ' + detail + '</li>';
+            '<li>Failed to load calendars: ' + detail + '</li>';
         }
       }
 
@@ -121,9 +121,9 @@ _CALENDARS_PAGE_CONTENT = """\
 """
 
 _EVENTS_PAGE_CONTENT = """\
-    <main class="ui-page">
+    <main class="rsu-page">
       <h1>Events</h1>
-      <form id="event-form" class="ui-form">
+      <form id="event-form" class="rsu-form">
         <label>Calendar
           <select id="event-calendar">
             <option value="">All calendars</option>
@@ -135,13 +135,13 @@ _EVENTS_PAGE_CONTENT = """\
         <label>To
           <input type="date" id="event-end" required>
         </label>
-        <div class="ui-form-actions">
+        <div class="rsu-form-actions">
           <button type="button" id="event-prev">Previous month</button>
           <button type="button" id="event-next">Next month</button>
           <button type="submit" id="event-load">Load</button>
         </div>
       </form>
-      <div id="event-list" class="ui-list"></div>
+      <div id="event-list" class="rsu-list"></div>
     </main>
     <script type="module">
       function escapeHtml(value) {
@@ -200,15 +200,15 @@ _EVENTS_PAGE_CONTENT = """\
 
       function eventCard(ev) {
         const description = ev.description
-          ? '<p class="ui-note">' + escapeHtml(ev.description) + "</p>"
+          ? "<p>" + escapeHtml(ev.description) + "</p>"
           : "";
         const location = ev.location
-          ? '<p class="ui-note">Location: ' + escapeHtml(ev.location) + "</p>"
+          ? '<p class="rsu-badge">Location: ' + escapeHtml(ev.location) + "</p>"
           : "";
         return (
-          '<article class="ui-card">' +
+          '<article class="rsu-card">' +
           "<h3>" + escapeHtml(ev.summary) + "</h3>" +
-          '<p class="ui-meta">' + escapeHtml(formatDate(ev.dtstart)) +
+          '<p class="rsu-badge">' + escapeHtml(formatDate(ev.dtstart)) +
           " &rarr; " + escapeHtml(formatDate(ev.dtend)) + "</p>" +
           location +
           description +
@@ -228,7 +228,7 @@ _EVENTS_PAGE_CONTENT = """\
         }
         let html = "";
         for (const [day, dayEvents] of byDay) {
-          html += '<section class="ui-day"><h2>' + escapeHtml(day) + "</h2>";
+          html += '<section class="rsu-card"><h2>' + escapeHtml(day) + "</h2>";
           for (const ev of dayEvents) html += eventCard(ev);
           html += "</section>";
         }
@@ -240,7 +240,8 @@ _EVENTS_PAGE_CONTENT = """\
         const end = endInput.value;
         if (!start || !end) {
           list.innerHTML =
-            '<p class="ui-note">Please choose a from and to date.</p>';
+            '<p class="rsu-badge rsu-badge--info">' +
+            "Please choose a from and to date.</p>";
           return;
         }
         const params = new URLSearchParams({ start: start, end: end });
@@ -264,14 +265,15 @@ _EVENTS_PAGE_CONTENT = """\
           }
           if (events.length === 0) {
             list.innerHTML =
-              '<p class="ui-note">No events in this range.</p>';
+              '<p class="rsu-badge rsu-badge--info">No events in this range.</p>';
             return;
           }
           list.innerHTML = renderEvents(events);
         } catch (error) {
           const detail = escapeHtml(error.message || "unknown error");
           list.innerHTML =
-            '<p class="ui-error">Failed to load events: ' + detail + "</p>";
+            '<p class="rsu-badge rsu-badge--error">Failed to load events: ' +
+            detail + "</p>";
         }
       }
 
@@ -333,9 +335,9 @@ _EVENTS_PAGE_CONTENT = """\
 """
 
 _CONTACTS_PAGE_CONTENT = """\
-    <main class="ui-page">
+    <main class="rsu-page">
       <h1>Contacts</h1>
-      <table id="contacts-table" class="ui-table">
+      <table id="contacts-table" class="rsu-table">
         <thead>
           <tr>
             <th>Name</th>
@@ -383,7 +385,7 @@ _CONTACTS_PAGE_CONTENT = """\
 """
 
 _SETTINGS_PAGE_CONTENT = """\
-    <main class="ui-page">
+    <main class="rsu-page">
       <div id="settings"></div>
     </main>
     <script type="module">
