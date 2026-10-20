@@ -88,7 +88,16 @@ exclude-newer = "2026-08-06T00:00:00Z"
 # be exempted alongside. virtualenv (dev/tooling transitive) ships its CVE
 # fixes (PYSEC-2026-4011..4014 / GHSA-*) in 21.7.x releases published after the
 # cutoff, so exempt it too so the patched version can resolve.
-exclude-newer-package = { ruff = false, httpx2 = false, httpcore2 = false, pydantic-ai-slim = false, pydantic-graph = false, pyjwt = false, urllib3 = false, virtualenv = false, python-discovery = false }
+# mcp (transitive via claude-agent-sdk, pulled in by robotsix-llmio[claude_sdk])
+# is flagged for CVE-2026-59951 at 1.29.0; the fix 1.30.0 was published after
+# the exclude-newer cutoff, so exempt it (same mechanism as ruff/httpx2) and
+# floor it via override-dependencies below. 1.30.0 is the only fix within
+# claude-agent-sdk's mcp>=1.23.0,<2.0.0 range (2.2.0 is out of range).
+# certifi (transitive via httpx/requests/niquests) is flagged for
+# GHSA-6q48-6c7w-9gw2 at 2026.5.20; the fix 2026.10.19 was published after the
+# exclude-newer cutoff, so exempt it (same mechanism as ruff/httpx2) and floor
+# it via override-dependencies below.
+exclude-newer-package = { ruff = false, httpx2 = false, httpcore2 = false, pydantic-ai-slim = false, pydantic-graph = false, pyjwt = false, urllib3 = false, virtualenv = false, python-discovery = false, mcp = false, certifi = false }
 # robotsix-llmio still pins robotsix-http to an older rev via its own
 # `tool.uv.sources`, which uv propagates transitively.  Override it so the
 # whole dependency graph unifies on the rev that ships the
@@ -110,6 +119,11 @@ override-dependencies = [
     # GHSA-94p9-xgh2-xp45 / 9h9j-4vrj-gf7g / p58f-9548-mpm2 / x78j-v8h9-3j2q);
     # all are fixed by 21.7.13, the highest fix version across the set.
     "virtualenv>=21.7.13",
+    # mcp 1.29.0 is flagged for CVE-2026-59951; 1.30.0 is the fix within
+    # claude-agent-sdk's mcp>=1.23.0,<2.0.0 range (2.2.0 is out of range).
+    "mcp>=1.30.0,<2",
+    # certifi 2026.5.20 is flagged for GHSA-6q48-6c7w-9gw2; 2026.10.19 is the fix.
+    "certifi>=2026.10.19",
     "robotsix-http @ git+https://github.com/damien-robotsix/robotsix-http.git@7557325f0cd08e47124b588710da011951feb421",
 ]
 

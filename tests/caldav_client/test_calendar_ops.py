@@ -32,6 +32,18 @@ class TestListEvents:
         assert result[0].uid == "evt-1"
         assert result[1].uid == "evt-2"
 
+    def test_expands_recurring_occurrences(self, client: CalDavClient) -> None:
+        """Recurring events must be expanded so each returned occurrence
+        carries its own in-range ``dtstart`` rather than the master start."""
+        cal = client._principal.calendars.return_value[0]
+        cal.search.return_value = [_mock_vevent()]
+
+        client.list_events("2026-10-15T00:00:00", "2026-10-15T23:59:59")
+
+        _, kwargs = cal.search.call_args
+        assert kwargs["expand"] is True
+        assert kwargs["event"] is True
+
 
 class TestCreateEvent:
     def test_returns_event_with_uid(self, client: CalDavClient) -> None:

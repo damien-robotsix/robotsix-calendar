@@ -56,6 +56,56 @@ END:VCALENDAR"""
 
 
 # ---------------------------------------------------------------------------
+# Recurring-event occurrence expansion
+# ---------------------------------------------------------------------------
+
+
+def test_recurring_event_search_returns_expanded_occurrence(
+    caldav_client: Any,
+) -> None:
+    """A weekly recurrence queried for a later week must return the
+    occurrence on that day (``expand=True``), not the master's start.
+
+    Regression for the agenda bug where querying a single day returned a
+    recurring event with the master/original ``dtstart`` (the first
+    occurrence) instead of the occurrence inside the queried range.
+    """
+    principal = caldav_client.principal()
+    cal = principal.calendars()[0]
+
+    # Weekly recurrence whose master/first occurrence is 2026-10-08.
+    cal.save_event(
+        """BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Test//EN
+BEGIN:VEVENT
+UID:test-weekly-1
+DTSTART:20261008T180000
+DTEND:20261008T190000
+RRULE:FREQ=WEEKLY
+SUMMARY:Piano chant et escalade
+END:VEVENT
+END:VCALENDAR"""
+    )
+
+    # Query only 2026-10-15 — one week after the master occurrence.
+    results = cal.search(
+        start=datetime.datetime(2026, 10, 15, 0, 0, 0),
+        end=datetime.datetime(2026, 10, 15, 23, 59, 59),
+        event=True,
+        expand=True,
+    )
+
+    assert len(results) == 1
+    comp = results[0].icalendar_component
+    assert str(comp.get("SUMMARY")) == "Piano chant et escalade"
+    occurrence_start = comp.get("DTSTART").dt
+    assert occurrence_start.year == 2026
+    assert occurrence_start.month == 10
+    assert occurrence_start.day == 15
+
+
+# ---------------------------------------------------------------------------
 # Create + delete
 # ---------------------------------------------------------------------------
 

@@ -120,6 +120,11 @@ class _CalendarOpsMixin(_MixinBase):
 
         When *calendar_id* is empty, events are aggregated from **all**
         calendars.  Each event is tagged with its source ``calendar_id``.
+
+        Recurring events are **expanded** server-side (``expand=True``):
+        each occurrence that falls within the queried range is returned as
+        its own :class:`CalendarEvent` with the occurrence's ``dtstart``,
+        rather than the master event's original (first-occurrence) start.
         """
         logger.debug(
             "list_events start=%r end=%r calendar_id=%r",
@@ -134,7 +139,7 @@ class _CalendarOpsMixin(_MixinBase):
                 start=start_dt,
                 end=end_dt,
                 event=True,
-                expand=False,
+                expand=True,
             )
             aggregated.extend(
                 self._to_calendar_event(r, calendar_id=cal.name) for r in results
