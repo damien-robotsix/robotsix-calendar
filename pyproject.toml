@@ -93,7 +93,11 @@ exclude-newer = "2026-08-06T00:00:00Z"
 # the exclude-newer cutoff, so exempt it (same mechanism as ruff/httpx2) and
 # floor it via override-dependencies below. 1.30.0 is the only fix within
 # claude-agent-sdk's mcp>=1.23.0,<2.0.0 range (2.2.0 is out of range).
-exclude-newer-package = { ruff = false, httpx2 = false, httpcore2 = false, pydantic-ai-slim = false, pydantic-graph = false, pyjwt = false, urllib3 = false, virtualenv = false, python-discovery = false, mcp = false }
+# certifi (transitive via httpx/requests/niquests) is flagged for
+# GHSA-6q48-6c7w-9gw2 at 2026.5.20; the fix 2026.10.19 was published after the
+# exclude-newer cutoff, so exempt it (same mechanism as ruff/httpx2) and floor
+# it via override-dependencies below.
+exclude-newer-package = { ruff = false, httpx2 = false, httpcore2 = false, pydantic-ai-slim = false, pydantic-graph = false, pyjwt = false, urllib3 = false, virtualenv = false, python-discovery = false, mcp = false, certifi = false }
 # robotsix-llmio still pins robotsix-http to an older rev via its own
 # `tool.uv.sources`, which uv propagates transitively.  Override it so the
 # whole dependency graph unifies on the rev that ships the
@@ -118,6 +122,8 @@ override-dependencies = [
     # mcp 1.29.0 is flagged for CVE-2026-59951; 1.30.0 is the fix within
     # claude-agent-sdk's mcp>=1.23.0,<2.0.0 range (2.2.0 is out of range).
     "mcp>=1.30.0,<2",
+    # certifi 2026.5.20 is flagged for GHSA-6q48-6c7w-9gw2; 2026.10.19 is the fix.
+    "certifi>=2026.10.19",
     "robotsix-http @ git+https://github.com/damien-robotsix/robotsix-http.git@7557325f0cd08e47124b588710da011951feb421",
 ]
 
