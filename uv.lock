@@ -30,7 +30,7 @@ overrides = [
     { name = "mcp", specifier = ">=1.30.0,<2" },
     { name = "pydantic-ai-slim", specifier = ">=1.107.7,<2" },
     { name = "pyjwt", extras = ["crypto"], specifier = ">=2.15.0" },
-    { name = "robotsix-http", git = "https://github.com/damien-robotsix/robotsix-http.git?rev=7557325f0cd08e47124b588710da011951feb421" },
+    { name = "robotsix-http", git = "https://github.com/damien-robotsix/robotsix-http.git?rev=546d69f54aff774c90211247b23d6ba0e3aa5900" },
     { name = "urllib3", specifier = ">=2.8.0" },
     { name = "virtualenv", specifier = ">=21.7.13" },
 ]
@@ -1883,7 +1883,7 @@ requires-dist = [
     { name = "opentelemetry-api" },
     { name = "pydantic" },
     { name = "robotsix-config", git = "https://github.com/damien-robotsix/robotsix-config.git?rev=48e736bad05ff514360f93092a5f486a6aee1fe1" },
-    { name = "robotsix-http", extras = ["fastapi"], git = "https://github.com/damien-robotsix/robotsix-http.git?rev=7557325f0cd08e47124b588710da011951feb421" },
+    { name = "robotsix-http", extras = ["fastapi"], git = "https://github.com/damien-robotsix/robotsix-http.git?rev=546d69f54aff774c90211247b23d6ba0e3aa5900" },
     { name = "robotsix-llmio", extras = ["claude-sdk", "openrouter", "tracing"], git = "https://github.com/damien-robotsix/robotsix-llmio.git?rev=3f9127ad9cc45d52da76c411d7d1dc2faa903046" },
     { name = "uvicorn" },
 ]
@@ -1919,8 +1919,8 @@ dependencies = [
 
 [[package]]
 name = "robotsix-http"
-version = "0.4.0"
-source = { git = "https://github.com/damien-robotsix/robotsix-http.git?rev=7557325f0cd08e47124b588710da011951feb421#7557325f0cd08e47124b588710da011951feb421" }
+version = "0.8.2"
+source = { git = "https://github.com/damien-robotsix/robotsix-http.git?rev=546d69f54aff774c90211247b23d6ba0e3aa5900#546d69f54aff774c90211247b23d6ba0e3aa5900" }
 dependencies = [
     { name = "httpcore" },
     { name = "httpx" },
