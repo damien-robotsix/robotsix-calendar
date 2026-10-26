@@ -103,7 +103,7 @@ class TestCaldavExceptionMapping:
 
     def test_etag_mismatch_error_maps_to_conflict(self, client: CalDavClient) -> None:
         cal = client._principal.calendars.return_value[0]
-        cal.save_event.side_effect = client._caldav.lib.error.EtagMismatchError(
+        cal.save_event.side_effect = client._caldav.lib.error.ETagMismatchError(
             "ETag changed"
         )
         with pytest.raises(ConflictError) as exc_info:

@@ -229,3 +229,46 @@ END:VCALENDAR"""
     # Completely garbled data — Radicale cannot parse this as iCal.
     with pytest.raises(DAVError):
         cal.save_event("NOT A VALID ICALENDAR STRING AT ALL")
+
+
+# ---------------------------------------------------------------------------
+# _wrap_caldav_op exception mapping against the real caldav library
+# ---------------------------------------------------------------------------
+
+
+def _real_error(name: str) -> type[Exception]:
+    import caldav.lib.error
+
+    exc_cls: type[Exception] = getattr(caldav.lib.error, name)
+    return exc_cls
+
+
+@pytest.mark.parametrize(
+    ("raised", "expected"),
+    [
+        (lambda: _real_error("ETagMismatchError")("etag"), "ConflictError"),
+        (lambda: _real_error("AuthorizationError")("denied"), "AuthError"),
+        (lambda: _real_error("NotFoundError")("missing"), "NotFoundError"),
+        (lambda: RuntimeError("boom"), "CalDAVError"),
+    ],
+)
+def test_wrap_caldav_op_maps_real_caldav_errors(
+    caldav_client: Any, raised: Any, expected: str
+) -> None:
+    """The wrapper's except clauses must resolve against the real library.
+
+    A misspelled ``caldav.lib.error`` attribute raises ``AttributeError``
+    while the except clauses are evaluated, masking the original error.
+    """
+    from robotsix_calendar.caldav_client import CalDavClient, exceptions
+    from robotsix_calendar.caldav_client._shared import _wrap_caldav_op
+
+    client = CalDavClient(url=str(caldav_client.url), username="x", password="x")
+
+    @_wrap_caldav_op("probe")
+    def probe(_self: Any) -> None:
+        raise raised()
+
+    with pytest.raises(getattr(exceptions, expected)) as exc_info:
+        probe(client)
+    assert type(exc_info.value).__name__ == expected

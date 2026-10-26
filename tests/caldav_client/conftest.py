@@ -24,7 +24,7 @@ _mock_caldav = MagicMock()
 _mock_caldav.error.AuthorizationError = type("AuthorizationError", (Exception,), {})
 _mock_caldav.lib.error.NotFoundError = type("NotFoundError", (Exception,), {})
 _mock_caldav.lib.error.RateLimitError = type("RateLimitError", (Exception,), {})
-_mock_caldav.lib.error.EtagMismatchError = type("EtagMismatchError", (Exception,), {})
+_mock_caldav.lib.error.ETagMismatchError = type("ETagMismatchError", (Exception,), {})
 # Alias AuthorizationError under lib.error so _wrap_caldav_op's
 # self._caldav.lib.error.AuthorizationError resolves.
 _mock_caldav.lib.error.AuthorizationError = _mock_caldav.error.AuthorizationError
