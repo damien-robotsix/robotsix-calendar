@@ -245,7 +245,7 @@ def _wrap_caldav_op(op_name: str) -> Callable[[_F], _F]:
                     _record_and_raise(
                         exc, "rate_limited", RateLimitError, f"{op_name}: {exc}", span
                     )
-                except self._caldav.lib.error.EtagMismatchError as exc:
+                except self._caldav.lib.error.ETagMismatchError as exc:
                     _record_and_raise(
                         exc, "conflict", ConflictError, f"{op_name}: {exc}", span
                     )
