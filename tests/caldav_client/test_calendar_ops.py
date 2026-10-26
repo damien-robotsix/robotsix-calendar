@@ -11,6 +11,7 @@ from robotsix_calendar.caldav_client import (
     CalendarEvent,
 )
 from robotsix_calendar.caldav_client.exceptions import (
+    ConflictError,
     NotFoundError,
 )
 from tests.caldav_client.conftest import _make_event, _mock_vevent
@@ -44,6 +45,17 @@ class TestListEvents:
         assert kwargs["expand"] is True
         assert kwargs["event"] is True
 
+    def test_flags_recurring_events(self, client: CalDavClient) -> None:
+        cal = client._principal.calendars.return_value[0]
+        cal.search.return_value = [
+            _mock_vevent(uid="single"),
+            _mock_vevent(uid="series", rrule={"FREQ": ["WEEKLY"]}),
+        ]
+
+        result = client.list_events("2026-06-01", "2026-06-30")
+
+        assert [e.recurring for e in result] == [False, True]
+
 
 class TestCreateEvent:
     def test_returns_event_with_uid(self, client: CalDavClient) -> None:
@@ -75,6 +87,20 @@ class TestUpdateEvent:
 
         with pytest.raises(NotFoundError, match="not found"):
             client.update_event("unknown", _make_event())
+
+    @pytest.mark.parametrize("calendar_id", ["", "work"])
+    def test_rejects_recurring_series(
+        self, client: CalDavClient, calendar_id: str
+    ) -> None:
+        """Updating a recurring master must not flatten the series."""
+        cal = client._principal.calendars.return_value[0]
+        cal.name = "work"
+        cal.event.return_value = _mock_vevent(uid="series", rrule={"FREQ": ["WEEKLY"]})
+
+        with pytest.raises(ConflictError, match="recurring"):
+            client.update_event("series", _make_event(), calendar_id=calendar_id)
+
+        cal.save_event.assert_not_called()
 
 
 class TestDeleteEvent:

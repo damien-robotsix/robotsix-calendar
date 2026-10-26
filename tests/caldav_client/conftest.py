@@ -128,6 +128,8 @@ def _mock_vevent(**overrides: Any) -> MagicMock:
             dt=overrides.get("dtend", datetime.datetime(2026, 6, 15, 10, 0, 0))
         ),
     }
+    if "rrule" in overrides:
+        values["RRULE"] = overrides["rrule"]
     comp = MagicMock()
     comp.get.side_effect = lambda name, default=None: values.get(name, default)
     obj = MagicMock()

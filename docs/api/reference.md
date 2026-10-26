@@ -83,6 +83,25 @@ outside the accepted range are rejected with a `422` validation response.
 `GET /events` is bounded by its required `start`/`end` date range rather
 than by `offset`/`limit`.
 
+## Recurring events
+
+`GET /events` expands recurring series: each occurrence inside the
+queried range is returned as its own event object with that
+occurrence's `dtstart`/`dtend`, the **master `uid`** shared by the
+whole series, and `"recurring": true` (single events carry
+`"recurring": false`).
+
+Because every occurrence shares the master `uid`, the write endpoints
+act on the whole series, never on a single occurrence:
+
+- `PUT /events/{uid}` on a recurring event is **rejected with `409`
+  (`conflict`)** and the series is left unchanged. Rewriting the stored
+  object would otherwise replace the master (with its `RRULE`, `RDATE`,
+  `EXDATE`s and overrides) by one non-recurring event. Per-occurrence
+  edits are not supported.
+- `DELETE /events/{uid}` on a recurring event removes the **whole
+  series** (all occurrences).
+
 ## Error responses
 
 All error responses use a nested JSON envelope with the format:

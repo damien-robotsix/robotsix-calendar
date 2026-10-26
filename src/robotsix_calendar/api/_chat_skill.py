@@ -95,9 +95,13 @@ Returns a JSON array of event objects:
   "location": "Office",
   "dtstart": "2026-09-01T10:00:00",
   "dtend": "2026-09-01T11:00:00",
-  "calendar_id": "<calendar-name>"
+  "calendar_id": "<calendar-name>",
+  "recurring": false
 }
 ```
+
+`recurring` is `true` for occurrences of a recurring series; those
+occurrences all share the series' master `uid` (see PUT/DELETE below).
 
 ### POST /events — create an event
 
@@ -138,6 +142,14 @@ Content-Type: application/json
 Replaces the event identified by `uid` with the supplied fields and
 returns the updated event object.
 
+**Recurring events:** `GET /events` expands recurring series, so every
+occurrence is returned separately with its own `dtstart` but the
+**same master `uid`** and `"recurring": true`.  `PUT /events/{uid}` on
+a recurring event is **rejected with `409` (`conflict`)** — neither a
+single occurrence nor the whole series can be edited this way, and the
+series is left untouched.  Tell the user per-occurrence edits are not
+supported; to change the series, delete it and recreate it.
+
 ### DELETE /events/{uid} — delete an event
 
 ```
@@ -146,6 +158,11 @@ DELETE /events/{uid}
 
 Deletes the event (idempotent), with an optional `calendar_id` query
 parameter to restrict the lookup.  Returns `204` with no body.
+
+**Recurring events:** DELETE removes the **whole series** (all
+occurrences sharing the `uid`), not just the occurrence you saw in a
+list.  Only call it on a `"recurring": true` event when the user
+explicitly wants the entire series gone.
 
 ---
 

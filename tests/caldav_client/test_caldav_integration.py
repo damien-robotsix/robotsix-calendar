@@ -105,6 +105,56 @@ END:VCALENDAR"""
     assert occurrence_start.day == 15
 
 
+# ``CalDavClient`` reads ``Calendar.name``, deprecated in real caldav 2.x.
+@pytest.mark.filterwarnings("ignore:The 'name' attribute is deprecated")
+def test_update_recurring_event_is_rejected_and_series_preserved(
+    caldav_client: Any,
+) -> None:
+    """Updating a recurring event via its (shared) UID must not flatten
+    the series into a single event: the update is rejected with
+    ``ConflictError`` and the stored RRULE survives.
+    """
+    from robotsix_calendar.caldav_client import CalDavClient, CalendarEvent
+    from robotsix_calendar.caldav_client.exceptions import ConflictError
+
+    principal = caldav_client.principal()
+    cal = principal.calendars()[0]
+    cal.save_event(
+        """BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Test//EN
+BEGIN:VEVENT
+UID:test-weekly-update
+DTSTART:20261103T100000
+DTEND:20261103T103000
+RRULE:FREQ=WEEKLY
+SUMMARY:Weekly standup
+END:VEVENT
+END:VCALENDAR"""
+    )
+
+    client = CalDavClient(url=str(caldav_client.url), username="x", password="x")
+
+    occurrences = client.list_events("2026-11-01T00:00:00", "2026-11-30T23:59:59")
+    standups = [e for e in occurrences if e.uid == "test-weekly-update"]
+    assert len(standups) == 4
+    assert all(e.recurring for e in standups)
+
+    with pytest.raises(ConflictError, match="recurring"):
+        client.update_event(
+            "test-weekly-update",
+            CalendarEvent(
+                summary="Weekly standup",
+                dtstart="2026-11-10T11:00:00",
+                dtend="2026-11-10T11:30:00",
+            ),
+        )
+
+    stored = cal.event(uid="test-weekly-update").icalendar_component
+    assert stored.get("RRULE") is not None
+    assert stored.get("DTSTART").dt == datetime.datetime(2026, 11, 3, 10, 0, 0)
+
+
 # ---------------------------------------------------------------------------
 # Create + delete
 # ---------------------------------------------------------------------------
