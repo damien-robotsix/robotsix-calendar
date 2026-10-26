@@ -69,50 +69,24 @@ docs = [
 ]
 
 [tool.uv]
-exclude-newer = "2026-08-06T00:00:00Z"
-# Exempt ruff from the `exclude-newer` cutoff: dependabot bumps ruff frequently
-# and a fixed cutoff freezes it out of every release published after it.
-# httpx2/httpcore2 are transitive deps of genai-prices (pulled in by
-# robotsix-llmio). The 2.4.0 releases pinned by the graph trip code-scanning
-# CVEs (CVE-2026-84379..84382); the patched 2.13.0 releases were published
-# after the exclude-newer cutoff above, so exempt just these two packages from
-# the cutoff (same mechanism used for ruff) and floor them via
-# override-dependencies. This keeps genai-prices at its current version — a
-# plain override without the exemption would backtrack genai-prices/pydantic-ai
-# instead of upgrading httpx2.
-# pydantic-ai-slim, pyjwt and urllib3 ship their CVE fixes (see
-# override-dependencies below) in releases published after the exclude-newer
-# cutoff, so exempt just those packages from the cutoff (same mechanism as
-# ruff/httpx2) to let the patched versions resolve. pydantic-graph is the
-# lockstep companion of pydantic-ai-slim (pinned ==1.107.7 by it), so it must
-# be exempted alongside. virtualenv (dev/tooling transitive) ships its CVE
-# fixes (PYSEC-2026-4011..4014 / GHSA-*) in 21.7.x releases published after the
-# cutoff, so exempt it too so the patched version can resolve.
-# mcp (transitive via claude-agent-sdk, pulled in by robotsix-llmio[claude_sdk])
-# is flagged for CVE-2026-59951 at 1.29.0; the fix 1.30.0 was published after
-# the exclude-newer cutoff, so exempt it (same mechanism as ruff/httpx2) and
-# floor it via override-dependencies below. 1.30.0 is the only fix within
-# claude-agent-sdk's mcp>=1.23.0,<2.0.0 range (2.2.0 is out of range).
-# certifi (transitive via httpx/requests/niquests) is flagged for
-# GHSA-6q48-6c7w-9gw2 at 2026.5.20; the fix 2026.10.19 was published after the
-# exclude-newer cutoff, so exempt it (same mechanism as ruff/httpx2) and floor
-# it via override-dependencies below.
-exclude-newer-package = { ruff = false, httpx2 = false, httpcore2 = false, pydantic-ai-slim = false, pydantic-graph = false, pyjwt = false, urllib3 = false, virtualenv = false, python-discovery = false, mcp = false, certifi = false }
-# robotsix-llmio still pins robotsix-http to an older rev via its own
-# `tool.uv.sources`, which uv propagates transitively.  Override it so the
-# whole dependency graph unifies on the rev that ships the
-# `robotsix_http.fastapi` service-bootstrap adopted by the API layer.  The
-# pinned rev additionally ships `create_chat_skill_router` /
-# `assert_chat_skill_route_parity`, and is a descendant of llmio's pin, so it
-# stays forward-compatible for llmio's `robotsix_http.retry` usage.
+# Supply-chain cooldown: resolve only releases at least 3 days old (relative
+# window, uv >= 0.9 syntax — same policy as robotsix-board). A fixed date
+# (previously 2026-08-06) froze the graph and blocked every robotsix-llmio
+# bump once it required openai>=3, which was published after that date; a
+# rolling window keeps the cooldown without needing per-package exemptions
+# for each CVE fix released after a stale cutoff.
+exclude-newer = "3 days"
+# robotsix-llmio pins robotsix-http to its own rev via `tool.uv.sources`,
+# which uv propagates transitively.  Override it so the whole dependency graph
+# unifies on the rev pinned in `[tool.uv.sources]` below (the same rev llmio
+# pins; it ships the `robotsix_http.fastapi` service-bootstrap and
+# `create_chat_skill_router` / `assert_chat_skill_route_parity` used by the
+# API layer).
 override-dependencies = [
+    # CodeQL/Trivy CVE-scan floors for transitive deps flagged by the security
+    # job.
     "httpx2>=2.12.0",
     "httpcore2>=2.10.0",
-    # CodeQL/Trivy CVE-scan floors for transitive deps flagged by the security
-    # job. pydantic-ai-slim is capped below 2 so the fix stays on the 1.107.x
-    # patch line adopted by robotsix-llmio (a plain >= would backtrack the
-    # whole pydantic-ai/openai/genai-prices graph to 2.x).
-    "pydantic-ai-slim>=1.107.7,<2",
     "pyjwt[crypto]>=2.15.0",
     "urllib3>=2.8.0",
     # virtualenv 21.5.0 is flagged for 8 advisories (PYSEC-2026-4011..4014 and
@@ -124,13 +98,13 @@ override-dependencies = [
     "mcp>=1.30.0,<2",
     # certifi 2026.5.20 is flagged for GHSA-6q48-6c7w-9gw2; 2026.10.19 is the fix.
     "certifi>=2026.10.19",
-    "robotsix-http @ git+https://github.com/damien-robotsix/robotsix-http.git@7557325f0cd08e47124b588710da011951feb421",
+    "robotsix-http @ git+https://github.com/damien-robotsix/robotsix-http.git@4bf6c1e317ccdf4f2e2764ad05c97a456b1ca0a1",
 ]
 
 [tool.uv.sources]
 robotsix-config = { git = "https://github.com/damien-robotsix/robotsix-config.git", rev = "48e736bad05ff514360f93092a5f486a6aee1fe1" }
-robotsix-llmio = { git = "https://github.com/damien-robotsix/robotsix-llmio.git", rev = "3f9127ad9cc45d52da76c411d7d1dc2faa903046" }  # pragma: allowlist secret
-robotsix-http = { git = "https://github.com/damien-robotsix/robotsix-http.git", rev = "7557325f0cd08e47124b588710da011951feb421" }
+robotsix-llmio = { git = "https://github.com/damien-robotsix/robotsix-llmio.git", rev = "3fb688be8cea3dbcb95430b5c72fdca096d710a6" }  # pragma: allowlist secret
+robotsix-http = { git = "https://github.com/damien-robotsix/robotsix-http.git", rev = "4bf6c1e317ccdf4f2e2764ad05c97a456b1ca0a1" }
 robotsix-modules = { git = "https://github.com/damien-robotsix/robotsix-modules.git", rev = "b2e82231fa2f260589be9ba757c6be450f4e5d3e" }
 
 [tool.hatch.build.targets.wheel]
