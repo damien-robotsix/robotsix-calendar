@@ -137,6 +137,14 @@ src/robotsix_calendar/
 
 **Provenance:** proposed by retrospect from 20261026T123208Z-exclude-newer-2026-08-06-blocks-every-ro-7fe1
 
+## Python language conventions
+
+> **Rule:** `except A, B:` (no parentheses, no `as`) is valid PEP 758 syntax on our py314 target (`requires-python = ">=3.14"`, ruff `target-version = "py314"`) and is `ruff format`'s canonical output. Do not file or "fix" it as Python 2 syntax — converting it to `except (A, B):` is reverted by the formatter / fails the CI format check. Only the `as` form still needs parentheses: `except (A, B) as e:`.
+
+**Rationale:** the same false positive (e.g. `caldav_client/calendar_ops.py`, `caldav_client/__init__.py`) was filed three times (`20260928T204959Z-...-bc7f`, `20261012T185243Z-...-b812`, `20261013T010237Z-...-3b0b`) and each closed as no change needed. Triagers should decline such tickets as "not a bug" instead of routing them to implement.
+
+**Provenance:** triage boilerplate gap `pep758-except-comma-false-positive` (20261026T203323Z-triage-boilerplate-decline-python-2-exce-e736)
+
 ## Periodic workflows
 
 This repo is targeted by **17 periodic agent workflows**, plus one
