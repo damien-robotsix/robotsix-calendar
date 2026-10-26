@@ -128,6 +128,15 @@ src/robotsix_calendar/
 - **`pydantic` / `robotsix-config`** — configuration & data models
 - **`robotsix-http`** — HTTP client with retry logic
 - **`fastapi` / `uvicorn`** — HTTP API server for structured CRUD endpoints
+
+## Dependency management
+
+> **Rule:** Never pin `[tool.uv] exclude-newer` to a fixed date. Use a relative window such as `exclude-newer = "3 days"` (uv >= 0.9 syntax). A fixed cutoff freezes the lock and blocks later releases such as robotsix-llmio bumps that need newer transitive dependencies.
+
+**Rationale:** robotsix-calendar ticket 20261026T123208Z-exclude-newer-2026-08-06-blocks-every-ro-7fe1: the fixed 2026-08-06 cutoff blocked robotsix-llmio 0.10 (openai>=3) and forced per-package exemptions. The rolling window matches robotsix-board policy.
+
+**Provenance:** proposed by retrospect from 20261026T123208Z-exclude-newer-2026-08-06-blocks-every-ro-7fe1
+
 ## Periodic workflows
 
 This repo is targeted by **17 periodic agent workflows**, plus one
