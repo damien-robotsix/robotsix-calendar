@@ -12,7 +12,7 @@ from ._shared import (
     _comp_text,
     _wrap_caldav_op,
 )
-from .exceptions import NotFoundError
+from .exceptions import ConflictError, NotFoundError
 
 logger = logging.getLogger(__name__)
 
@@ -22,6 +22,32 @@ if TYPE_CHECKING:
     _MixinBase = _CalDavClientProtocol
 else:
     _MixinBase = object
+
+_RECURRENCE_PROPS = ("RRULE", "RDATE", "RECURRENCE-ID")
+
+
+def _is_recurring_component(comp: Any) -> bool:
+    """Return ``True`` if the VEVENT is (an occurrence of) a recurring series."""
+    return any(comp.get(prop) is not None for prop in _RECURRENCE_PROPS)
+
+
+def _reject_if_recurring(uid: str, event_obj: Any) -> None:
+    """Refuse to overwrite a recurring series with a single flat event.
+
+    ``update_event`` rewrites the whole calendar object; doing so for a
+    recurring master would silently drop its RRULE/RDATE/EXDATEs and
+    overrides, flattening the series into one standalone event.
+
+    Raises:
+        ConflictError: If the stored object contains a recurring VEVENT.
+    """
+    if _is_recurring_component(event_obj.icalendar_component):
+        raise ConflictError(
+            f"Event with UID {uid!r} is a recurring series; updating "
+            "it would replace every occurrence with a single event. "
+            "Per-occurrence or series edits of recurring events are "
+            "not supported — delete and recreate the series instead.",
+        )
 
 
 class _CalendarOpsMixin(_MixinBase):
@@ -73,6 +99,7 @@ class _CalendarOpsMixin(_MixinBase):
             dtstart=_comp_dt(comp, "DTSTART"),
             dtend=_comp_dt(comp, "DTEND"),
             calendar_id=calendar_id,
+            recurring=_is_recurring_component(comp),
         )
 
     def _event_to_ical(self, event: CalendarEvent) -> str:
@@ -186,8 +213,14 @@ class _CalendarOpsMixin(_MixinBase):
         the UID (the UID may live in a non-default collection).  When
         *calendar_id* is given, only that single calendar is searched.
 
+        Recurring events are **rejected**: the stored object is rewritten
+        wholesale, so updating a series master would silently drop its
+        ``RRULE``/``RDATE``/``EXDATE`` and overrides.  Instead of
+        flattening the series, a :class:`ConflictError` is raised.
+
         Raises:
             NotFoundError: If the UID doesn't exist.
+            ConflictError: If the UID identifies a recurring series.
         """
         logger.debug(
             "update_event uid=%r calendar_id=%r summary=%r",
@@ -208,7 +241,8 @@ class _CalendarOpsMixin(_MixinBase):
                 raise NotFoundError(
                     f"Event with UID {uid!r} not found.",
                 )
-            cal, _ = result
+            cal, existing = result
+        _reject_if_recurring(uid, existing)
         # Build updated iCal with the same UID
         updated = CalendarEvent(
             uid=uid,
@@ -226,6 +260,10 @@ class _CalendarOpsMixin(_MixinBase):
     @_wrap_caldav_op("delete event")
     def delete_event(self, uid: str, calendar_id: str = "") -> None:
         """Delete the event identified by *uid*. Idempotent.
+
+        For a recurring event this removes the **whole series** (every
+        occurrence shares the master UID); single occurrences cannot be
+        deleted individually.
 
         When *calendar_id* is empty, iterates **all** calendars to locate
         the UID.  Returns ``None`` when the UID does not exist in any

@@ -63,6 +63,7 @@ class EventResponse(BaseModel):
     dtstart: str
     dtend: str
     calendar_id: str
+    recurring: bool = False
 
 
 class TaskCreate(BaseModel):
@@ -164,6 +165,7 @@ def _event_to_response(event: CalendarEvent) -> EventResponse:
         dtstart=event.dtstart,
         dtend=event.dtend,
         calendar_id=event.calendar_id,
+        recurring=event.recurring,
     )
 
 

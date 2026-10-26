@@ -72,6 +72,10 @@ class CalendarEvent:
         dtstart: Start time in ISO 8601 format.
         dtend: End time in ISO 8601 format.
         calendar_id: Calendar name the event belongs to (optional).
+        recurring: ``True`` when the event is (an occurrence of) a
+            recurring series — i.e. its VEVENT carries ``RRULE``,
+            ``RDATE`` or ``RECURRENCE-ID``.  All occurrences of a series
+            share the master ``uid``.
     """
 
     uid: str = ""
@@ -81,6 +85,7 @@ class CalendarEvent:
     dtstart: str  # ISO 8601
     dtend: str  # ISO 8601
     calendar_id: str = ""
+    recurring: bool = False
 
 
 @dataclass(kw_only=True)
