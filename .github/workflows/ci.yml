@@ -58,21 +58,14 @@ jobs:
       security-events: write  # needed to upload SARIF results to code scanning
     uses: damien-robotsix/robotsix-github-workflows/.github/workflows/docker-pr-scan.yml@77e10e286717cfe0eeb6b8d9ce985f3794236d15  # main
 
-  # hand-rolled: no shared workflow equivalent in robotsix-github-workflows
   hadolint:
     name: Dockerfile lint (hadolint)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25  # v2.22.1
-        with:
-          egress-policy: audit
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: hadolint/hadolint-action@06be81baf89a55ffd0e24b8f04a4185738dd3387  # v3.5.0
-        with:
-          dockerfile: Dockerfile
-          failure-threshold: warning
+    permissions:
+      contents: read
+    uses: damien-robotsix/robotsix-github-workflows/.github/workflows/lint-dockerfile.yml@47523e8aa2d34d41da060d29b57f75ab262cb840  # v1.4.0
+    with:
+      dockerfiles: Dockerfile
+      failure-threshold: warning
 
   # hand-rolled: no shared workflow equivalent in robotsix-github-workflows
   integration:
