@@ -168,6 +168,7 @@ modules:
       - .github/workflows/codeql.yml
       - .github/workflows/config-schema-drift.yml
       - .github/workflows/dependabot-auto-merge.yml
+      - .github/workflows/dependency-review.yml
       - .github/workflows/docker-publish.yml
       - .github/workflows/docs.yml
       - .github/workflows/lint-workflows.yml
