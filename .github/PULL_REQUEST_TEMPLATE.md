@@ -9,7 +9,7 @@
 - [ ] `uv run mypy .` passes
 - [ ] `uv run pytest` passes
 - [ ] Added entry to `CHANGELOG.md` under the appropriate section
-- [ ] Commit messages follow conventional commits (`mill:` prefix for features, `Fix:`, `Add:`, etc.)
+- [ ] Commit messages and the PR title follow conventional commits (`feat(scope): ...`, `fix: ...`, `docs: ...`); the commit-msg hook in `.pre-commit-config.yaml` enforces this locally
 
 ## Changes
 
