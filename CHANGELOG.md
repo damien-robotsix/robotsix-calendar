@@ -255,6 +255,56 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.2.0](https://github.com/damien-robotsix/robotsix-calendar/compare/v0.1.0...v0.2.0) (2026-10-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* requires the claude-auth mount to serve the default provider slot; without it every parse rides the OpenRouter failover path.
+
+### Features
+
+* Add a robotsix-ui based UI access point to robotsix-calendar: app shell + calendars/contacts visualisation (20260901T174109Z-add-a-robotsix-ui-based-ui-access-point-d7a2) ([#481](https://github.com/damien-robotsix/robotsix-calendar/issues/481)) ([fbfdd71](https://github.com/damien-robotsix/robotsix-calendar/commit/fbfdd711f81690b81c9f8e7d9281bf6fcc2b5ee1))
+* Add pagination support to list endpoints (tasks, contacts) (20260928T205635Z-add-pagination-support-to-list-endpoints-47f8) ([#513](https://github.com/damien-robotsix/robotsix-calendar/issues/513)) ([954d1f1](https://github.com/damien-robotsix/robotsix-calendar/commit/954d1f112e6af7df91b9f4051e3726201f368476))
+* bump llmio to provider-failover rework — intent parsing on level 1 ([#477](https://github.com/damien-robotsix/robotsix-calendar/issues/477)) ([bc27d9b](https://github.com/damien-robotsix/robotsix-calendar/commit/bc27d9b4cd10a7831d99e29a6b5e3569573a2dff))
+* completeness_check scan: 3 findings (2026-09-28) (20260928T190439Z-completeness-check-scan-3-findings-2026-736a) ([#510](https://github.com/damien-robotsix/robotsix-calendar/issues/510)) ([18590f3](https://github.com/damien-robotsix/robotsix-calendar/commit/18590f3b7e4ef926ad62d2894cafe9a0aca351b7))
+* Declare canonical langfuse/openrouter credential blocks and wire them to the LLM layer (20260814T131741Z-declare-canonical-langfuse-openrouter-cr-4664) ([#434](https://github.com/damien-robotsix/robotsix-calendar/issues/434)) ([444a2b5](https://github.com/damien-robotsix/robotsix-calendar/commit/444a2b59d171d59c0fe98d14c67b92a2967173a4))
+* **tracing:** install llmio's tracing extra for Langfuse export ([#85](https://github.com/damien-robotsix/robotsix-calendar/issues/85)) ([d2547f6](https://github.com/damien-robotsix/robotsix-calendar/commit/d2547f62c49ccf5ab478773e6c500f7b37560076))
+* wire calendar agent to the live broker + structured add_to_calendar ([#74](https://github.com/damien-robotsix/robotsix-calendar/issues/74)) ([40b19f1](https://github.com/damien-robotsix/robotsix-calendar/commit/40b19f183de5b73d38ee58da5152a04b597f795f))
+
+
+### Bug Fixes
+
+* _wrap_caldav_op references nonexistent caldav.lib.error.EtagMismatchError (AttributeError masks real errors) (20261026T191326Z-wrap-caldav-op-references-nonexistent-ca-136b) ([#564](https://github.com/damien-robotsix/robotsix-calendar/issues/564)) ([0be85f2](https://github.com/damien-robotsix/robotsix-calendar/commit/0be85f2384ddb3db00bc1c47df24c0e9cae3842d))
+* Add AgentLogicError to _STATUS_MAP in HTTP exception handler (20260914T190854Z-add-agentlogicerror-to-status-map-in-htt-bac5) ([#497](https://github.com/damien-robotsix/robotsix-calendar/issues/497)) ([ecc8a8a](https://github.com/damien-robotsix/robotsix-calendar/commit/ecc8a8a80200416131ae62fa2cb47a37032f35c7))
+* Add CALDAV_HEALTHCHECK_TIMEOUT to config/config.json and close the config-schema-drift blind spot on the default config file (20260806T162259Z-add-caldav-healthcheck-timeout-to-config-2896) ([#420](https://github.com/damien-robotsix/robotsix-calendar/issues/420)) ([994addf](https://github.com/damien-robotsix/robotsix-calendar/commit/994addf15b5c25470e87026dc2f7ab1a18418bc9))
+* **caldav:** valid iCalendar datetimes + install the llmio provider extra ([#81](https://github.com/damien-robotsix/robotsix-calendar/issues/81)) ([6dc6537](https://github.com/damien-robotsix/robotsix-calendar/commit/6dc6537b5f288a43f39a84a386bac6eca01a291f))
+* Calendar UI: render actual events (agenda view), not just calendar names (20260901T200343Z-calendar-ui-render-actual-events-agenda-65d7) ([#488](https://github.com/damien-robotsix/robotsix-calendar/issues/488)) ([0d4c546](https://github.com/damien-robotsix/robotsix-calendar/commit/0d4c546f456ef07710f93d0e90743c6df3977642))
+* CI failure: CI on main (20260812T090634Z-ci-failure-ci-on-main-6aa4) ([#432](https://github.com/damien-robotsix/robotsix-calendar/issues/432)) ([2a7ba2c](https://github.com/damien-robotsix/robotsix-calendar/commit/2a7ba2c9814b9b559ec7d36b5f151fbdc737c6b1))
+* CI failure: Docs on main (20260817T215553Z-ci-failure-docs-on-main-7e4a) ([#445](https://github.com/damien-robotsix/robotsix-calendar/issues/445)) ([2de6877](https://github.com/damien-robotsix/robotsix-calendar/commit/2de68770bbf57ba380cc119afc1536ee97aa9970))
+* ci_fix: out-of-scope CI failure — CodeQL code-scanning, Python CI (shared) / tests, security / Security (20260914T163435Z-ci-fix-out-of-scope-ci-failure-codeql-co-9f2a) ([#494](https://github.com/damien-robotsix/robotsix-calendar/issues/494)) ([4a8a358](https://github.com/damien-robotsix/robotsix-calendar/commit/4a8a358235cbc040be981cb289055efe9d56131e))
+* ci_fix: out-of-scope CI failure — CodeQL code-scanning, security / Security, Python CI (shared) / tests (20261012T191416Z-ci-fix-out-of-scope-ci-failure-codeql-co-f779) ([#523](https://github.com/damien-robotsix/robotsix-calendar/issues/523)) ([82dfa06](https://github.com/damien-robotsix/robotsix-calendar/commit/82dfa06ae09ce2668e400ea7efe2f555cb69e21c))
+* **ci:** grant reusable workflows every permission they declare ([#405](https://github.com/damien-robotsix/robotsix-calendar/issues/405)) ([42e6872](https://github.com/damien-robotsix/robotsix-calendar/commit/42e68723aacc4e4b50092fb47bc08301518f6ca4))
+* **ci:** grant security-events:write on the shared caller jobs — startup_failure on every push ([#469](https://github.com/damien-robotsix/robotsix-calendar/issues/469)) ([d1a3abd](https://github.com/damien-robotsix/robotsix-calendar/commit/d1a3abdfe21b570dc9ab10079a02e13b0d2f335d))
+* Deduplicate the hardcoded 'robotsix-calendar-agent' component alias into a shared constant and cross-validate langfuse/openrouter alias sets (20260816T053929Z-deduplicate-the-hardcoded-robotsix-calen-20a6) ([#437](https://github.com/damien-robotsix/robotsix-calendar/issues/437)) ([b34b7df](https://github.com/damien-robotsix/robotsix-calendar/commit/b34b7df3a3877f9fd940d6ca71551ee0c1ce74a1))
+* **docker:** make the calendar-agent image actually build ([#79](https://github.com/damien-robotsix/robotsix-calendar/issues/79)) ([f599591](https://github.com/damien-robotsix/robotsix-calendar/commit/f599591c775264869e8b9eb734a16c2a423e9426))
+* emit human-readable `reply` alongside `result` in agent responses ([#127](https://github.com/damien-robotsix/robotsix-calendar/issues/127)) ([21ef7c4](https://github.com/damien-robotsix/robotsix-calendar/commit/21ef7c448ba9f2d9f10d13224adf0f5068036e01))
+* exclude-newer 2026-08-06 blocks every robotsix-llmio &gt;= 0.10 bump (openai&gt;=3) — move the cutoff (20261026T123208Z-exclude-newer-2026-08-06-blocks-every-ro-7fe1) ([#558](https://github.com/damien-robotsix/robotsix-calendar/issues/558)) ([f315bd8](https://github.com/damien-robotsix/robotsix-calendar/commit/f315bd8b91adfa6c0064c75c2cbdbf35f373f25f))
+* **intent:** correct llmio agent API + use the non-reasoning tier ([#82](https://github.com/damien-robotsix/robotsix-calendar/issues/82)) ([c6390d9](https://github.com/damien-robotsix/robotsix-calendar/commit/c6390d959e07672473a3745b21e99d79f9076305))
+* Run tracing/key wiring on the actual service entrypoint path (20260814T135351Z-run-tracing-key-wiring-on-the-actual-ser-dc38) ([#435](https://github.com/damien-robotsix/robotsix-calendar/issues/435)) ([2a18600](https://github.com/damien-robotsix/robotsix-calendar/commit/2a1860019f7c2057cbd303e5553defcc5b2d82d4))
+* Updating a recurring event via PUT /events/{uid} silently deletes the whole recurrence series (20261026T190551Z-updating-a-recurring-event-via-put-event-f3a0) ([#563](https://github.com/damien-robotsix/robotsix-calendar/issues/563)) ([4e89a34](https://github.com/damien-robotsix/robotsix-calendar/commit/4e89a3410270f9d2dfa693e62b04eb9dcb5555ab))
+
+
+### Documentation
+
+* Add error handling guide documenting CalendarError subclasses and exception patterns (20260914T201344Z-add-error-handling-guide-documenting-cal-43af) ([#499](https://github.com/damien-robotsix/robotsix-calendar/issues/499)) ([4b61c09](https://github.com/damien-robotsix/robotsix-calendar/commit/4b61c0902f89a732cdfe749101298a6d866e683b))
+* AGENT.md overstates periodic-workflow count (says 18, only 17 stubs exist) (20260831T075711Z-agent-md-overstates-periodic-workflow-co-1670) ([#468](https://github.com/damien-robotsix/robotsix-calendar/issues/468)) ([757e28a](https://github.com/damien-robotsix/robotsix-calendar/commit/757e28a154e912fd52f870153649220faf83b1e4))
+* AGENT.md: Dependency management — Never pin `[tool.uv] exclude-newer` to a fixed date. Use a relative window such… (20261026T131204Z-agent-md-dependency-management-never-pin-5e82) ([#559](https://github.com/damien-robotsix/robotsix-calendar/issues/559)) ([63c980a](https://github.com/damien-robotsix/robotsix-calendar/commit/63c980ab991d7268224aa99e86f5d5488e725591))
+* Fix multiple stale/incorrect documentation issues in docs/index.md (20260806T231101Z-fix-multiple-stale-incorrect-documentati-3257) ([#421](https://github.com/damien-robotsix/robotsix-calendar/issues/421)) ([4348575](https://github.com/damien-robotsix/robotsix-calendar/commit/4348575ca9314b30053905d9121d21c75e7297e2))
+* Fix stale documentation in README.md and tutorials: agent-comm, removed _intent_parser, wrong config keys (20260808T205956Z-fix-stale-documentation-in-readme-md-and-8388) ([#422](https://github.com/damien-robotsix/robotsix-calendar/issues/422)) ([102505c](https://github.com/damien-robotsix/robotsix-calendar/commit/102505ce852018e619a50bb5d97e913f9ecd70a5))
+* Improve README with Getting Started section (20261013T005755Z-improve-readme-with-getting-started-sect-425e) ([#524](https://github.com/damien-robotsix/robotsix-calendar/issues/524)) ([86f0597](https://github.com/damien-robotsix/robotsix-calendar/commit/86f05976b5e16af7854659932259f37db273bab4))
+* Triage boilerplate: decline 'Python 2 exception syntax' (`except A, B:`) findings — valid PEP 758 under py314; document in AGENT.md (20261026T203323Z-triage-boilerplate-decline-python-2-exce-e736) ([#565](https://github.com/damien-robotsix/robotsix-calendar/issues/565)) ([f49444d](https://github.com/damien-robotsix/robotsix-calendar/commit/f49444d64dc23c71d8eb4fc2e0651e350eab08c8))
+
 ## [Unreleased]
 
 ### Added
