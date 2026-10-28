@@ -172,8 +172,9 @@ modules:
       - .github/workflows/docker-publish.yml
       - .github/workflows/docs.yml
       - .github/workflows/lint-workflows.yml
-      - .github/workflows/release.yml
+      - .github/workflows/release-please.yml
       - .github/workflows/scan-container.yml
+      - .release-please-manifest.json
       - .robotsix-mill/config.yaml
       - .robotsix-mill/boilerplate/auto-approve-boilerplate.md
       - .robotsix-mill/boilerplate/auto-approve-reject-boilerplate.md
