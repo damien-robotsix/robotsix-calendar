@@ -55,6 +55,11 @@ repos:
     hooks:
       - id: validate-module-taxonomy
 
+  - repo: https://github.com/damien-robotsix/robotsix-standards
+    rev: v0.10.0
+    hooks:
+      - id: check-secret-str
+
   - repo: https://github.com/commitizen-tools/commitizen
     rev: v4.17.0
     hooks:
