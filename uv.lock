@@ -2063,7 +2063,7 @@ dev = [
     { name = "pytest" },
     { name = "pytest-cov" },
     { name = "radicale" },
-    { name = "robotsix-modules", git = "https://github.com/damien-robotsix/robotsix-modules.git?rev=b2e82231fa2f260589be9ba757c6be450f4e5d3e" },
+    { name = "robotsix-modules", git = "https://github.com/damien-robotsix/robotsix-modules.git?rev=7579f6b26a36a55c20d5a6d4b0f0134750c3452d" },
     { name = "ruff" },
     { name = "vulture" },
 ]
@@ -2119,8 +2119,8 @@ tracing = [
 
 [[package]]
 name = "robotsix-modules"
-version = "0.2.0"
-source = { git = "https://github.com/damien-robotsix/robotsix-modules.git?rev=b2e82231fa2f260589be9ba757c6be450f4e5d3e#b2e82231fa2f260589be9ba757c6be450f4e5d3e" }
+version = "0.5.4"
+source = { git = "https://github.com/damien-robotsix/robotsix-modules.git?rev=7579f6b26a36a55c20d5a6d4b0f0134750c3452d#7579f6b26a36a55c20d5a6d4b0f0134750c3452d" }
 dependencies = [
     { name = "jsonschema" },
     { name = "pyyaml" },
