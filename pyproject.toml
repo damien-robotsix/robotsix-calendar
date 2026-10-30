@@ -102,7 +102,7 @@ override-dependencies = [
 ]
 
 [tool.uv.sources]
-robotsix-config = { git = "https://github.com/damien-robotsix/robotsix-config.git", rev = "48e736bad05ff514360f93092a5f486a6aee1fe1" }
+robotsix-config = { git = "https://github.com/damien-robotsix/robotsix-config.git", rev = "8aca9167294af2e67be63e8673715154ec510a71" }
 robotsix-llmio = { git = "https://github.com/damien-robotsix/robotsix-llmio.git", rev = "3fb688be8cea3dbcb95430b5c72fdca096d710a6" }  # pragma: allowlist secret
 robotsix-http = { git = "https://github.com/damien-robotsix/robotsix-http.git", rev = "4bf6c1e317ccdf4f2e2764ad05c97a456b1ca0a1" }
 robotsix-modules = { git = "https://github.com/damien-robotsix/robotsix-modules.git", rev = "b2e82231fa2f260589be9ba757c6be450f4e5d3e" }
