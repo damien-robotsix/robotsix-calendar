@@ -255,6 +255,13 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.2.1](https://github.com/damien-robotsix/robotsix-calendar/compare/v0.2.0...v0.2.1) (2026-11-01)
+
+
+### Documentation
+
+* CI failure: Docs on main (20261101T093008Z-ci-failure-docs-on-main-26f6) ([#591](https://github.com/damien-robotsix/robotsix-calendar/issues/591)) ([605fa11](https://github.com/damien-robotsix/robotsix-calendar/commit/605fa1158476e66f902ba90d2027c2f642621a35))
+
 ## [0.2.0](https://github.com/damien-robotsix/robotsix-calendar/compare/v0.1.0...v0.2.0) (2026-10-28)
 
 
