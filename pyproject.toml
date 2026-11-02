@@ -98,14 +98,14 @@ override-dependencies = [
     "mcp>=1.30.0,<2",
     # certifi 2026.5.20 is flagged for GHSA-6q48-6c7w-9gw2; 2026.10.19 is the fix.
     "certifi>=2026.10.19",
-    "robotsix-http @ git+https://github.com/damien-robotsix/robotsix-http.git@4bf6c1e317ccdf4f2e2764ad05c97a456b1ca0a1",
+    "robotsix-http @ git+https://github.com/damien-robotsix/robotsix-http.git@26a59975c450bddc79a5f9044612455035b8b5a8",
 ]
 
 [tool.uv.sources]
-robotsix-config = { git = "https://github.com/damien-robotsix/robotsix-config.git", rev = "48e736bad05ff514360f93092a5f486a6aee1fe1" }
-robotsix-llmio = { git = "https://github.com/damien-robotsix/robotsix-llmio.git", rev = "3fb688be8cea3dbcb95430b5c72fdca096d710a6" }  # pragma: allowlist secret
-robotsix-http = { git = "https://github.com/damien-robotsix/robotsix-http.git", rev = "4bf6c1e317ccdf4f2e2764ad05c97a456b1ca0a1" }
-robotsix-modules = { git = "https://github.com/damien-robotsix/robotsix-modules.git", rev = "b2e82231fa2f260589be9ba757c6be450f4e5d3e" }
+robotsix-config = { git = "https://github.com/damien-robotsix/robotsix-config.git", rev = "0e45213dd987b5dc5a082c3bc482fbc6be6a67ca" }
+robotsix-llmio = { git = "https://github.com/damien-robotsix/robotsix-llmio.git", rev = "4ebb6c0cf8398ea8553729d93d64408167119c90" }  # pragma: allowlist secret
+robotsix-http = { git = "https://github.com/damien-robotsix/robotsix-http.git", rev = "26a59975c450bddc79a5f9044612455035b8b5a8" }
+robotsix-modules = { git = "https://github.com/damien-robotsix/robotsix-modules.git", rev = "d84617c297130783d422d4044bb4ad96992d0dac" }
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/robotsix_calendar"]
