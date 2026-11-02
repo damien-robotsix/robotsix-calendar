@@ -1,5 +1,5 @@
 version = 1
-revision = 5
+revision = 3
 requires-python = ">=3.14"
 resolution-markers = [
     "python_full_version >= '3.15'",
@@ -17,7 +17,7 @@ overrides = [
     { name = "httpx2", specifier = ">=2.12.0" },
     { name = "mcp", specifier = ">=1.30.0,<2" },
     { name = "pyjwt", extras = ["crypto"], specifier = ">=2.15.0" },
-    { name = "robotsix-http", git = "https://github.com/damien-robotsix/robotsix-http.git?rev=4bf6c1e317ccdf4f2e2764ad05c97a456b1ca0a1" },
+    { name = "robotsix-http", git = "https://github.com/damien-robotsix/robotsix-http.git?rev=26a59975c450bddc79a5f9044612455035b8b5a8" },
     { name = "urllib3", specifier = ">=2.8.0" },
     { name = "virtualenv", specifier = ">=21.7.13" },
 ]
@@ -2047,9 +2047,9 @@ requires-dist = [
     { name = "fastapi" },
     { name = "opentelemetry-api" },
     { name = "pydantic" },
-    { name = "robotsix-config", git = "https://github.com/damien-robotsix/robotsix-config.git?rev=48e736bad05ff514360f93092a5f486a6aee1fe1" },
-    { name = "robotsix-http", extras = ["fastapi"], git = "https://github.com/damien-robotsix/robotsix-http.git?rev=4bf6c1e317ccdf4f2e2764ad05c97a456b1ca0a1" },
-    { name = "robotsix-llmio", extras = ["claude-sdk", "openrouter", "tracing"], git = "https://github.com/damien-robotsix/robotsix-llmio.git?rev=3fb688be8cea3dbcb95430b5c72fdca096d710a6" },
+    { name = "robotsix-config", git = "https://github.com/damien-robotsix/robotsix-config.git?rev=0e45213dd987b5dc5a082c3bc482fbc6be6a67ca" },
+    { name = "robotsix-http", extras = ["fastapi"], git = "https://github.com/damien-robotsix/robotsix-http.git?rev=26a59975c450bddc79a5f9044612455035b8b5a8" },
+    { name = "robotsix-llmio", extras = ["claude-sdk", "openrouter", "tracing"], git = "https://github.com/damien-robotsix/robotsix-llmio.git?rev=4ebb6c0cf8398ea8553729d93d64408167119c90" },
     { name = "uvicorn" },
 ]
 
@@ -2063,7 +2063,7 @@ dev = [
     { name = "pytest" },
     { name = "pytest-cov" },
     { name = "radicale" },
-    { name = "robotsix-modules", git = "https://github.com/damien-robotsix/robotsix-modules.git?rev=b2e82231fa2f260589be9ba757c6be450f4e5d3e" },
+    { name = "robotsix-modules", git = "https://github.com/damien-robotsix/robotsix-modules.git?rev=d84617c297130783d422d4044bb4ad96992d0dac" },
     { name = "ruff" },
     { name = "vulture" },
 ]
@@ -2076,16 +2076,16 @@ docs = [
 
 [[package]]
 name = "robotsix-config"
-version = "0.4.0"
-source = { git = "https://github.com/damien-robotsix/robotsix-config.git?rev=48e736bad05ff514360f93092a5f486a6aee1fe1#48e736bad05ff514360f93092a5f486a6aee1fe1" }
+version = "0.7.5"
+source = { git = "https://github.com/damien-robotsix/robotsix-config.git?rev=0e45213dd987b5dc5a082c3bc482fbc6be6a67ca#0e45213dd987b5dc5a082c3bc482fbc6be6a67ca" }
 dependencies = [
     { name = "pydantic" },
 ]
 
 [[package]]
 name = "robotsix-http"
-version = "0.6.0"
-source = { git = "https://github.com/damien-robotsix/robotsix-http.git?rev=4bf6c1e317ccdf4f2e2764ad05c97a456b1ca0a1#4bf6c1e317ccdf4f2e2764ad05c97a456b1ca0a1" }
+version = "0.9.1"
+source = { git = "https://github.com/damien-robotsix/robotsix-http.git?rev=26a59975c450bddc79a5f9044612455035b8b5a8#26a59975c450bddc79a5f9044612455035b8b5a8" }
 dependencies = [
     { name = "httpcore" },
     { name = "httpx" },
@@ -2093,8 +2093,8 @@ dependencies = [
 
 [[package]]
 name = "robotsix-llmio"
-version = "0.10.0"
-source = { git = "https://github.com/damien-robotsix/robotsix-llmio.git?rev=3fb688be8cea3dbcb95430b5c72fdca096d710a6#3fb688be8cea3dbcb95430b5c72fdca096d710a6" }
+version = "0.11.0"
+source = { git = "https://github.com/damien-robotsix/robotsix-llmio.git?rev=4ebb6c0cf8398ea8553729d93d64408167119c90#4ebb6c0cf8398ea8553729d93d64408167119c90" }
 dependencies = [
     { name = "anyio" },
     { name = "httpx" },
@@ -2119,8 +2119,8 @@ tracing = [
 
 [[package]]
 name = "robotsix-modules"
-version = "0.2.0"
-source = { git = "https://github.com/damien-robotsix/robotsix-modules.git?rev=b2e82231fa2f260589be9ba757c6be450f4e5d3e#b2e82231fa2f260589be9ba757c6be450f4e5d3e" }
+version = "0.5.4"
+source = { git = "https://github.com/damien-robotsix/robotsix-modules.git?rev=d84617c297130783d422d4044bb4ad96992d0dac#d84617c297130783d422d4044bb4ad96992d0dac" }
 dependencies = [
     { name = "jsonschema" },
     { name = "pyyaml" },
