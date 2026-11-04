@@ -74,6 +74,16 @@
       ],
       "title": "OpenRouterSettings",
       "type": "object"
+    },
+    "TierLevel": {
+      "description": "Three-level capability selector.\n\n| Member   | Value      | Purpose                                              |\n|----------|------------|------------------------------------------------------|\n| LEVEL1   | ``level1`` | Cheap, frequent: monitors, classifiers, summaries    |\n| LEVEL2   | ``level2`` | Workhorse: implementing code, main assistant turns   |\n| LEVEL3   | ``level3`` | Frontier: hardest reasoning and long-horizon work    |\n\nCollapsed from five levels on 2026-09-01: equivalent-capability models on\nother providers are no longer separate levels \u2014 they live in the\n``fallback`` provider slot of :class:`TierConfig` at the *same* level.",
+      "enum": [
+        "level1",
+        "level2",
+        "level3"
+      ],
+      "title": "TierLevel",
+      "type": "string"
     }
   },
   "additionalProperties": false,
@@ -137,6 +147,11 @@
       ],
       "default": null,
       "description": "OpenRouter API credentials \u2014 per-alias keys. Every component that emits LLM traffic must have an entry whose alias matches the corresponding ``langfuse.projects`` key."
+    },
+    "llm_level": {
+      "$ref": "#/$defs/TierLevel",
+      "default": "level1",
+      "description": "llmio capability level used for intent parsing - one of level1 (cheap/frequent), level2 (workhorse), level3 (frontier)."
     },
     "log_level": {
       "default": "INFO",

@@ -10,6 +10,7 @@ from __future__ import annotations
 import logging
 
 from pydantic import BaseModel, Field, SecretStr, field_validator, model_validator
+from robotsix_llmio.config import TierLevel
 
 COMPONENT_ALIAS = "robotsix-calendar"
 """Canonical component alias.
@@ -137,6 +138,15 @@ class Settings(BaseModel):
             "OpenRouter API credentials — per-alias keys. Every component "
             "that emits LLM traffic must have an entry whose alias matches "
             "the corresponding ``langfuse.projects`` key."
+        ),
+    )
+
+    # -- LLM ---------------------------------------------------------------
+    llm_level: TierLevel = Field(
+        default=TierLevel.LEVEL1,
+        description=(
+            "llmio capability level used for intent parsing - one of "
+            "level1 (cheap/frequent), level2 (workhorse), level3 (frontier)."
         ),
     )
 

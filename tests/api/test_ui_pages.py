@@ -120,3 +120,26 @@ def test_page_functions_render_title_and_active_nav(
     assert _titles(html) == [title]
     active = [h for h, _, is_active in _nav_entries(html) if is_active]
     assert active == ([active_href] if active_href else [])
+
+
+def test_inline_script_hashes_cover_every_inline_script() -> None:
+    """Every inline module script served by the UI is allow-listed by hash."""
+    import base64
+    import hashlib
+
+    from robotsix_calendar.api._ui_pages import inline_script_hashes
+
+    hashes = set(inline_script_hashes())
+    pages = (
+        ui_landing_page(),
+        ui_calendars_page(),
+        ui_events_page(),
+        ui_contacts_page(),
+        settings_page(),
+    )
+    for page in pages:
+        bodies = re.findall(r'<script type="module">(.*?)</script>', page, re.DOTALL)
+        assert bodies
+        for body in bodies:
+            digest = base64.b64encode(hashlib.sha256(body.encode()).digest()).decode()
+            assert f"'sha256-{digest}'" in hashes

@@ -190,6 +190,49 @@ class TestRuntimeCredentials:
         assert os.environ["LANGFUSE_SECRET_KEY"] == "sk-canonical"
         mock_setup.assert_called_once()
 
+    def test_canonical_block_overrides_preexisting_env(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """A pre-existing deploy-plane env var must never win (no fallback)."""
+        from pydantic import SecretStr
+
+        from robotsix_calendar.agent import _setup_runtime_credentials
+        from robotsix_calendar.settings import (
+            LangfuseProjectSettings,
+            LangfuseSettings,
+            OpenRouterSettings,
+            Settings,
+        )
+
+        for var in (*self._LANGFUSE_ENV_VARS, "OPENROUTER_API_KEY"):
+            monkeypatch.setenv(var, "stale-env-value")
+
+        settings = Settings(
+            radicale_url="https://x.com",
+            radicale_username="u",
+            radicale_password=SecretStr("p"),
+            langfuse=LangfuseSettings(
+                host="https://langfuse.example.com",
+                projects={
+                    COMPONENT_ALIAS: LangfuseProjectSettings(
+                        public_key=SecretStr("pk-canonical"),
+                        secret_key=SecretStr("sk-canonical"),
+                    ),
+                },
+            ),
+            openrouter=OpenRouterSettings(
+                keys={COMPONENT_ALIAS: SecretStr("or-canonical")}
+            ),
+        )
+
+        with patch("robotsix_llmio.core.setup_langfuse_tracing"):
+            _setup_runtime_credentials(settings)
+
+        assert os.environ["LANGFUSE_HOST"] == "https://langfuse.example.com"
+        assert os.environ["LANGFUSE_PUBLIC_KEY"] == "pk-canonical"
+        assert os.environ["LANGFUSE_SECRET_KEY"] == "sk-canonical"
+        assert os.environ["OPENROUTER_API_KEY"] == "or-canonical"
+
     def test_setup_tracing_noop_when_alias_missing(
         self, monkeypatch: pytest.MonkeyPatch
     ) -> None:

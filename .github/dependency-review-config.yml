@@ -13,3 +13,7 @@ allow-dependencies-licenses:
   - 'pkg:pypi/commitizen'
   - 'pkg:pypi/tomlkit'
   - 'pkg:pypi/wrapt'
+  # justification: secure (TypeError/secure) code is MIT-licensed; the
+  # CC-BY-SA-2.5/4.0 entries in its SPDX expression cover bundled
+  # documentation text only, not the runtime library we import.
+  - 'pkg:pypi/secure'

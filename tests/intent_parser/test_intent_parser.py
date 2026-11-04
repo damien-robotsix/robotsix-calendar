@@ -7,6 +7,7 @@ from typing import Any
 from unittest.mock import MagicMock
 
 import pytest
+from robotsix_llmio.config import TierLevel
 
 # ---------------------------------------------------------------------------
 # Mock robotsix_llmio in sys.modules
@@ -188,6 +189,49 @@ class TestBuildAgentContract:
             "llmio wraps it internally. "
             f"Got: {build_call.kwargs.get('output_type')!r}"
         )
+
+
+class TestConfiguredLevel:
+    """The llmio level comes from the caller (``llm_level`` config field)."""
+
+    @pytest.mark.parametrize(
+        ("level", "expected"),
+        [(TierLevel.LEVEL1, 1), (TierLevel.LEVEL2, 2), (TierLevel.LEVEL3, 3)],
+    )
+    def test_level_forwarded_to_build_agent(
+        self, level: TierLevel, expected: int
+    ) -> None:
+        _mock_llmio_core.reset_mock(return_value=True, side_effect=True)
+        _setup_llmio_mock(_mock_run_agent("list_events", {}))
+
+        IntentParser(level=level).parse("list events")
+
+        build_call = _mock_llmio_core.build_agent_for_level.call_args
+        assert build_call.args[0] == expected
+
+
+class TestNoRawTextLogging:
+    """Raw instruction text never reaches a log call (LLM02)."""
+
+    _SECRET_TEXT = "meet alice@example.com re: diagnosis"
+
+    def test_success_log_omits_text(self, caplog: pytest.LogCaptureFixture) -> None:
+        _mock_llmio_core.reset_mock(return_value=True, side_effect=True)
+        _setup_llmio_mock(_mock_run_agent("list_events", {}))
+
+        with caplog.at_level("DEBUG"):
+            IntentParser().parse(self._SECRET_TEXT)
+
+        assert self._SECRET_TEXT not in caplog.text
+
+    def test_failure_log_omits_text(self, caplog: pytest.LogCaptureFixture) -> None:
+        _mock_llmio_core.reset_mock(return_value=True, side_effect=True)
+        _setup_llmio_mock(RuntimeError("boom"))
+
+        with caplog.at_level("DEBUG"), pytest.raises(IntentParseError):
+            IntentParser().parse(self._SECRET_TEXT)
+
+        assert self._SECRET_TEXT not in caplog.text
 
 
 class TestSystemPrompt:
