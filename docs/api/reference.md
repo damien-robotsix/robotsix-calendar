@@ -64,6 +64,19 @@ never returned to the panel and unsubmitted values are preserved on update.
 Like every other component UI, the page sits behind the central gateway —
 the component itself adds no authentication.
 
+## Security response headers
+
+Every response carries the security headers from the `secure` library's
+BALANCED preset, applied by one middleware registered at app construction:
+`Content-Security-Policy`, `X-Frame-Options`, `X-Content-Type-Options`,
+`Strict-Transport-Security`, `Referrer-Policy` and `Permissions-Policy`.
+Every response also carries `Cache-Control: no-store, max-age=0`, so config,
+HTML and calendar/contact data are never stored by clients or proxies.
+
+The CSP sets `script-src` to `'self'` plus the exact `sha256` hashes of the
+UI's inline module scripts. Inline scripts that are not listed are blocked;
+`'unsafe-inline'` is never used.
+
 ## Pagination
 
 The `GET /tasks` and `GET /contacts` list endpoints are paginated with
