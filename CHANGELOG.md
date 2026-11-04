@@ -255,6 +255,13 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.2.2](https://github.com/damien-robotsix/robotsix-calendar/compare/v0.2.1...v0.2.2) (2026-11-04)
+
+
+### Bug Fixes
+
+* Component security audit: missing security-header middleware, credential env fallback, hard-coded llmio level, raw prompt-text logging (20261101T092908Z-component-security-audit-missing-securit-87a1) ([#604](https://github.com/damien-robotsix/robotsix-calendar/issues/604)) ([88060e6](https://github.com/damien-robotsix/robotsix-calendar/commit/88060e6a31649da5a3b596c7237d2b8746636750))
+
 ## [0.2.1](https://github.com/damien-robotsix/robotsix-calendar/compare/v0.2.0...v0.2.1) (2026-11-01)
 
 
