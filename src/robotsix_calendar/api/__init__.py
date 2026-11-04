@@ -26,11 +26,14 @@ from robotsix_config import (
     rollback,
 )
 from robotsix_http.fastapi import create_health_router, register_exception_handlers
+from secure import CacheControl, ContentSecurityPolicy, Secure
+from secure.middleware import SecureASGIMiddleware
 
 from ..caldav_client import CalDavClient
 from ..caldav_client._shared import CalendarEvent, Contact, Task
 from ..settings import Settings
 from ._chat_skill import router as _chat_skill_router
+from ._ui_pages import inline_script_hashes
 from ._ui_pages import router as _ui_pages_router
 
 logger = logging.getLogger(__name__)
@@ -127,6 +130,20 @@ class AddressbookInfo(BaseModel):
 # ---------------------------------------------------------------------------
 
 app = FastAPI(title="Calendar Agent API")
+
+# OWASP security response headers (http-security-headers standard): the
+# BALANCED preset plus ``Cache-Control: no-store, max-age=0`` so config,
+# HTML and calendar/contact responses are never stored (rule 5).  Registered
+# once, here, before any route — routes never set security headers.
+secure_headers = Secure.with_default_headers()
+# CSP relaxation (rule 3): allow-list the UI's inline module scripts by
+# their exact sha256 hash — never 'unsafe-inline', never a hand-built string.
+_csp = next(
+    h for h in secure_headers.headers_list if isinstance(h, ContentSecurityPolicy)
+)
+_csp.script_src(*inline_script_hashes())
+secure_headers.headers_list.append(CacheControl().no_store().max_age(0))
+app.add_middleware(SecureASGIMiddleware, secure=secure_headers)
 
 _STATIC_DIR = Path(__file__).parent / "static"
 app.mount("/static", StaticFiles(directory=str(_STATIC_DIR)), name="static")

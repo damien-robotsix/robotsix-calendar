@@ -56,7 +56,9 @@ omitted (or set to ``null``), Langfuse tracing is not initialised.
 The `projects` map uses the component alias as the key — currently
 ``robotsix-calendar``.  When set, the agent exports ``LANGFUSE_HOST``,
 ``LANGFUSE_PUBLIC_KEY``, and ``LANGFUSE_SECRET_KEY`` to the process
-environment before calling ``setup_langfuse_tracing()``.
+environment before calling ``setup_langfuse_tracing()``.  The canonical
+block always wins: any pre-existing ``LANGFUSE_*`` environment variable is
+overwritten, never used as a fallback.
 
 ## OpenRouter
 
@@ -76,9 +78,25 @@ environment variable.
 ```
 
 The `keys` map uses the same component alias as ``langfuse.projects``.
+When the key is set, it is exported as ``OPENROUTER_API_KEY``,
+overwriting any pre-existing value in the process environment.
 Currently the key is declared for future wiring (the
 :class:`~robotsix_calendar.intent_parser.IntentParser` accepts
 an ``api_key`` parameter for this purpose).
+
+## LLM level
+
+`llm_level` selects the llmio capability level used for intent parsing:
+`level1` (cheap/frequent, the default), `level2` (workhorse) or `level3`
+(frontier).  The level is always taken from this config field — it is
+never hard-coded and never read from the environment.  Which model
+backs each level is llmio's fleet-global tier configuration.
+
+```json
+{
+  "llm_level": "level1"
+}
+```
 
 !!! note "Component agent removed"
     The component-agent management package has been removed.  See

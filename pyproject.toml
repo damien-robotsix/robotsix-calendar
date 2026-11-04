@@ -24,6 +24,9 @@ dependencies = [
     "pydantic",
     "fastapi",
     "uvicorn",
+    # HTTP security response headers (CSP, HSTS, X-Frame-Options, ...) via
+    # SecureASGIMiddleware — http-security-headers standard.
+    "secure>=2.0.1",
     # opentelemetry-api provides opentelemetry.trace used directly by
     # healthcheck; declared explicitly so the healthcheck entry point does not
     # rely on robotsix-llmio[tracing] pulling it in transitively.

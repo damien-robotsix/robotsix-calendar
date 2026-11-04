@@ -53,9 +53,12 @@ def _setup_tracing(settings: Settings | None = None) -> None:
     if project is None:
         return
 
-    os.environ.setdefault("LANGFUSE_HOST", langfuse_host)
-    os.environ.setdefault("LANGFUSE_PUBLIC_KEY", project.public_key.get_secret_value())
-    os.environ.setdefault("LANGFUSE_SECRET_KEY", project.secret_key.get_secret_value())
+    # Unconditional assignment (not ``setdefault``): the canonical config
+    # block is the only credential source — a pre-existing deploy-plane
+    # environment variable must never silently win over it.
+    os.environ["LANGFUSE_HOST"] = langfuse_host
+    os.environ["LANGFUSE_PUBLIC_KEY"] = project.public_key.get_secret_value()
+    os.environ["LANGFUSE_SECRET_KEY"] = project.secret_key.get_secret_value()
 
     try:
         from robotsix_llmio.core import setup_langfuse_tracing  # pragma: no cover
@@ -86,7 +89,9 @@ def _setup_openrouter_key(settings: Settings | None = None) -> None:
     if not isinstance(secret, str):
         return  # guard against MagicMock in test environments
 
-    os.environ.setdefault("OPENROUTER_API_KEY", secret)
+    # Unconditional assignment: the canonical block always wins over any
+    # pre-existing environment value (no silent env fallback).
+    os.environ["OPENROUTER_API_KEY"] = secret
 
 
 def _setup_runtime_credentials(settings: Settings | None = None) -> None:
@@ -183,7 +188,7 @@ class CalendarAgent:
             timeout=settings.caldav_timeout,
         )
 
-        self._parser = IntentParser()
+        self._parser = IntentParser(level=settings.llm_level)
 
     # ------------------------------------------------------------------
     # public API
@@ -222,7 +227,9 @@ class CalendarAgent:
         op = parsed.operation
         params: dict[str, Any] = parsed.params
 
-        logger.debug("Dispatching operation=%r params=%r", op, params)
+        # Log only parameter names — values are raw model output derived
+        # from the user's instruction and must never reach a log call.
+        logger.debug("Dispatching operation=%r param_keys=%r", op, sorted(params))
 
         handler = _DISPATCH.get(op)
         if handler is None:

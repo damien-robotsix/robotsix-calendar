@@ -13,6 +13,7 @@ from enum import StrEnum
 from typing import Any, Literal
 
 from pydantic import BaseModel, Field
+from robotsix_llmio.config import TierLevel
 
 logger = logging.getLogger(__name__)
 
@@ -87,14 +88,21 @@ class IntentParser:
             both *api_key* and *model_config* are set, *api_key* takes
             precedence (it replaces any existing ``api_key`` key in
             *model_config*).
+        level: llmio capability level used for intent parsing.  Callers
+            pass the ``llm_level`` config field; the default
+            (``TierLevel.LEVEL1``, llmio's cheap/frequent tier) mirrors
+            that field's default.
     """
 
     def __init__(
         self,
         model_config: dict[str, Any] | None = None,
         api_key: str | None = None,
+        *,
+        level: TierLevel = TierLevel.LEVEL1,
     ) -> None:
         self._model_config = dict(model_config) if model_config else {}
+        self._level = TierLevel(level)
         if api_key is not None:
             self._model_config["api_key"] = api_key
 
@@ -108,13 +116,12 @@ class IntentParser:
         try:
             from robotsix_llmio.core import build_agent_for_level, run_agent
 
-            # level=1 is llmio's cheap/frequent tier (Claude haiku on the
-            # default slot; DeepSeek flash under provider failover): intent
-            # parsing is frequent and simple, a good fit. The claudeSDK path
-            # wraps raw structured output in PromptedOutput at every level,
-            # so passing _IntentOutput directly is safe on both slots.
+            # The level comes from the ``llm_level`` config field (never
+            # hard-coded, never from env). The claudeSDK path wraps raw
+            # structured output in PromptedOutput at every level, so passing
+            # _IntentOutput directly is safe on both slots.
             handle = build_agent_for_level(
-                1,
+                int(self._level.value.removeprefix("level")),
                 provider_kwargs=self._model_config or None,
                 system_prompt=_build_system_prompt(),
                 output_type=_IntentOutput,
@@ -142,14 +149,17 @@ class IntentParser:
                 params=output.params or {},
                 original_text=text,
             )
-            logger.info("Parsed intent: operation=%r text=%r", result.operation, text)
+            # Never log the raw instruction text (LLM02): log its length only.
+            logger.info(
+                "Parsed intent: operation=%r text_len=%d", result.operation, len(text)
+            )
             return result
-        except IntentParseError as exc:
-            logger.exception("Intent parse error for '%s': %s", text, exc)
+        except IntentParseError:
+            logger.exception("Intent parse error (text_len=%d)", len(text))
             raise
         except Exception as exc:
             logger.exception(
-                "Unexpected error during intent parsing for '%s': %s", text, exc
+                "Unexpected error during intent parsing (text_len=%d)", len(text)
             )
             _msg = f"Intent parsing failed: {exc}"
             raise IntentParseError(_msg) from exc

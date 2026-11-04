@@ -14,6 +14,10 @@ application state.
 
 from __future__ import annotations
 
+import base64
+import hashlib
+import re
+
 from fastapi import APIRouter
 from fastapi.responses import HTMLResponse, RedirectResponse
 
@@ -429,3 +433,31 @@ def ui_contacts_page() -> str:
 def settings_page() -> str:
     """Render the shared app shell plus the schema-driven settings panel."""
     return _ui_page("Settings", "/settings", _SETTINGS_PAGE_CONTENT)
+
+
+_INLINE_SCRIPT_RE = re.compile(r'<script type="module">(.*?)</script>', re.DOTALL)
+
+
+def inline_script_hashes() -> tuple[str, ...]:
+    """Return the CSP ``'sha256-…'`` sources of every inline UI script.
+
+    The BALANCED CSP (``script-src 'self'``) blocks inline scripts, so the
+    app-setup site allow-lists exactly these script bodies by hash via the
+    ``Secure`` object's CSP methods (http-security-headers rule 3) instead
+    of relaxing ``script-src`` to ``'unsafe-inline'``.  Pages are
+    deterministic, so hashing their rendered output at startup covers every
+    inline script this module can serve.
+    """
+    pages = (
+        ui_landing_page(),
+        ui_calendars_page(),
+        ui_events_page(),
+        ui_contacts_page(),
+        settings_page(),
+    )
+    hashes: dict[str, None] = {}
+    for page in pages:
+        for body in _INLINE_SCRIPT_RE.findall(page):
+            digest = hashlib.sha256(body.encode("utf-8")).digest()
+            hashes[f"'sha256-{base64.b64encode(digest).decode('ascii')}'"] = None
+    return tuple(hashes)
