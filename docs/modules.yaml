@@ -156,6 +156,7 @@ modules:
       - .hadolint.yaml
       - .pre-commit-config.yaml
       - .python-version
+      - .secrets-patterns-excluded
       - .github/CODEOWNERS
       - .github/ISSUE_TEMPLATE/bug_report.yml
       - .github/ISSUE_TEMPLATE/config.yml
