@@ -120,6 +120,14 @@ src/robotsix_calendar/
 
 **Provenance:** proposed by retrospect from 20260710T195032Z-docs-modules-yaml-init-depends-on-missin-7e16
 
+## Project layout
+
+> **Rule:** Every new tracked file, including repo-root config files, must be listed under a module's paths in `docs/modules.yaml`; the baseline `Modules drift` check fails otherwise.
+
+**Rationale:** Ticket 20261103T103001Z-robotsix-calendar-add-the-standards-mand-f9f2 (PR #605): the new `.secrets-patterns-excluded` file failed `Modules drift` until fixing_ci added it to the `repo-config` module. A human adding a root file would hit the same check.
+
+**Provenance:** proposed by retrospect from 20261103T103001Z-robotsix-calendar-add-the-standards-mand-f9f2
+
 ## Dependencies
 
 
