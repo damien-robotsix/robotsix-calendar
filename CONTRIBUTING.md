@@ -53,6 +53,10 @@ make all           # run all checks
 
 `make format` rewrites files to the canonical format.
 
+Type checking covers `src/` only. `make typecheck`, the local mypy
+pre-commit hook and the shared CI workflow all run `mypy src/` in strict
+mode; `tests/` is not type-checked.
+
 ## Branches and pull requests
 
 - Create a feature branch off `main` for your change.
