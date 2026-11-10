@@ -255,6 +255,13 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.2.4](https://github.com/damien-robotsix/robotsix-calendar/compare/v0.2.3...v0.2.4) (2026-11-10)
+
+
+### Documentation
+
+* Align mypy typecheck scope across PR template, Makefile, and pre-commit (20261110T021541Z-align-mypy-typecheck-scope-across-pr-tem-9cbb) ([#613](https://github.com/damien-robotsix/robotsix-calendar/issues/613)) ([933046a](https://github.com/damien-robotsix/robotsix-calendar/commit/933046ad1e1b01da4174ff9b1185448694ab85fd))
+
 ## [0.2.3](https://github.com/damien-robotsix/robotsix-calendar/compare/v0.2.2...v0.2.3) (2026-11-04)
 
 
