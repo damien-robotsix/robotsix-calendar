@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # Builder stage: installs build dependencies and creates the virtualenv.
-FROM python:3.14-slim-bookworm AS builder
+FROM python:3.15-slim-bookworm AS builder
 
 # Install uv from the official image.
 COPY --from=ghcr.io/astral-sh/uv:0.11.21 /uv /uvx /bin/
@@ -58,7 +58,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-dev
 
 # Runtime stage: minimal image with only the virtualenv and source.
-FROM python:3.14-slim-bookworm AS runtime
+FROM python:3.15-slim-bookworm AS runtime
 
 # Upgrade vulnerable system packages, then remove pip (not needed at
 # runtime).  libpcre2-8-0 in the slim-bookworm base trips container CVEs
