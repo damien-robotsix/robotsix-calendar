@@ -5,13 +5,7 @@ from __future__ import annotations
 import pytest
 from fastapi.testclient import TestClient
 
-from robotsix_calendar.api import app
 from robotsix_calendar.api._ui_pages import inline_script_hashes
-
-
-@pytest.fixture
-def client() -> TestClient:
-    return TestClient(app)
 
 
 @pytest.mark.parametrize("path", ["/ui", "/ui/events", "/settings", "/health"])
