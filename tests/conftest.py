@@ -5,12 +5,16 @@ from __future__ import annotations
 import json
 import os
 import tempfile
+from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
+from fastapi.testclient import TestClient
 from hypothesis import HealthCheck, settings
+
+from robotsix_calendar.api import app
 
 # Re-export the session-scoped integration fixture so it is explicitly
 # available to all test modules.
@@ -114,3 +118,14 @@ def calendar_agent() -> Any:
         yield agent
 
         Path(config_path).unlink(missing_ok=True)
+
+
+@pytest.fixture
+def client() -> Iterator[TestClient]:
+    """Build a TestClient for the shared FastAPI app.
+
+    State-specific mocks (e.g. a mocked CalDavClient on ``app.state``) are
+    installed by the individual test fixtures that need them, not here.
+    """
+    with TestClient(app) as test_client:
+        yield test_client

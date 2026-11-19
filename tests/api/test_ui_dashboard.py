@@ -2,23 +2,12 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterator
-
 import pytest
 from fastapi.testclient import TestClient
-
-from robotsix_calendar.api import app
 
 # Every UI page must mount the shared AppShell with the primary nav
 # entries (Events, Calendars, Contacts, Settings).
 UI_PAGES = ("/ui", "/ui/calendars", "/ui/contacts", "/ui/events", "/settings")
-
-
-@pytest.fixture
-def client() -> Iterator[TestClient]:
-    """Build a TestClient for the shared FastAPI app."""
-    with TestClient(app) as test_client:
-        yield test_client
 
 
 class TestRootRedirect:

@@ -28,17 +28,16 @@ from robotsix_calendar.caldav_client.exceptions import (
 
 
 @pytest.fixture
-def mock_client() -> MagicMock:
-    """Create a mock CalDavClient."""
-    return MagicMock()
+def mock_client() -> Iterator[MagicMock]:
+    """Create a mock CalDavClient and install it on ``app.state``.
 
-
-@pytest.fixture
-def client(mock_client: MagicMock) -> Iterator[TestClient]:
-    """Create a TestClient with a mocked CalDavClient on app.state."""
-    app.state.caldav_client = mock_client
-    with TestClient(app) as c:
-        yield c
+    State-specific mock kept here (not in the shared ``client`` builder) so
+    tests that do not exercise CalDAV-backed endpoints build a plain
+    TestClient.
+    """
+    mock = MagicMock()
+    app.state.caldav_client = mock
+    yield mock
     with contextlib.suppress(AttributeError):
         del app.state.caldav_client
 

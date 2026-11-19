@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
 
@@ -11,7 +10,6 @@ import pytest
 from fastapi.testclient import TestClient
 from robotsix_config import MASKED_SECRET_SENTINEL, load_config
 
-from robotsix_calendar.api import app
 from robotsix_calendar.settings import Settings
 
 BASE_CONFIG: dict[str, Any] = {
@@ -32,13 +30,6 @@ def config_path(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     path = tmp_path / "config.json"
     monkeypatch.setenv("ROBOTSIX_CONFIG_FILE", str(path))
     return path
-
-
-@pytest.fixture
-def client() -> Iterator[TestClient]:
-    """Build a TestClient for the shared FastAPI app."""
-    with TestClient(app) as test_client:
-        yield test_client
 
 
 def _write_config(path: Path, data: dict[str, Any]) -> None:
