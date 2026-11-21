@@ -1,10 +1,15 @@
 # syntax=docker/dockerfile:1
 
-# Builder stage: installs build dependencies and creates the virtualenv.
-FROM python:3.14-slim-bookworm AS builder
+# Pin the base image to a digest (mutable tags are a supply-chain risk);
+# the tag `3.14-slim-bookworm` is kept for readability and Dependabot's
+# docker ecosystem bumps tag and digest together.
+ARG BASE_DIGEST=sha256:3fe1a0b6c2d6b2ebb572906cdabeca75aeb558c0c17db5ffefbcf8094871c32b
 
-# Install uv from the official image.
-COPY --from=ghcr.io/astral-sh/uv:0.11.21 /uv /uvx /bin/
+# Builder stage: installs build dependencies and creates the virtualenv.
+FROM python:3.14-slim-bookworm@${BASE_DIGEST} AS builder
+
+# Install uv from the official image (tag kept for readability; digest-pinned).
+COPY --from=ghcr.io/astral-sh/uv:0.11.21@sha256:ff07b86af50d4d9391d9daf4ff89ce427bc544f9aae87057e69a1cc0aa369946 /uv /uvx /bin/
 
 # git is required: robotsix-llmio is a git dependency that uv fetches at build time.
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
@@ -58,7 +63,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-dev
 
 # Runtime stage: minimal image with only the virtualenv and source.
-FROM python:3.14-slim-bookworm AS runtime
+FROM python:3.14-slim-bookworm@${BASE_DIGEST} AS runtime
 
 # Upgrade vulnerable system packages, then remove pip (not needed at
 # runtime).  libpcre2-8-0 in the slim-bookworm base trips container CVEs
