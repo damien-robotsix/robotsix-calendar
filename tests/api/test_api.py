@@ -21,6 +21,7 @@ from robotsix_calendar.caldav_client.exceptions import (
     AgentLogicError,
     AuthError,
     CalDAVError,
+    CalendarError,
     ConflictError,
     NotFoundError,
     RateLimitError,
@@ -383,56 +384,80 @@ class TestAddressbooks:
 
 
 class TestErrorMapping:
-    def test_auth_error_returns_401(
-        self, client: TestClient, mock_client: MagicMock
+    @pytest.mark.parametrize(
+        ("exception", "expected_status", "expected_code", "expected_detail"),
+        [
+            pytest.param(
+                AuthError("bad creds"),
+                401,
+                "auth_failed",
+                "bad creds",
+                id="auth_error",
+            ),
+            pytest.param(
+                ConflictError("etag mismatch"),
+                409,
+                "conflict",
+                "etag mismatch",
+                id="conflict",
+            ),
+            pytest.param(
+                RateLimitError("slow down"),
+                429,
+                "rate_limited",
+                "slow down",
+                id="rate_limited",
+            ),
+            pytest.param(
+                CalDAVError("server down"),
+                502,
+                "caldav_error",
+                "server down",
+                id="caldav_error",
+            ),
+            pytest.param(
+                AgentLogicError("missing uid"),
+                400,
+                "agent_logic_error",
+                "missing uid",
+                id="agent_logic_error",
+            ),
+            pytest.param(NotFoundError("not found"), 404, "not_found", "not found"),
+            pytest.param(
+                CalendarError("unexpected"),
+                500,
+                "calendar_error",
+                "unexpected",
+                id="calendar_error",
+            ),
+        ],
+    )
+    def test_calendar_error_renders_canonical_envelope(
+        self,
+        client: TestClient,
+        mock_client: MagicMock,
+        exception: CalendarError,
+        expected_status: int,
+        expected_code: str,
+        expected_detail: str,
     ) -> None:
-        mock_client.list_events.side_effect = AuthError("bad creds")
+        """Assert the full canonical envelope for every CalendarError subclass.
+
+        ``register_exception_handlers`` renders each subclass with its
+        declared ``status_code``/``code`` (from ``exceptions.py``) and the
+        human-readable message as ``detail``.  The ``expected_code`` schema
+        check pins the table to the exception's static ``code`` attribute so
+        the test cannot silently drift from the hierarchy it documents.
+        """
+        mock_client.list_events.side_effect = exception
         response = client.get(
             "/events", params={"start": "2026-01-01", "end": "2026-01-02"}
         )
-        assert response.status_code == 401
-        assert response.json()["error"]["code"] == "auth_failed"
 
-    def test_conflict_error_returns_409(
-        self, client: TestClient, mock_client: MagicMock
-    ) -> None:
-        mock_client.update_event.side_effect = ConflictError("etag mismatch")
-        response = client.put(
-            "/events/evt-1",
-            json={
-                "summary": "X",
-                "dtstart": "2026-01-01T10:00:00",
-                "dtend": "2026-01-01T11:00:00",
-            },
-        )
-        assert response.status_code == 409
-
-    def test_rate_limit_error_returns_429(
-        self, client: TestClient, mock_client: MagicMock
-    ) -> None:
-        mock_client.list_tasks.side_effect = RateLimitError("slow down")
-        response = client.get("/tasks")
-        assert response.status_code == 429
-
-    def test_caldav_error_returns_502(
-        self, client: TestClient, mock_client: MagicMock
-    ) -> None:
-        mock_client.list_contacts.side_effect = CalDAVError("server down")
-        response = client.get("/contacts")
-        assert response.status_code == 502
-
-    def test_agent_logic_error_returns_400(
-        self, client: TestClient, mock_client: MagicMock
-    ) -> None:
-        mock_client.list_tasks.side_effect = AgentLogicError("missing uid")
-        response = client.get("/tasks")
-        assert response.status_code == 400
-
-    def test_generic_calendar_error_returns_500(
-        self, client: TestClient, mock_client: MagicMock
-    ) -> None:
-        from robotsix_calendar.caldav_client.exceptions import CalendarError
-
-        mock_client.list_calendars.side_effect = CalendarError("unexpected")
-        response = client.get("/calendars")
-        assert response.status_code == 500
+        assert response.status_code == expected_status
+        assert response.json() == {
+            "error": {"code": expected_code, "detail": expected_detail}
+        }
+        # Schema check: the machine-readable code is the exception's own
+        # static ``code``, so the table cannot drift from exceptions.py.
+        assert expected_code == exception.code
